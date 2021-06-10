@@ -1,0 +1,53 @@
+import Utilities as u
+from Data.DataObjects.Annotatable import Annotatable
+
+class Peak(Annotatable):
+    def __init__(self, type, scan, retentiontime, mass, intensity, measurementid, patternid, sha1sum, signal, peak_data):
+        Annotatable.__init__(self)
+        self.type = type
+        self.scan = scan
+        self.retentiontime = retentiontime
+        self.mass = mass
+        self.intensity = intensity
+        self.measurementid = measurementid
+        self.patternid = patternid
+        self.sha1sum = sha1sum
+        self.signal = signal
+        self.peak_data = peak_data
+        self.peaks = []
+  
+    def add_peak(self, peak):
+        self.peaks.append(peak)
+
+    def if_patternid_set(self):
+        return round(self.get_patternid() != 0)
+
+    def get_type(self):
+        return self.type
+
+    def get_scanid(self):
+        return self.scan
+
+    def get_patternid(self):
+        return self.patternid
+
+    def get_mass(self):
+        return self.mass
+
+    def get_sha1sum(self):
+        return self.sha1sum
+
+    def get_retention_time_formatted_string(self):
+        return u.format_time_string(self.get_retention_time())
+
+    def get_retention_time_formatted_datetime(self):
+        return u.format_time_datetime(self.get_retention_time())
+
+    def get_retention_time(self):
+        return self.retentiontime
+
+    def get_intensity(self):
+        return self.intensity
+
+    def get_nr_peaks(self):
+        return round(len(self.peaks))

@@ -1,3 +1,4 @@
 {
-    "activestate.promptRuntimeCreation": false
+    "activestate.promptRuntimeCreation": false,
+    "python.pythonPath": "C:\\Python38\\python.exe"
 }

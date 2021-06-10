@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<peakmlviewer>
+	<settings>
+		<smooth>true</smooth>
+		<databases>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\01_StdMix.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\02_StdMix.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\03_StdMix.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\04_ESI-contaminants.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\05_LDonovani.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\ecocyc.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\hmdb.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\kegg.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\MetaCyc.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\Mycoplasma_hyopneumoniae.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\peptides.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\scocyc.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\standard.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\Streptomyces_clavuligerus_db.xml</database>
+            <database>C:\Source\MetabolomicModellingMSc\Databases\trypanocyc.xml</database>
+		</databases>
+	</settings>
+</peakmlviewer>
