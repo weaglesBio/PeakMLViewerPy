@@ -197,23 +197,54 @@ class PeakMLData:
         
         return df
 
+    # Returns the peak with one of the given list of measurement id's
+    def get_peaks_with_measurementids(self, peaks, measurementids):
+
+        measurement_peaks = []
+
+        for peak in peaks:
+            peak_has_measurement = False
+
+            peak_data = peak.get_peak_data()
+            peak_data_measurementids = peak_data.get_measurementids()
+
+            for peak_data_measurementid in peak_data_measurementids:
+                for measurementid in measurementids:
+                    if peak_data_measurementid == measurementid:
+                        peak_has_measurement = True
+
+            #for measurementid in measurementids:
+            #    if peak.get_measurementid() == measurementid:
+            #        peak_has_measurement = True
+
+            if peak_has_measurement:      
+                measurement_peaks.append(peak)
+
+        return measurement_peaks
+
     def get_intensity_plot(self):
-        peakml_obj = self.get_peakml_obj()
-        selected_peak = peakml_obj.get_selected_peak()
-        peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
-
-        df = pd.DataFrame()
-
-
-        #for set in peakml_obj.header.get_sets():
-
-
-            
-      #  df = df.append({"Mass": float(mass), "Intensity": float(intensity), "Description": description}, ignore_index=True)
         
-        return df
+        try:
+            peakml_obj = self.get_peakml_obj()
+            selected_peak = peakml_obj.get_selected_peak()
+            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
+            peaks = peakset.peaks
+            df = pd.DataFrame()
 
-        print("Not implemented")
+            for set in peakml_obj.header.get_sets():
+                
+                # Get all the peaks for the set.
+                measurement_peaks = self.get_peaks_with_measurementids(peaks, set.get_measurementids())
+
+                intensities = []
+                for measurement_peak in measurement_peaks:
+                    intensities.append(measurement_peak.get_intensity())
+
+                df = df.append({"SetID": set.get_setid(), "Intensities": intensities}, ignore_index=True)
+        except Exception as err:
+            print(err)
+
+        return df
 
     def get_identification(self):
         

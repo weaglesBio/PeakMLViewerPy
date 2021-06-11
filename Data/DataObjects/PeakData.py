@@ -76,3 +76,8 @@ class PeakData():
     def get_intensities(self):
         intensities = list(map(float,self.intensities))
         return intensities  #Converts from bytes to string
+
+    def get_measurementids(self):
+        measurementids = list(map(float,self.measurementids))
+        return measurementids  #Converts from bytes to string
+    

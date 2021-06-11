@@ -1,4 +1,6 @@
 from datetime import datetime
+import numpy as np
+import base64
 
 
 def format_time_string(time):
@@ -6,6 +8,13 @@ def format_time_string(time):
 
 def format_time_datetime(time):
     return datetime.fromtimestamp(float(time))
+
+
+#test = "AAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAg=="
+#test = "AAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE="
+#measurementids_decoded_bytes = base64.b64decode(test) 
+#measurementids = np.frombuffer(measurementids_decoded_bytes, dtype = int)
+#print(measurementids)
 
 #raw_time = 646.0380249023438
 

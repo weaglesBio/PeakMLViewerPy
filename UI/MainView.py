@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 import pandas as pd
 import numpy as np
 import ast
+import statistics as stats
 
 class MainView():
 
@@ -316,8 +317,8 @@ class MainView():
     def refresh_graph_view(self):
         self.generate_plot_peak()
         self.generate_plot_derivatives()
-        self.generate_plot_int_all()
-        self.generate_plot_int_log()
+        self.generate_plots_int()
+
 
     def generate_plot_peak(self):
 
@@ -333,12 +334,8 @@ class MainView():
             Intensity_values_arr = df.iloc[i]['Intensity_values']
             plot_label = df.iloc[i]["Label"]
 
-            #plots[row["Label"]] = pd.Dataframe({"RT_values": row["RT_values"], "Intensity_values": row["Intensity_values"]})
-            #plot_data = pd.DataFrame({"RT_values": RT_values_arr, "Intensity_values": Intensity_values_arr})
             self.axes_peak.plot(RT_values_arr, Intensity_values_arr, marker='', color=self.set_plot_colour(plot_label), linewidth=0.5, label=plot_label)
-            #self.gcf().autofmt_xdate()
 
-        #self.axes_peak.tick_params(axis='x', labelrotation=90)
         self.axes_peak.set_xlabel("Retention Time")
         self.axes_peak.set_ylabel("Intensity")
 
@@ -367,11 +364,66 @@ class MainView():
         self.axes_derivatives.set_ylabel("Intensity")
         self.figure_derivatives.canvas.draw()
 
-    def generate_plot_int_all(self):
-        print("Not Implemented")
+    def generate_plots_int(self):
+        df = self.data.get_intensity_plot()
+        self.generate_plot_int_all(df)
+        self.generate_plot_int_log(df)
 
-    def generate_plot_int_log(self):
-        print("Not Implemented")
+    def generate_plot_int_all(self, data):
+        self.axes_int_all.clear()
+        Set_ID_arr = []
+        Intensities_arr = []
+        for i in range(len(data)):
+
+            SetID = data.iloc[i]['SetID']
+            Intensities = data.iloc[i]['Intensities']
+        
+            for j in range(len(Intensities)):
+
+                Set_ID_val = str(SetID) + "-" + str(j + 1)
+                Set_ID_arr.append(Set_ID_val)
+                Intensities_arr.append(float(Intensities[j]))
+
+        self.axes_int_all.plot(Set_ID_arr, Intensities_arr, marker='', linewidth=0.5)
+
+        self.axes_int_all.set_xlabel("Set")
+        self.axes_int_all.set_ylabel("Intensity")
+        self.figure_int_all.canvas.draw()
+
+    def generate_plot_int_log(self, data):
+        self.axes_int_log.clear()
+ 
+        Intensities_float = []
+        Set_ID_arr = []
+        Intensity_mean_arr = []
+        Intensity_neg_arr = []
+        Intensity_pos_arr = []
+        for i in range(len(data)):
+
+            SetID = data.iloc[i]['SetID']
+            Intensities = data.iloc[i]['Intensities']
+
+            for i in range(len(Intensities)):
+                Intensities_float.append(float(Intensities[i]))
+
+            Intensity_mean = stats.mean(Intensities_float)
+            Intensity_max = max(Intensities_float)
+            Intensity_min = min(Intensities_float)
+            Intensity_pos = Intensity_max - Intensity_mean
+            Intensity_neg = Intensity_mean - Intensity_min
+
+            Set_ID_arr.append(SetID)
+            Intensity_mean_arr.append(Intensity_mean)
+            Intensity_neg_arr.append(Intensity_neg)
+            Intensity_pos_arr.append(Intensity_pos)
+
+        self.axes_int_log.errorbar(Set_ID_arr, Intensity_mean_arr, yerr=[Intensity_neg_arr,Intensity_pos_arr])
+
+        self.axes_int_log.set_xlabel("Set")
+        self.axes_int_log.set_ylabel("Intensity")
+        self.figure_int_log.canvas.draw()
+
+
  
     def set_plot_colour(self, label):
         if label == "A_01" or label == "B_01" or label == "C_01":

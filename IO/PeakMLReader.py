@@ -173,9 +173,15 @@ def importElementTreeFromPeakMLFile(tree_data,filepath):
 
         id = set_element.find("./id")
         type = set_element.find("./type")
-        measurementids = set_element.find("./measurementids")
+        
+        measurementids_element = set_element.find("./measurementids")
+        measurementids = []
 
-        set = SetInfo(id.text, type.text, measurementids.text)
+        if measurementids_element is not None: 
+            measurementids_decoded_bytes = base64.b64decode(measurementids_element.text) 
+            measurementids = np.frombuffer(measurementids_decoded_bytes, dtype = int)
+
+        set = SetInfo(id.text, type.text, measurementids)
         header_obj.add_set(set)
 
     # Add 'Sample Info' records to PeakHeader

@@ -51,3 +51,9 @@ class Peak(Annotatable):
 
     def get_nr_peaks(self):
         return round(len(self.peaks))
+
+    def get_peak_data(self):
+        return self.peak_data
+
+    def get_measurementid(self):
+        return self.measurementid
