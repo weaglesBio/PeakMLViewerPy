@@ -1,3 +1,4 @@
+from Data.DataObjects.PeakColour import PeakColour
 from numpy.lib.twodim_base import mask_indices
 import IO.MoleculeIO
 import gzip
@@ -8,6 +9,16 @@ import os.path
 import IO.PeakMLReader as Read
 import IO.PeakMLWriter as Write
 import IO.MoleculeIO as MolIO
+
+from Data.DataObjects.FilterMass import FilterMass
+from Data.DataObjects.FilterIntensity import FilterIntensity
+from Data.DataObjects.FilterRetentionTime import FilterRetentionTime
+from Data.DataObjects.FilterNumberDetections import FilterNumberDetections
+from Data.DataObjects.FilterAnnotations import FilterAnnotations
+from Data.DataObjects.FilterSort import FilterSort
+from Data.DataObjects.FilterSortTimeSeries import FilterSortTimeSeries
+
+import Utilities as Utils
 
 # The purpose of this class is to encapsulate all data access logic, the methods here are the one used by the ui layer
 # They should be a specific and descriptive in their naming as possible.
@@ -43,6 +54,16 @@ class PeakMLData:
 
     def get_nr_peaks(self):
         return self.peakml_obj.get_nr_peaks()
+
+    def get_total_nr_peaks(self):      
+        peak_count = 0
+        for peak in self.peakml_obj.peaks:
+            if peak.get_type() == 'peakset':
+                peak_count += len(peak.peaks)
+            else:
+                peak_count += 1
+
+        return peak_count
 
     def set_selected_peak(self, peak_id):
         self.peakml_obj.set_selected_peak(peak_id)
@@ -117,13 +138,13 @@ class PeakMLData:
         # Will need to examine the complexity of the required queries.
 
     def get_entry_list(self):
-        peakml_obj = self.get_peakml_obj()
 
         df = pd.DataFrame()
 
-        for peak_obj in peakml_obj.peaks:
+        for peak_obj in self.get_peakml_obj().get_filtered_peaks():
 
             selected = peak_obj.if_patternid_set()
+            
             sha1sum = peak_obj.get_sha1sum()
             scanid = peak_obj.get_scanid()
             type = peak_obj.get_type()
@@ -131,12 +152,22 @@ class PeakMLData:
             mass = peak_obj.get_mass()
             intensity = peak_obj.get_intensity()
             nr_peaks = peak_obj.get_nr_peaks()
+            checked = peak_obj.get_checked()
 
-            df = df.append({"Scanid": scanid, "Sha1sum": sha1sum, "Type": type, "Selected": selected, "RT": rt, "Mass": mass, "Intensity": intensity, "Nrpeaks": nr_peaks}, ignore_index=True)
+            if peak_obj.get_specific_annotation('identification'):
+                has_annotation = True
+            else:
+                has_annotation = False
 
-        #print(df)
+            df = df.append({"Scanid": scanid, "Sha1sum": sha1sum, "Type": type, "Selected": selected, "RT": rt, "Mass": mass, "Intensity": intensity, "Nrpeaks": nr_peaks, "HasAnnotation": has_annotation, "Checked": checked}, ignore_index=True)
+
         return df
-        #Apply filters
+
+    def get_filters_list(self):
+        df = pd.DataFrame()
+        for filter in self.get_peakml_obj().get_filters():
+            df = df.append({"ID": filter.get_id_str(), "Type": filter.get_type_value(), "Settings": filter.get_settings_value()}, ignore_index=True)
+        return df
 
     def get_peak_plot(self): 
         peakml_obj = self.get_peakml_obj()
@@ -146,19 +177,18 @@ class PeakMLData:
         df = pd.DataFrame()
 
         for peak_obj in peakset_obj.peaks:
-            
-            #print("measurementid: " + peak_obj.measurementid)
 
             measurement_obj = peakml_obj.header.get_measurement_by_id(peak_obj.measurementid)
-            #set_obj = peakml_obj.header.get_set_by_measurementid(peak_obj.measurementid)
-            
+
             label = measurement_obj.label
             rt_values = peak_obj.peak_data.get_retention_times_formatted_datetime()
             intensity_values = peak_obj.peak_data.get_intensities() 
 
-            df = df.append({"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values}, ignore_index=True)
+            colour = measurement_obj.get_colour()
+            selected = measurement_obj.get_selected() 
 
-        #print(df)
+            df = df.append({"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values, "Colour" : colour, "Selected" : selected }, ignore_index=True)
+
         return df
 
     def get_derivatives_plot(self):
@@ -213,10 +243,6 @@ class PeakMLData:
                     if peak_data_measurementid == measurementid:
                         peak_has_measurement = True
 
-            #for measurementid in measurementids:
-            #    if peak.get_measurementid() == measurementid:
-            #        peak_has_measurement = True
-
             if peak_has_measurement:      
                 measurement_peaks.append(peak)
 
@@ -240,7 +266,7 @@ class PeakMLData:
                 for measurement_peak in measurement_peaks:
                     intensities.append(measurement_peak.get_intensity())
 
-                df = df.append({"SetID": set.get_setid(), "Intensities": intensities}, ignore_index=True)
+                df = df.append({"SetID": set.get_id(), "Intensities": intensities}, ignore_index=True)
         except Exception as err:
             print(err)
 
@@ -281,16 +307,8 @@ class PeakMLData:
             try:
                 id = annotation_ids[i]
                 molecule = molecule_database[id]
-
-                if annotation_ppms and len(annotation_ppms) > 0:
-                    ppm = annotation_ppms[i]
-                else:
-                    ppm = None
-
-                if annotation_adducts and len(annotation_adducts) > 0:
-                    adduct = annotation_adducts[i]
-                else:
-                    adduct = None
+                ppm = annotation_ppms[i] if annotation_ppms and len(annotation_ppms) > 0 else None
+                adduct = annotation_adducts[i] if annotation_adducts and len(annotation_adducts) > 0 else None
 
                 mol_formula = str(molecule.get_formula())
                 mol_name = molecule.get_name()
@@ -303,101 +321,82 @@ class PeakMLData:
 
         return df
 
+    def get_sets(self):
+        try:
+            df = pd.DataFrame()
+            peakml_obj = self.get_peakml_obj()
+            selected_peak = peakml_obj.get_selected_peak()
+            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
+
+
+            # Set measurement colours from sets
+            for set_info in peakml_obj.header.get_sets():
+
+                df = df.append({"UID": set_info.get_uid(), "Name": set_info.get_id(), "Color": set_info.get_colour(), "Selected": set_info.get_selected(), "Parent": None}, ignore_index=True)
+
+                measurement_peaks = self.get_peaks_with_measurementids(peakset.peaks, set_info.get_measurementids())
+
+                for measurement_peak in measurement_peaks:
+                    measurement = peakml_obj.header.get_measurement_by_id(measurement_peak.get_measurementid())
+
+                    measurement.set_colour(set_info.get_colour())
+                    
+                    df = df.append({"UID": measurement.get_uid(), "Name": measurement.get_label(), "Color": set_info.get_colour(), "Selected": measurement.get_selected(), "Parent": set_info.get_id()}, ignore_index=True)
+                
+        except Exception as err:
+            print(err)
+
+        return df
+
+    def get_details(self):
+
+        try:
+            peakml_obj = self.get_peakml_obj()
+            selected_peak = peakml_obj.get_selected_peak()
+            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
+            df = pd.DataFrame()
+
+            for annotation in peakset.get_annotations():
+                df = df.append({"Label": annotation.get_label(), "Value": annotation.get_value()}, ignore_index=True)
+
+        except Exception as err:
+            print(err)
+
+        return df
+
+    #def update_peakcolour_selection(self, sampleid, selected):
+    #    self.get_peakml_obj().set_peak_colour_selection_by_sampleid(sampleid,selected)
+
+    def update_set_selection(self, measurement_sampleid, selected):
+
+        measurement = self.get_peakml_obj().header.get_measurement_by_sampleid(measurement_sampleid)
+        measurement.set_selected(selected)
+
+        #self.get_peakml_obj().set_peak_colour_selection_by_sampleid(sampleid,selected)  
 
     def get_peak_set_data_by_selected_peak(self):
         print("Not implemented")
 
+    def add_filter_mass(self, mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option):
+        self.get_peakml_obj().add_filter(FilterMass(mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option))
 
-        #database = 
-        #get databases
+    def add_filter_intensity(self, intensity_min, intensity_unit):
+        self.get_peakml_obj().add_filter(FilterIntensity(intensity_min, intensity_unit))
 
+    def add_filter_retention_time(self, range_min, range_max):
+        self.get_peakml_obj().add_filter(FilterRetentionTime(range_min, range_max))
 
-        
-        print("not")
+    def add_filter_number_detections(self, detection_number):
+        self.get_peakml_obj().add_filter(FilterNumberDetections(detection_number))
 
+    def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
+        self.get_peakml_obj().add_filter(FilterAnnotations(annotation_name, annotation_relation, annotation_value))
 
-        #get annotation
+    def add_filter_sort(self):
+        print("Not implemented")
 
-    
-#
- #       peakset_obj = peakml_obj.get_peak_from_sha1sum(sha1sum)
- #      
- #       
-#
- #       for peak_obj in peakset_obj.peaks:
- #           
- #           print("measurementid: " + peak_obj.measurementid)
-#
- #           measurement_obj = peakml_obj.header.get_measurement_by_id(peak_obj.measurementid)
- #           #set_obj = peakml_obj.header.get_set_by_measurementid(peak_obj.measurementid)
- #           
- #           label = measurement_obj.label
- #           rt_values = peak_obj.peak_data.get_retention_times_formatted()
- #           intensity_values = peak_obj.peak_data.get_intensities() 
-#
- #           df = df.append({"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values}, ignore_index=True)
-#
- #       print(df)
- #       return df
+    def add_filter_sort_times_series(self):
+        print("Not implemented")
 
-    #def add_filter(self):
-
-
-## Need logic section for visibility of lines.
-
-
-
-#Can there be more than two layers of peaks.
-
-
-
-    #def remove_filter:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        #get peaks
-        peakml_obj.peaks
+    def remove_filter_by_id(self, id):
+        self.get_peakml_obj().remove_filter_by_id(id)

@@ -14,6 +14,7 @@ class Peak(Annotatable):
         self.sha1sum = sha1sum
         self.signal = signal
         self.peak_data = peak_data
+        self.checked = False
         self.peaks = []
   
     def add_peak(self, peak):
@@ -57,3 +58,9 @@ class Peak(Annotatable):
 
     def get_measurementid(self):
         return self.measurementid
+
+    def get_checked(self):
+        return self.checked
+
+    def set_checked(self, checked):
+        self.checked = checked

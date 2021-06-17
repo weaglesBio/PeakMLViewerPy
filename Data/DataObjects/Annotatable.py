@@ -11,3 +11,6 @@ class Annotatable():
                 return annotation
 
         return None
+
+    def get_annotations(self):
+        return self.annotations

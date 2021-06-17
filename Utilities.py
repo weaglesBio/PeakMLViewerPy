@@ -1,7 +1,8 @@
 from datetime import datetime
 import numpy as np
 import base64
-
+import uuid
+import seaborn as sns
 
 def format_time_string(time):
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
@@ -9,8 +10,23 @@ def format_time_string(time):
 def format_time_datetime(time):
     return datetime.fromtimestamp(float(time))
 
+def get_current_time():
+    return datetime.now().strftime("%H:%M:%S")
 
-#test = "AAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAg=="
+def get_new_uuid():
+    return uuid.uuid4()
+
+def get_colours(number):
+    palette = sns.color_palette(None, number)
+    return palette.as_hex()
+
+## Debugging methods
+
+def trace(message):
+    print(" ".join([message, get_current_time()]))
+
+
+#test = "AAAAAAAAAAEAAAAC"
 #test = "AAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE="
 #measurementids_decoded_bytes = base64.b64decode(test) 
 #measurementids = np.frombuffer(measurementids_decoded_bytes, dtype = int)

@@ -14,6 +14,8 @@ from Data.DataObjects.MeasurementInfo import MeasurementInfo
 from Data.DataObjects.ScanInfo import ScanInfo
 from Data.DataObjects.FileInfo import FileInfo
 
+import Utilities as Utils
+
 
 #class PeakMLFile():
 
@@ -168,6 +170,8 @@ def importElementTreeFromPeakMLFile(tree_data,filepath):
 
     add_annotations(header_element, header_obj)
 
+    colours = Utils.get_colours(len(header_element.findall("./sets/set")))
+    set_iter = 0
     # Add 'Set Info' records to PeakHeader
     for set_element in header_element.findall("./sets/set"):
 
@@ -181,8 +185,10 @@ def importElementTreeFromPeakMLFile(tree_data,filepath):
             measurementids_decoded_bytes = base64.b64decode(measurementids_element.text) 
             measurementids = np.frombuffer(measurementids_decoded_bytes, dtype = int)
 
-        set = SetInfo(id.text, type.text, measurementids)
+        set = SetInfo(id.text, type.text, measurementids, colours[set_iter])
         header_obj.add_set(set)
+
+        set_iter += 1
 
     # Add 'Sample Info' records to PeakHeader
     for sample_element in header_element.findall("./samples/sample"):
@@ -234,6 +240,8 @@ def importElementTreeFromPeakMLFile(tree_data,filepath):
             measurement.add_file(file)
 
         header_obj.add_measurement(measurement)
+
+
 
     peakset = []
 

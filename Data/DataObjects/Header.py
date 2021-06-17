@@ -33,11 +33,24 @@ class Header(Annotatable):
 
     def get_measurement_by_id(self, measurement_id):
         for measurement in self.measurements:
-           if measurement.id == measurement_id:
+           if measurement.id == str(measurement_id):
+               return measurement
+
+    def get_measurement_by_sampleid(self, measurement_sampleid):
+        for measurement in self.measurements:
+           if measurement.sampleid == str(measurement_sampleid):
+               return measurement
+
+    def get_measurement_by_uid(self, measurement_uid):
+        for measurement in self.measurements:
+           if measurement.id == str(measurement_uid):
                return measurement
     
     def get_set_by_measurementid(self, measurement_id):
         for set in self.sets:
            if set.id == measurement_id:
                return set
+
+    def get_measurements(self):
+        return self.measurements
             
