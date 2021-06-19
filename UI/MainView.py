@@ -1,17 +1,19 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.filedialog as fd
+import tkinter.simpledialog as sd
 import ttkwidgets as ttkw
+#If package only available as pip, install with anaconda prompt
 
 import matplotlib.pyplot as plt
-import tkinter.simpledialog as sd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.dates import DateFormatter
-import matplotlib.dates as mdates
-import pandas as pd
-import numpy as np
 import statistics as stats
 from PIL import ImageTk, Image
+from rdkit import Chem
+from rdkit.Chem.Draw import IPythonConsole, ShowMol
+from rdkit.Chem import Draw
+from rdkit.Chem import inchi
 
 from UI.FilterMassDialog import FilterMassDialog
 from UI.FilterIntensityDialog import FilterIntensityDialog
@@ -20,6 +22,7 @@ from UI.FilterNumberDetectionsDialog import FilterNumberDetectionsDialog
 from UI.FilterAnnotationsDialog import FilterAnnotationsDialog
 from UI.SortDialog import SortDialog
 from UI.SortTimeSeriesDialog import SortTimeSeriesDialog
+from UI.PreferencesDialog import PreferencesDialog
 
 import Utilities as Utils
 
@@ -39,9 +42,6 @@ class MainView():
         self.data = data
         self.menubar = tk.Menu(self.root)
 
-        #self.img_checked = ImageTk.PhotoImage(Image.open("checked.png"))
-        #self.img_unchecked = ImageTk.PhotoImage(Image.open("checked.png"))
-
         #Add 'File' category
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Open", command=self.file_open)
@@ -49,11 +49,15 @@ class MainView():
         self.filemenu.add_command(label="Save as...", command=self.file_save_as)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.root.quit)
-        self.menubar.add_cascade(label="Menu", menu=self.filemenu)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        self.editmenu = tk.Menu(self.menubar, tearoff=0)
+        self.editmenu.add_command(label="Preferences", command=self.edit_preferences)
+        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
         #Main content container
         self.viewer_frame = tk.Frame(self.root)
-        self.viewer_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
+        self.viewer_frame.pack(fill=tk.BOTH, expand = tk.TRUE, padx=(10,10), pady=(10,10))
 
         # Allow the second column and row to be resizable second column resizable
         self.viewer_frame.columnconfigure(1, weight = 1)
@@ -74,8 +78,8 @@ class MainView():
         self.middle_right_frame.grid(row=1, column=2, columnspan = 1, sticky="NEWS")
 
         self.bottom_frame = tk.LabelFrame(self.viewer_frame, width=1100, height=150, padx=10, pady=10, text="Annotations")
-        self.bottom_frame.grid(row=2, column=0, columnspan = 3,sticky="NEWS")
-
+        self.bottom_frame.grid(row=2, column=0, columnspan = 3, sticky="NEWS")
+        
         # Allow middle centre to be resizable.
         self.middle_centre_frame.columnconfigure(0, weight = 1)
         self.middle_centre_frame.rowconfigure(1, weight = 1)
@@ -85,10 +89,18 @@ class MainView():
         self.tab_derivatives = ttk.Frame(self.tabs_plot)
         self.tab_intensity_pattern = ttk.Frame(self.tabs_plot)
 
-        self.tabs_plot.add(self.tab_peak, text = "peak")
-        self.tabs_plot.add(self.tab_derivatives, text = "derivatives")
-        self.tabs_plot.add(self.tab_intensity_pattern, text = "intensity pattern")
+        self.tabs_plot.add(self.tab_peak, text = "Peak")
+        self.tabs_plot.add(self.tab_derivatives, text = "Derivatives")
+        self.tabs_plot.add(self.tab_intensity_pattern, text = "Intensity Pattern")
         self.tabs_plot.pack(expand = 1, fill = "both")
+
+        self.tabs_der = ttk.Notebook(self.tab_derivatives)
+        self.tab_der_all = ttk.Frame(self.tabs_der)
+        self.tab_der_log = ttk.Frame(self.tabs_der)
+
+        self.tabs_der.add(self.tab_der_all, text = "All")
+        self.tabs_der.add(self.tab_der_log, text = "Log")
+        self.tabs_der.pack(expand = 1, fill = "both")
 
         self.tabs_int = ttk.Notebook(self.tab_intensity_pattern)
         self.tab_int_all = ttk.Frame(self.tabs_int)
@@ -114,49 +126,59 @@ class MainView():
         # Entry View
         self.selected_id = tk.StringVar()
 
-        self.entry_tree = ttkw.CheckboxTreeview(self.middle_left_frame, height = 25, show=("headings","tree"), selectmode="browse")
+        self.entry_grid_frame = tk.Frame(self.middle_left_frame)
+
+        self.entry_tree = ttkw.CheckboxTreeview(self.entry_grid_frame, height = 20, show=("headings","tree"), selectmode="browse")
         self.entry_tree["columns"]=["RT","Mass", "Intensity", "Nr_peaks"]
         self.entry_tree.column("#0", width=40, stretch = tk.YES)
         self.entry_tree.column("#1", width=100, stretch = tk.YES)
         self.entry_tree.column("#2", width=100, stretch = tk.YES)
         self.entry_tree.column("#3", width=100, stretch = tk.YES)
-        self.entry_tree.column("#4", width=100, stretch = tk.YES)
-
+        self.entry_tree.column("#4", width=50, stretch = tk.YES)
         self.entry_tree.heading("#0", text="")
         self.entry_tree.heading("#1", text="Retention time")
         self.entry_tree.heading("#2", text="Mass")
         self.entry_tree.heading("#3", text="Intensity")
-        self.entry_tree.heading("#4", text="Sample Count")
-
+        self.entry_tree.heading("#4", text="Samples")
         self.entry_tree.bind('<ButtonRelease-1>', self.select_entry)
         self.entry_tree.bind('<KeyRelease-Up>', self.select_entry)
         self.entry_tree.bind('<KeyRelease-Down>', self.select_entry)
-
         self.entry_tree.tag_configure("has_ann", foreground="black")
         self.entry_tree.tag_configure("no_ann", foreground="grey")
-        self.entry_tree.tag_configure("is_focus", background="lightblue")
-        #self.entry_tree.tag_configure("checked", image=self.img_checked)
-        #self.entry_tree.tag_configure("unchecked", image=self.img_unchecked)
-
+        self.entry_tree.tag_configure("is_focus", foreground="white", background="blue")
         self.entry_tree.grid(row=0, column=0, sticky="NEWS")
 
-        self.filter_tree = ttk.Treeview(self.middle_left_frame, height = 6)
+        self.entry_tree_vsb = ttk.Scrollbar(self.entry_grid_frame, orient="vertical", command=self.entry_tree.yview)
+        self.entry_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.entry_tree_hsb = ttk.Scrollbar(self.entry_grid_frame, orient="horizontal", command=self.entry_tree.xview)
+        self.entry_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.entry_tree.configure(yscrollcommand=self.entry_tree_vsb.set, xscrollcommand=self.entry_tree_hsb.set)
 
+        self.entry_grid_frame.grid(row=0, column=0, sticky="NEWS")
+
+        self.filter_grid_frame = tk.Frame(self.middle_left_frame)
+
+        self.filter_tree = ttk.Treeview(self.filter_grid_frame, height = 5)
         self.filter_tree["columns"]=["Type","Settings"]
         self.filter_tree.column("#0", width = 10, stretch = tk.YES)
         self.filter_tree.column("#1", width = 100, stretch = tk.YES)
         self.filter_tree.column("#2", width = 100, stretch = tk.YES)
-
         self.filter_tree.heading("#0", text="",)
         self.filter_tree.heading("#1", text="Type")
         self.filter_tree.heading("#2", text="Settings")
+        self.filter_tree.grid(row=0, column=0)
 
-        self.filter_tree.grid(row=1, column=0, sticky="NEWS")
+        self.filter_tree_vsb = ttk.Scrollbar(self.filter_grid_frame, orient="vertical", command=self.filter_tree.yview)
+        self.filter_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.filter_tree_hsb = ttk.Scrollbar(self.filter_grid_frame, orient="horizontal", command=self.filter_tree.xview)
+        self.filter_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.filter_tree.configure(yscrollcommand=self.filter_tree_vsb.set, xscrollcommand=self.filter_tree_hsb.set)
 
-        option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Filter Annotations", "Sort", "Sort time-series"]
+        self.filter_grid_frame.grid(row=1, column=0, sticky="NEWS")
 
         self.filter_frame = ttk.Frame(self.middle_left_frame)
 
+        option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Filter Annotations", "Sort", "Sort time-series"]
         self.filter_option_selected = tk.StringVar(self.root)
         self.filter_option_selected.set("Select Filter...")
 
@@ -181,15 +203,25 @@ class MainView():
         canvas_peak.get_tk_widget().pack(side="top",fill ='both',expand=True)
         canvas_peak.draw()
 
-        # Derivatives plot
-        self.figure_derivatives = plt.Figure(figsize=(7,7))#figsize=(6,5),dpi=100
-        self.axes_derivatives = self.figure_derivatives.add_subplot(111)
-        canvas_derivatives = FigureCanvasTkAgg(self.figure_derivatives, self.tab_derivatives)
-        toolbar_frame_derivatives = tk.Frame(self.tab_derivatives)
-        toolbar_frame_derivatives.pack(side="top",fill ='x',expand=True)
-        toolbar_derivatives = NavigationToolbar2Tk(canvas_derivatives,toolbar_frame_derivatives)
-        canvas_derivatives.get_tk_widget().pack(side="top",fill ='both',expand=True)
-        canvas_derivatives.draw()
+        # Derivatives all plot
+        self.figure_der_all = plt.Figure(figsize=(7,7))#figsize=(6,5),dpi=100
+        self.axes_der_all = self.figure_der_all.add_subplot(111)
+        canvas_der_all = FigureCanvasTkAgg(self.figure_der_all, self.tab_der_all)
+        toolbar_frame_der_all = tk.Frame(self.tab_der_all)
+        toolbar_frame_der_all.pack(side="top",fill ='x',expand=True)
+        toolbar_der_all = NavigationToolbar2Tk(canvas_der_all,toolbar_frame_der_all)
+        canvas_der_all.get_tk_widget().pack(side="top",fill ='both',expand=True)
+        canvas_der_all.draw()
+
+        # Derivatives log plot
+        self.figure_der_log = plt.Figure(figsize=(7,7))#figsize=(6,5),dpi=100
+        self.axes_der_log = self.figure_der_log.add_subplot(111)
+        canvas_der_log = FigureCanvasTkAgg(self.figure_der_log, self.tab_der_log)
+        toolbar_frame_der_log = tk.Frame(self.tab_der_log)
+        toolbar_frame_der_log.pack(side="top",fill ='x',expand=True)
+        toolbar_der_log = NavigationToolbar2Tk(canvas_der_log,toolbar_frame_der_log)
+        canvas_der_log.get_tk_widget().pack(side="top",fill ='both',expand=True)
+        canvas_der_log.draw()
 
         # Intensity pattern all plot
         self.figure_int_all = plt.Figure(figsize=(7,7))#figsize=(6,5),dpi=100
@@ -197,7 +229,7 @@ class MainView():
         canvas_int_all = FigureCanvasTkAgg(self.figure_int_all, self.tab_int_all)
         toolbar_frame_int_all = tk.Frame(self.tab_int_all)
         toolbar_frame_int_all.pack(side="top",fill ='x',expand=True)
-        toolbar = NavigationToolbar2Tk(canvas_int_all,toolbar_frame_int_all)
+        toolbar_int_all = NavigationToolbar2Tk(canvas_int_all,toolbar_frame_int_all)
         canvas_int_all.get_tk_widget().pack(side="top",fill ='both',expand=True)
         canvas_int_all.draw()
 
@@ -212,44 +244,59 @@ class MainView():
         canvas_int_log.draw()
 
         # Sets View
-        self.sets_tree = ttkw.CheckboxTreeview(self.middle_right_frame, height = 25, show=("headings","tree"))
+        self.sets_grid_frame = tk.Frame(self.middle_right_frame)
 
+        self.sets_tree = ttkw.CheckboxTreeview(self.sets_grid_frame, height = 20, show=("headings","tree"), selectmode="browse")
         self.sets_tree["columns"]=["Name"]
-        self.sets_tree.column("#0", width = 10, stretch = tk.YES)
-        self.sets_tree.column("#1", width = 50, stretch = tk.YES)
-
+        self.sets_tree.column("#0", width = 60, stretch = tk.YES)
+        self.sets_tree.column("#1", width = 150, stretch = tk.YES)
         self.sets_tree.heading("#0", text="",)
         self.sets_tree.heading("#1", text="Name")
-
         self.sets_tree.bind('<ButtonRelease-1>', self.update_sets_view)
-        
-        self.sets_tree.grid(row=0, column=0, sticky="NEWS")
+        self.sets_tree.grid(row=0, column=0)
 
-        self.details_tree = ttk.Treeview(self.middle_right_frame)
+        self.sets_tree_vsb = ttk.Scrollbar(self.sets_grid_frame, orient="vertical", command=self.sets_tree.yview)
+        self.sets_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.sets_tree_hsb = ttk.Scrollbar(self.sets_grid_frame, orient="horizontal", command=self.sets_tree.xview)
+        self.sets_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.sets_tree.configure(yscrollcommand=self.sets_tree_vsb.set, xscrollcommand=self.sets_tree_hsb.set)
 
+        self.sets_grid_frame.grid(row=0, column=0, sticky="NEWS")
+
+        self.details_grid_frame = tk.Frame(self.middle_right_frame)
+
+        self.details_tree = ttk.Treeview(self.details_grid_frame)
         self.details_tree["columns"]=["Label","Value"]
         self.details_tree.column("#0", width = 10, stretch = tk.YES)
-        self.details_tree.column("#1", width = 100, stretch = tk.YES)
-        self.details_tree.column("#2", width = 100, stretch = tk.YES)
-
+        self.details_tree.column("#1", width = 80, stretch = tk.YES)
+        self.details_tree.column("#2", width = 120, stretch = tk.YES)
         self.details_tree.heading("#0", text="",)
         self.details_tree.heading("#1", text="Label")
         self.details_tree.heading("#2", text="Value")
+        self.details_tree.grid(row=0, column=0)
 
-        self.details_tree.grid(row=1, column=0, sticky="NEWS")
+        self.details_tree_vsb = ttk.Scrollbar(self.details_grid_frame, orient="vertical", command=self.details_tree.yview)
+        self.details_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.details_tree_hsb = ttk.Scrollbar(self.details_grid_frame, orient="horizontal", command=self.details_tree.xview)
+        self.details_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.details_tree.configure(yscrollcommand=self.details_tree_vsb.set, xscrollcommand=self.details_tree_hsb.set)
+
+        self.details_grid_frame.grid(row=1, column=0, sticky="NEWS")
 
         # Annotation View
-        self.annotation_tree = ttk.Treeview(self.bottom_frame)
+
+        self.annotation_grid_frame = tk.Frame(self.bottom_frame)
+
+        self.annotation_tree = ttk.Treeview(self.annotation_grid_frame)
         self.annotation_tree["columns"]=["ID", "Formula", "PPM", "Adduct", "Name", "Class", "Description"]
         self.annotation_tree.column("#0", width=10, minwidth=10, stretch = tk.NO)
-        self.annotation_tree.column("#1", stretch = tk.YES)
-        self.annotation_tree.column("#2", stretch = tk.YES)
-        self.annotation_tree.column("#3", stretch = tk.YES)
-        self.annotation_tree.column("#4",  stretch = tk.YES)
-        self.annotation_tree.column("#5")
-        self.annotation_tree.column("#6", stretch = tk.YES)
-        self.annotation_tree.column("#7", stretch = tk.YES)
-
+        self.annotation_tree.column("#1", width = 100, stretch = tk.YES)
+        self.annotation_tree.column("#2", width = 200, stretch = tk.YES)
+        self.annotation_tree.column("#3", width = 100, stretch = tk.YES)
+        self.annotation_tree.column("#4", width = 200, stretch = tk.YES)
+        self.annotation_tree.column("#5", width = 200)
+        self.annotation_tree.column("#6", width = 200, stretch = tk.YES)
+        self.annotation_tree.column("#7", width = 200, stretch = tk.YES)
         self.annotation_tree.heading("#0", text="")
         self.annotation_tree.heading("#1", text="ID")
         self.annotation_tree.heading("#2", text="Formula")
@@ -258,8 +305,19 @@ class MainView():
         self.annotation_tree.heading("#5", text="Name")
         self.annotation_tree.heading("#6", text="Class")
         self.annotation_tree.heading("#7", text="Description")
+        self.annotation_tree.grid(row=0, column=0)
 
-        self.annotation_tree.grid(row=0, column=0, columnspan = 3, sticky="NES")
+        self.annotation_tree_vsb = ttk.Scrollbar(self.annotation_grid_frame, orient="vertical", command=self.annotation_tree.yview)
+        self.annotation_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.annotation_tree_hsb = ttk.Scrollbar(self.annotation_grid_frame, orient="horizontal", command=self.annotation_tree.xview)
+        self.annotation_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.annotation_tree.configure(yscrollcommand=self.annotation_tree_vsb.set, xscrollcommand=self.annotation_tree_hsb.set)
+
+        self.annotation_grid_frame.pack(side = tk.LEFT, expand = tk.YES, fill = tk.BOTH)
+
+        # Molecule View
+        self.molecule_canvas = tk.Canvas(self.bottom_frame)
+        self.molecule_canvas.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
 
         self.data.load_molecule_databases()
         #print(self.data.get_molecule_database())
@@ -276,7 +334,7 @@ class MainView():
         return [elm for elm in self.style.map("Treeview", query_opt=option) 
                 if elm[:2] != ("!disabled","!selected")]
 
-    def import_file(self):
+    def import_peakml_file(self):
         try:
             filepath = self.get_filepath()
 
@@ -288,27 +346,49 @@ class MainView():
         except Exception as err:
             print (err)
 
+    def export_peakml_file(self):
+        try:
+            filepath = self.get_filepath()
+
+            if filepath:
+                self.data.export_data_object_to_file(filepath)
+
+                #self.refresh_views(True)
+                #self.refresh_on_data_change()
+        except Exception as err:
+            print (err)
+
     # Menu Methods
 
     def file_open(self):
         try:
             filepath = fd.askopenfilename()
             self.set_filepath(filepath)    
-            self.import_file()
+            self.import_peakml_file()
         except IOError:
             print("An error occurred")
 
     def file_save(self):
-        print("Not Implemented")
+        # Ask 'Are you sure you want to update the imported file '<filename>'?
+
+        self.export_peakml_file()
 
     def file_save_as(self):
-        print("Not Implemented")
+        try:
+            filepath = fd.asksaveasfilename(defaultextension=".peakml")
+            self.set_filepath(filepath)    
+            self.export_peakml_file()
+        except IOError:
+            print("An error occurred")
 
     def get_filepath(self):
         return self.filepath
 
     def set_filepath(self,filepath):
         self.filepath = filepath
+
+    def edit_preferences(self):
+        self.preferences_dialog()
 
     def close_application(self):
         print("Not Implemented")
@@ -404,11 +484,16 @@ class MainView():
         
         self.annotation_tree.delete(*self.annotation_tree.get_children())
         df_identifications = self.data.get_identification()
-
+        smiles_details = None
+        inchi_details = None
         if df_identifications is not None:
             for i in range(len(df_identifications)):
                 identification_row = df_identifications.iloc[i]
                 self.annotation_tree.insert("",i,i, values=(identification_row["ID"],identification_row["Formula"],identification_row["PPM"],identification_row["Adduct"],identification_row["Name"],identification_row["Class"],identification_row["Description"]))
+                smiles_details = identification_row["Smiles"]
+                inchi_details = identification_row["InChi"]
+
+        self.refresh_molecule_view(inchi_details, smiles_details)
 
     def refresh_sets_view(self):
         
@@ -458,6 +543,22 @@ class MainView():
                 filter_row = df_filters.iloc[i]
                 self.filter_tree.insert("", i, i, values=(filter_row["Type"], filter_row["Settings"]), tags=(filter_row["ID"]))
 
+    def refresh_molecule_view(self, inchi_data, smiles_data):
+        self.molecule_canvas.delete("all")
+
+        if inchi_data is not None:
+            mol = inchi.MolFromInchi(inchi_data)
+            mol_image = Draw.MolToImage(mol)
+
+        elif smiles_data is not None:
+            mol = Chem.MolFromSmiles(smiles_data)
+            mol_image = Draw.MolToImage(mol)       
+        else:
+            mol_image = Image.new(mode="RGB", size=(200,110), color = (0, 204, 102))
+
+        self.mol_img = ImageTk.PhotoImage(mol_image)
+        self.molecule_canvas.create_image(200,110, image=self.mol_img)
+
     # Graph View Methods
 
     def refresh_graph_view(self):
@@ -502,21 +603,50 @@ class MainView():
 
     def generate_plot_derivatives(self):
         df = self.data.get_derivatives_plot()
-        self.axes_derivatives.clear()
+        self.generate_plot_der_all(df)
+        self.generate_plot_der_int(df)
+        
+    def generate_plot_der_all(self, data):
+        self.axes_der_all.clear()
 
-        mass_values = df['Mass']
-        intensity_values = df['Intensity']
-        label_values = df['Description']
+        mass_values = data['Mass']
+        intensity_values = data['Intensity']
+        label_values = data['Description']
 
-        self.axes_derivatives.stem(mass_values, intensity_values, markerfmt=None)
+        intensity_values_float = []
 
-        for i in range(len(df)):
-            self.axes_derivatives.annotate(label_values[i],(mass_values[i],intensity_values[i]))
+        for j in range(len(intensity_values)):
+                intensity_values_float.append(float(intensity_values[j]))
 
-        self.axes_derivatives.set_xlabel("Mass")
-        self.axes_derivatives.set_ylabel("Intensity")
-        self.figure_derivatives.canvas.draw()
-        self.figure_derivatives.tight_layout()
+        self.axes_der_all.stem(mass_values, intensity_values, markerfmt=None)
+
+        for i in range(len(data)):
+            self.axes_der_all.annotate(label_values[i],(mass_values[i],intensity_values[i]))
+
+        self.axes_der_all.set_xlabel("Mass")
+        self.axes_der_all.set_ylabel("Intensity")
+        self.figure_der_all.canvas.draw()
+        self.figure_der_all.tight_layout()
+
+    def generate_plot_der_int(self, data):
+        self.axes_der_log.clear()
+
+        mass_values = data['Mass']
+        intensity_values = data['Intensity']
+        label_values = data['Description']
+                
+        self.axes_der_log.stem(mass_values, intensity_values, markerfmt=None)
+
+        for i in range(len(data)):
+            self.axes_der_log.annotate(label_values[i],(mass_values[i],intensity_values[i]))
+
+        self.axes_der_log.set_xlabel("Mass")
+        self.axes_der_log.set_ylabel("Intensity")
+
+        self.axes_der_log.set_yscale('log')
+        
+        self.figure_der_log.canvas.draw()
+        self.figure_der_log.tight_layout()
 
     def generate_plots_int(self):
         df = self.data.get_intensity_plot()
@@ -629,3 +759,9 @@ class MainView():
     def filter_sort_time_series_dialog(self):
         dlg = SortTimeSeriesDialog(self.root,"Sort time series")
         self.data.add_filter_sort_times_series()
+
+    def preferences_dialog(self):
+        dlg = PreferencesDialog(self.root,"Preferences", self.data)
+        #self.data.add_filter_intensity(dlg.intensity_min, dlg.intensity_unit)
+
+        self.data.update_settings()

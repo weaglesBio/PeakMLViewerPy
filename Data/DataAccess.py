@@ -17,6 +17,7 @@ from Data.DataObjects.FilterNumberDetections import FilterNumberDetections
 from Data.DataObjects.FilterAnnotations import FilterAnnotations
 from Data.DataObjects.FilterSort import FilterSort
 from Data.DataObjects.FilterSortTimeSeries import FilterSortTimeSeries
+from Data.Settings import Settings
 
 import Utilities as Utils
 
@@ -30,6 +31,8 @@ class PeakMLData:
         self.peakml_obj = None
         self.filepath = None
         self.molecule_database = None
+
+        self.settings = Settings()
 
     def get_filepath(self):
         return self.filepath
@@ -120,16 +123,15 @@ class PeakMLData:
 
     def export_data_object_to_file(self, filepath):
 
-        path =  filepath.rsplit("\\")[1]
-        filename = filepath.rsplit("\\")[2]
+        head, tail = os.path.split(filepath)
 
         data_obj = self.get_peakml_obj()
 
         print("Generating output xml")
-        xml_string = Write.CreateXMLObjectFromPeakMLObject(data_obj)
+        xml_string = Write.create_xml_from_peakml(data_obj)
 
         print("Saving XML...")
-        r = open(path + "Reconstructed_" + filename, "w")
+        r = open(head + tail, "w")
         r.write(xml_string)
         r.close()
         print("XML Saved")
@@ -314,8 +316,10 @@ class PeakMLData:
                 mol_name = molecule.get_name()
                 mol_classdesc = molecule.get_class_description()
                 mol_desc = molecule.get_description()
+                mol_smiles = molecule.get_smiles()
+                mol_inchi = molecule.get_inchi()
 
-                df = df.append({"ID": id, "Formula": mol_formula, "PPM": ppm, "Adduct": adduct, "Name": mol_name, "Class": mol_classdesc, "Description": mol_desc}, ignore_index=True)
+                df = df.append({"ID": id, "Formula": mol_formula, "PPM": ppm, "Adduct": adduct, "Name": mol_name, "Class": mol_classdesc, "Description": mol_desc , "Smiles": mol_smiles, "InChi": mol_inchi}, ignore_index=True)
             except Exception as err:
                 print(err)
 
@@ -400,3 +404,15 @@ class PeakMLData:
 
     def remove_filter_by_id(self, id):
         self.get_peakml_obj().remove_filter_by_id(id)
+
+    def get_settings_preference_by_name(self, name):
+        return self.settings.get_preference_by_name(name)
+
+    def get_settings_database_paths(self):
+        database_paths = self.settings.get_database_paths()
+        df = pd.DataFrame()
+        for path in database_paths:
+            head, tail = os.path.split(path)
+            df = df.append({"Name": tail, "Path": path}, ignore_index=True)
+
+        return df

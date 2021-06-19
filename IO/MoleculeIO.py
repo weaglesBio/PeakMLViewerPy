@@ -39,28 +39,28 @@ def load_molecule_databases():
                 polarity = compound_node.find("./polarity")
 
                 molecule = Molecule(id.text, name.text, formula.text)
-                if inchi:
+                if inchi is not None:
                     molecule.set_inchi(inchi.text)
 
-                if smiles:
+                if smiles is not None:
                     molecule.set_smiles(smiles.text)
 
-                if synonyms:    
+                if synonyms is not None:    
                     molecule.set_synonyms(synonyms.text)
 
-                if description:
+                if description is not None:
                     molecule.set_description(description.text)
 
-                if classdesc:
+                if classdesc is not None:
                     molecule.set_class_description(classdesc.text)
 
-                if retentiontime:
+                if retentiontime is not None:
                     molecule.set_retention_time(float(retentiontime.text) * 60.0)
 
-                if mass and len(mass.text) > 0:
+                if mass is not None and mass.text is not None and len(mass.text) > 0:
                         molecule.set_mass(mass.text)
                         
-                if polarity:
+                if polarity is not None:
                     molecule.set_polarity(polarity.text)
 
                 molecules[id.text] = molecule

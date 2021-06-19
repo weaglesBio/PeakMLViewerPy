@@ -1,4 +1,5 @@
 {
     "activestate.promptRuntimeCreation": false,
-    "python.pythonPath": "C:\\Python38\\python.exe"
+    "python.pythonPath": "C:\\Users\\willi\\miniconda3\\envs\\virt_env\\python.exe",
+    "python.terminal.activateEnvironment": true
 }

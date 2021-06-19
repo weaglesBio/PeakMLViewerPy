@@ -113,7 +113,7 @@ def add_peak_nodes(parent_element, parent_object):
                     measurementids = ET.SubElement(peakdata, 'measurementids')
                     measurementids.text = peak_obj.peak_data.get_encoded_measurementids()             
 
-def CreateXMLObjectFromPeakMLObject(data_obj):
+def create_xml_from_peakml(data_obj):
     
     peakml = ET.Element('peakml')
     peakml.set('version', "1.0.0")

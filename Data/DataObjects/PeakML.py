@@ -4,7 +4,6 @@ class PeakML():
         self.filepath = filepath
         self.header = header
         self.filters = []
-        #self.peak_colours = []
         self.peaks = peaks if peaks else []
 
     def get_nr_peaks(self):
@@ -25,20 +24,6 @@ class PeakML():
         for peak in self.peaks:
            if peak.sha1sum == sha1sum:
                return peak
-
-    #def get_peak_colours(self):
-    #    return self.peak_colours
-
-    #def set_peak_colours(self, peak_colours):
-    #    self.peak_colours = peak_colours
-
-    #def get_peak_colour_by_sampleid(self, sampleid):
-    #    for peak_colour in self.peak_colours:
-    #        if peak_colour.get_sampleid() == sampleid:
-    #            return peak_colour
-
-    #def set_peak_colour_selection_by_sampleid(self, sampleid, selected):
-    #    [peak_colour.set_selected(selected) for peak_colour in self.peak_colours if peak_colour.get_sampleid() == sampleid]
                 
     def get_filtered_peaks(self):
 

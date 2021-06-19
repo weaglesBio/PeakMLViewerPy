@@ -1,0 +1,89 @@
+import tkinter as tk
+import tkinter.ttk as ttk
+
+class PreferencesDialog(tk.simpledialog.Dialog):
+    def __init__(self, parent, title, data):
+        self.decdp = data.get_settings_preference_by_name('decdp')
+        self.databases = data.get_settings_database_paths()
+        super().__init__(parent, title)
+    
+    def body(self, frame):
+
+        #Set up tabs.
+
+        self.tabs_preferences = ttk.Notebook(frame)
+        self.tab_appearance = ttk.Frame(self.tabs_preferences)
+        self.tab_databases = ttk.Frame(self.tabs_preferences)
+        
+        self.tabs_preferences.add(self.tab_appearance, text = "Appearance")
+        self.tabs_preferences.add(self.tab_databases, text = "Databases")
+        self.tabs_preferences.pack(expand = 1, fill = "both")
+
+        # Appearance section
+        self.val_decdp = tk.StringVar(value=self.decdp)
+
+        self.lbl_decdp = tk.Label(self.tab_appearance, width=15, text="Decimal Points:")
+        self.spbx_decdp = ttk.Spinbox(self.tab_appearance, width=15, from_=0, to=30, state='readonly', textvariable=self.val_decdp)
+
+        self.lbl_decdp.grid(row=0, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
+        self.spbx_decdp.grid(row=0, column=1, padx=(2,2), pady=(5,5),sticky="NEWS")
+
+        # Database section
+        self.database_grid_frame = tk.Frame(self.tab_databases)
+
+        self.database_tree = ttk.Treeview(self.database_grid_frame, height = 6)
+        self.database_tree["columns"]=["Name","Path"]
+        self.database_tree.column("#0", width = 10, stretch = tk.YES)
+        self.database_tree.column("#1", width = 100, stretch = tk.YES)
+        self.database_tree.column("#2", width = 200, stretch = tk.YES)
+        self.database_tree.heading("#0", text="",)
+        self.database_tree.heading("#1", text="Name")
+        self.database_tree.heading("#2", text="Path")
+        self.database_tree.grid(row=0, column=0)
+
+        self.database_tree_vsb = ttk.Scrollbar(self.database_grid_frame, orient="vertical", command=self.database_tree.yview)
+        self.database_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.database_tree_hsb = ttk.Scrollbar(self.database_grid_frame, orient="horizontal", command=self.database_tree.xview)
+        self.database_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.database_tree.configure(yscrollcommand=self.database_tree_vsb.set, xscrollcommand=self.database_tree_hsb.set)
+
+        self.database_grid_frame.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEWS")
+
+        self.database_button_frame = tk.Frame(self.tab_databases)
+        self.database_button_frame.grid(row=0, column=1, sticky="NEWS")
+
+        self.database_add = tk.Button(self.database_button_frame, text="Add", command=self.add_database)
+        self.database_remove = tk.Button(self.database_button_frame, text="Remove", command=self.remove_database)
+
+        self.database_add.grid(row=0, column=0, padx=(5,5), pady=(2,2), sticky="NEWS")
+        self.database_remove.grid(row=1, column=0, padx=(5,5), pady=(0,0), sticky="NEWS")
+
+        if self.databases is not None:
+            for i in range(len(self.databases)):
+                database_row = self.databases.iloc[i]
+                self.database_tree.insert("", i, i, values=(database_row["Name"], database_row["Path"]))
+
+    def buttonbox(self):
+        self.btn_close = tk.Button(self, text='Close', width=5, command=self.close_btn_clicked)
+        self.btn_close.pack(side="right", padx=(5,10), pady=(5,10))
+        self.btn_save = tk.Button(self, text='Save', width=5, command=self.save_btn_clicked)
+        self.btn_save.pack(side="right", padx=(5,5), pady=(5,10))
+        self.bind("<Return>", lambda event: self.save_btn_clicked())
+        self.bind("<Escape>", lambda event: self.close_btn_clicked())
+
+    def save_btn_clicked(self):
+        self.annotation_name = self.val_decdp.get()
+        #self.databases = 
+        
+        #self.annotation_relation = self.option_annotation_relation_selected.get()
+        #self.annotation_value = self.ent_annotation_value.get()
+        self.destroy()
+
+    def close_btn_clicked(self):
+        self.destroy()
+    
+    def add_database(self):
+        print("Not implemented")
+
+    def remove_database(self):
+        print("Not implemented")
