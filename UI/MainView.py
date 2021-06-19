@@ -26,6 +26,8 @@ from UI.PreferencesDialog import PreferencesDialog
 
 import Utilities as Utils
 
+import threading
+
 class MainView():
 
     def __init__(self, data):
@@ -41,6 +43,9 @@ class MainView():
 
         self.data = data
         self.menubar = tk.Menu(self.root)
+
+
+        
 
         #Add 'File' category
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
@@ -111,18 +116,29 @@ class MainView():
         self.tabs_int.pack(expand = 1, fill = "both")
 
         # Info View
+        self.info_frame = tk.Frame(self.top_frame)
+
         self.filename_text = tk.StringVar()
         self.peak_number_text = tk.StringVar()
 
-        self.filename_label = tk.Label(self.top_frame, textvariable = self.filename_text, anchor="w")
+        self.filename_label = tk.Label(self.info_frame, textvariable = self.filename_text, anchor="w")
         self.filename_label.grid(row=0, column=0)
 
-        self.peak_number_label = tk.Label(self.top_frame, textvariable = self.peak_number_text, anchor="w")
+        self.peak_number_label = tk.Label(self.info_frame, textvariable = self.peak_number_text, anchor="w")
         self.peak_number_label.grid(row=1, column=0)
-
+        
         self.filename_text.set("Filename:")
         self.peak_number_text.set("Nr peaks:")
 
+        self.info_frame.pack(side = tk.LEFT, expand = tk.YES, fill = tk.BOTH)
+
+        self.progress_frame = tk.Frame(self.top_frame)
+        #self.progress_bar = ProgressBar(self.progress_frame, row=0, column=1)
+        self.progress_frame.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
+
+        #self.progress_bar = ttk.Progressbar(self.top_frame, orient=tk.HORIZONTAL, mode='indeterminate', maximum=100, value=0)
+        #self.progress_bar.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
+        
         # Entry View
         self.selected_id = tk.StringVar()
 
@@ -334,6 +350,34 @@ class MainView():
         return [elm for elm in self.style.map("Treeview", query_opt=option) 
                 if elm[:2] != ("!disabled","!selected")]
 
+    def check_progress(self):
+        if self.thread.is_alive():
+            self.root.after(100, self.check_progress)
+        else:
+            self.show_progressbar(False)
+
+    def show_progressbar(self, start):
+        if start:
+            #self.progress_win = tk.Toplevel()
+            #self.progress_win
+            #self.progress_win = tk.Toplevel()
+
+            self.progress_bar = ttk.Progressbar(self.progress_frame, orient=tk.HORIZONTAL, mode='indeterminate', takefocus=True)
+            self.progress_bar.grid()
+            self.progress_bar.start()
+        else:
+            self.progress_bar.stop()
+            self.progress_bar.destroy()
+
+    def import_file(self):
+        self.show_progressbar(True)
+
+        self.thread = threading.Thread(target=self.import_peakml_file, args=())
+        self.thread.daemon = True
+        self.thread.start()
+
+        self.check_progress()
+
     def import_peakml_file(self):
         try:
             filepath = self.get_filepath()
@@ -342,7 +386,6 @@ class MainView():
                 self.data.import_from_filepath(filepath)
 
                 self.refresh_views(True)
-                #self.refresh_on_data_change()
         except Exception as err:
             print (err)
 
@@ -352,9 +395,6 @@ class MainView():
 
             if filepath:
                 self.data.export_data_object_to_file(filepath)
-
-                #self.refresh_views(True)
-                #self.refresh_on_data_change()
         except Exception as err:
             print (err)
 
@@ -364,7 +404,7 @@ class MainView():
         try:
             filepath = fd.askopenfilename()
             self.set_filepath(filepath)    
-            self.import_peakml_file()
+            self.import_file()
         except IOError:
             print("An error occurred")
 
@@ -765,3 +805,16 @@ class MainView():
         #self.data.add_filter_intensity(dlg.intensity_min, dlg.intensity_unit)
 
         self.data.update_settings()
+
+   # def start_progress(self, name):
+   #     self.progress = ProgressBarDialog(self.root, name)
+        
+
+    #def end_progress(self):
+    #    self.progress.close()
+        
+    #def start_progress_bar(self):
+    #    self.progress_bar.progress_start()
+
+    #def stop_progress_bar(self):
+    #    self.progress_bar.progress_stop()
