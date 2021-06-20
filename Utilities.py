@@ -20,6 +20,9 @@ def get_colours(number):
     palette = sns.color_palette(None, number)
     return palette.as_hex()
 
+def convert_float_to_sf(value,number):
+    print("Not implemented")
+
 ## Debugging methods
 
 def trace(message):

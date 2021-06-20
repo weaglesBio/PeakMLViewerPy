@@ -123,18 +123,12 @@ class PeakMLData:
 
     def export_data_object_to_file(self, filepath):
 
-        head, tail = os.path.split(filepath)
-
         data_obj = self.get_peakml_obj()
-
-        print("Generating output xml")
         xml_string = Write.create_xml_from_peakml(data_obj)
 
-        print("Saving XML...")
-        r = open(head + tail, "w")
+        r = open(filepath, "w")
         r.write(xml_string)
         r.close()
-        print("XML Saved")
 
         # use panda dataframe for data - better than current object structure for queries?
         # Will need to examine the complexity of the required queries.
@@ -305,12 +299,21 @@ class PeakMLData:
         
         df = pd.DataFrame()
 
+        ppm = None
+        adduct = None
+
         for i in range(len(annotation_ids)):
             try:
                 id = annotation_ids[i]
                 molecule = molecule_database[id]
-                ppm = annotation_ppms[i] if annotation_ppms and len(annotation_ppms) > 0 else None
-                adduct = annotation_adducts[i] if annotation_adducts and len(annotation_adducts) > 0 else None
+
+                if annotation_ppms and len(annotation_ppms) > 0:
+                    if i < len(annotation_ppms):
+                        ppm = annotation_ppms[i]
+
+                if annotation_adducts and len(annotation_adducts) > 0:
+                    if i < len(annotation_adducts):
+                        adduct = annotation_adducts[i]
 
                 mol_formula = str(molecule.get_formula())
                 mol_name = molecule.get_name()
@@ -368,15 +371,10 @@ class PeakMLData:
 
         return df
 
-    #def update_peakcolour_selection(self, sampleid, selected):
-    #    self.get_peakml_obj().set_peak_colour_selection_by_sampleid(sampleid,selected)
-
     def update_set_selection(self, measurement_sampleid, selected):
 
         measurement = self.get_peakml_obj().header.get_measurement_by_sampleid(measurement_sampleid)
         measurement.set_selected(selected)
-
-        #self.get_peakml_obj().set_peak_colour_selection_by_sampleid(sampleid,selected)  
 
     def get_peak_set_data_by_selected_peak(self):
         print("Not implemented")

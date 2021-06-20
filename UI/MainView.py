@@ -44,9 +44,6 @@ class MainView():
         self.data = data
         self.menubar = tk.Menu(self.root)
 
-
-        
-
         #Add 'File' category
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Open", command=self.file_open)
@@ -62,7 +59,7 @@ class MainView():
 
         #Main content container
         self.viewer_frame = tk.Frame(self.root)
-        self.viewer_frame.pack(fill=tk.BOTH, expand = tk.TRUE, padx=(10,10), pady=(10,10))
+        self.viewer_frame.pack(fill=tk.BOTH, expand = tk.TRUE, padx=(5,5), pady=(5,5))
 
         # Allow the second column and row to be resizable second column resizable
         self.viewer_frame.columnconfigure(1, weight = 1)
@@ -73,16 +70,16 @@ class MainView():
         self.top_frame = tk.Frame(self.viewer_frame, width=1100, height=100, padx=5, pady=5)
         self.top_frame.grid(row=0, column=0, columnspan = 3, sticky = "NEWS")
 
-        self.middle_left_frame = tk.LabelFrame(self.viewer_frame, width=250, height=750, padx=10, pady=10, text="Entries")
+        self.middle_left_frame = tk.Frame(self.viewer_frame, width=250, height=750, padx=10, pady=0)
         self.middle_left_frame.grid(row=1, column=0, columnspan = 1, sticky="NEWS")
 
         self.middle_centre_frame = tk.LabelFrame(self.viewer_frame, width=750, height=750, padx=5, pady=5, text="Summary Plots")
         self.middle_centre_frame.grid(row=1, column=1, columnspan = 1, sticky="NEWS")
 
-        self.middle_right_frame = tk.LabelFrame(self.viewer_frame, width=100, height=750, padx=10, pady=10, text="Sets")
+        self.middle_right_frame = tk.Frame(self.viewer_frame, width=100, height=750, padx=10, pady=0)
         self.middle_right_frame.grid(row=1, column=2, columnspan = 1, sticky="NEWS")
 
-        self.bottom_frame = tk.LabelFrame(self.viewer_frame, width=1100, height=150, padx=10, pady=10, text="Annotations")
+        self.bottom_frame = tk.Frame(self.viewer_frame, width=1100, height=100, padx=10, pady=10)
         self.bottom_frame.grid(row=2, column=0, columnspan = 3, sticky="NEWS")
         
         # Allow middle centre to be resizable.
@@ -116,33 +113,37 @@ class MainView():
         self.tabs_int.pack(expand = 1, fill = "both")
 
         # Info View
-        self.info_frame = tk.Frame(self.top_frame)
+        self.info_frame = tk.LabelFrame(self.top_frame, padx=10, pady=10, text="Info")
 
         self.filename_text = tk.StringVar()
         self.peak_number_text = tk.StringVar()
 
-        self.filename_label = tk.Label(self.info_frame, textvariable = self.filename_text, anchor="w")
+        self.filename_label = tk.Label(self.info_frame, text = "Filename:")
         self.filename_label.grid(row=0, column=0)
 
-        self.peak_number_label = tk.Label(self.info_frame, textvariable = self.peak_number_text, anchor="w")
+        self.peak_number_label = tk.Label(self.info_frame, text = "Nr peaks:")
         self.peak_number_label.grid(row=1, column=0)
+
+        self.filename_val_label = tk.Label(self.info_frame, textvariable = self.filename_text)
+        self.filename_val_label.grid(row=0, column=1)
+
+        self.peak_number_val_label = tk.Label(self.info_frame, textvariable = self.peak_number_text)
+        self.peak_number_val_label.grid(row=1, column=1)
         
-        self.filename_text.set("Filename:")
-        self.peak_number_text.set("Nr peaks:")
+        self.info_frame.grid(row=0, column=0, columnspan = 1)
+        
+        self.progress_frame = tk.LabelFrame(self.top_frame, padx=10, pady=10, text="Progress")
+        self.progress_details_text = tk.StringVar()
+        self.progress_details_label = tk.Label(self.progress_frame, textvariable = self.progress_details_text)
+        self.progress_details_label.grid(row=0, column=0)
+        self.progress_frame.grid(row=0, column=1, columnspan = 1, padx=(10,0))
 
-        self.info_frame.pack(side = tk.LEFT, expand = tk.YES, fill = tk.BOTH)
-
-        self.progress_frame = tk.Frame(self.top_frame)
-        #self.progress_bar = ProgressBar(self.progress_frame, row=0, column=1)
-        self.progress_frame.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
-
-        #self.progress_bar = ttk.Progressbar(self.top_frame, orient=tk.HORIZONTAL, mode='indeterminate', maximum=100, value=0)
-        #self.progress_bar.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
+        self.progress_details_text.set("No file imported.")
         
         # Entry View
         self.selected_id = tk.StringVar()
 
-        self.entry_grid_frame = tk.Frame(self.middle_left_frame)
+        self.entry_grid_frame = tk.LabelFrame(self.middle_left_frame, padx=10, pady=10, text="Entries")
 
         self.entry_tree = ttkw.CheckboxTreeview(self.entry_grid_frame, height = 20, show=("headings","tree"), selectmode="browse")
         self.entry_tree["columns"]=["RT","Mass", "Intensity", "Nr_peaks"]
@@ -172,7 +173,9 @@ class MainView():
 
         self.entry_grid_frame.grid(row=0, column=0, sticky="NEWS")
 
-        self.filter_grid_frame = tk.Frame(self.middle_left_frame)
+        self.filter_frame = tk.LabelFrame(self.middle_left_frame, padx=10, pady=10, text="Filters")
+
+        self.filter_grid_frame = tk.Frame(self.filter_frame)
 
         self.filter_tree = ttk.Treeview(self.filter_grid_frame, height = 5)
         self.filter_tree["columns"]=["Type","Settings"]
@@ -190,22 +193,24 @@ class MainView():
         self.filter_tree_hsb.grid(row=1, column=0, sticky="NEWS")
         self.filter_tree.configure(yscrollcommand=self.filter_tree_vsb.set, xscrollcommand=self.filter_tree_hsb.set)
 
-        self.filter_grid_frame.grid(row=1, column=0, sticky="NEWS")
+        self.filter_grid_frame.grid(row=0, column=0, sticky="NEWS")
 
-        self.filter_frame = ttk.Frame(self.middle_left_frame)
+        self.filter_control_frame = tk.Frame(self.filter_frame)
 
         option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Filter Annotations", "Sort", "Sort time-series"]
         self.filter_option_selected = tk.StringVar(self.root)
         self.filter_option_selected.set("Select Filter...")
 
-        self.filter_option = tk.OptionMenu(self.filter_frame, self.filter_option_selected, *option_list)
-        self.filter_add = tk.Button(self.filter_frame, text="Add", command=self.add_filter)
-        self.filter_remove = tk.Button(self.filter_frame, text="Remove", command=self.remove_filter)
+        self.filter_option = tk.OptionMenu(self.filter_control_frame, self.filter_option_selected, *option_list)
+        self.filter_add = tk.Button(self.filter_control_frame, text="Add", command=self.add_filter)
+        self.filter_remove = tk.Button(self.filter_control_frame, text="Remove", command=self.remove_filter)
 
         self.filter_option.grid(row=0, column=0)
         self.filter_add.grid(row=0, column=1)
         self.filter_remove.grid(row=0, column=2)
-        self.filter_frame.grid(row=2, column=0, sticky="NEWS")
+
+        self.filter_control_frame.grid(row=1, column=0, sticky="NEWS")
+        self.filter_frame.grid(row=1, column=0, sticky="NEWS")
 
         ## Graph View
 
@@ -260,9 +265,9 @@ class MainView():
         canvas_int_log.draw()
 
         # Sets View
-        self.sets_grid_frame = tk.Frame(self.middle_right_frame)
+        self.sets_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Sets")
 
-        self.sets_tree = ttkw.CheckboxTreeview(self.sets_grid_frame, height = 20, show=("headings","tree"), selectmode="browse")
+        self.sets_tree = ttkw.CheckboxTreeview(self.sets_grid_frame, height = 15, show=("headings","tree"), selectmode="browse")
         self.sets_tree["columns"]=["Name"]
         self.sets_tree.column("#0", width = 60, stretch = tk.YES)
         self.sets_tree.column("#1", width = 150, stretch = tk.YES)
@@ -279,7 +284,7 @@ class MainView():
 
         self.sets_grid_frame.grid(row=0, column=0, sticky="NEWS")
 
-        self.details_grid_frame = tk.Frame(self.middle_right_frame)
+        self.details_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Details")
 
         self.details_tree = ttk.Treeview(self.details_grid_frame)
         self.details_tree["columns"]=["Label","Value"]
@@ -301,9 +306,9 @@ class MainView():
 
         # Annotation View
 
-        self.annotation_grid_frame = tk.Frame(self.bottom_frame)
+        self.annotation_grid_frame = tk.LabelFrame(self.bottom_frame, padx=10, pady=10, text="Annotations")
 
-        self.annotation_tree = ttk.Treeview(self.annotation_grid_frame)
+        self.annotation_tree = ttk.Treeview(self.annotation_grid_frame, height = 8)
         self.annotation_tree["columns"]=["ID", "Formula", "PPM", "Adduct", "Name", "Class", "Description"]
         self.annotation_tree.column("#0", width=10, minwidth=10, stretch = tk.NO)
         self.annotation_tree.column("#1", width = 100, stretch = tk.YES)
@@ -329,21 +334,19 @@ class MainView():
         self.annotation_tree_hsb.grid(row=1, column=0, sticky="NEWS")
         self.annotation_tree.configure(yscrollcommand=self.annotation_tree_vsb.set, xscrollcommand=self.annotation_tree_hsb.set)
 
-        self.annotation_grid_frame.pack(side = tk.LEFT, expand = tk.YES, fill = tk.BOTH)
+        self.annotation_grid_frame.grid(row=0, column=0)
 
         # Molecule View
-        self.molecule_canvas = tk.Canvas(self.bottom_frame)
-        self.molecule_canvas.pack(side = tk.RIGHT, expand = tk.YES, fill = tk.BOTH)
+        self.molecule_canvas_frame = tk.LabelFrame(self.bottom_frame, padx=10, pady=10, text="Molecule View")
+        self.molecule_canvas = tk.Canvas(self.molecule_canvas_frame, bg="white", height=200, width=300)
+        self.molecule_canvas.grid(row=0, column=0, sticky="NEWS")
+        self.molecule_canvas_frame.grid(row=0, column=1, padx=(10,0))
 
         self.data.load_molecule_databases()
-        #print(self.data.get_molecule_database())
 
         self.root.config(menu=self.menubar)
         # Run GUI until event occurs.
         self.root.mainloop()
- 
-        ## DEBUGGING LOGIC - PRESETTING THE FILENAME
-        #self.data.import_from_filepath("C:\\Users\\willi\\OneDrive\\University\\RP2\\peakML\\Example_file.peakml")
 
     # Fix to bug with tkinter
     def fixed_map(self, option):
@@ -358,12 +361,8 @@ class MainView():
 
     def show_progressbar(self, start):
         if start:
-            #self.progress_win = tk.Toplevel()
-            #self.progress_win
-            #self.progress_win = tk.Toplevel()
-
             self.progress_bar = ttk.Progressbar(self.progress_frame, orient=tk.HORIZONTAL, mode='indeterminate', takefocus=True)
-            self.progress_bar.grid()
+            self.progress_bar.grid(row=0, column=1)
             self.progress_bar.start()
         else:
             self.progress_bar.stop()
@@ -379,17 +378,31 @@ class MainView():
         self.check_progress()
 
     def import_peakml_file(self):
+        self.progress_details_text.set("Importing file...")
+
         try:
             filepath = self.get_filepath()
 
             if filepath:
                 self.data.import_from_filepath(filepath)
-
                 self.refresh_views(True)
         except Exception as err:
             print (err)
 
+        self.progress_details_text.set("File imported.")
+
+    def export_file(self):
+        self.show_progressbar(True)
+
+        self.thread = threading.Thread(target=self.export_peakml_file, args=())
+        self.thread.daemon = True
+        self.thread.start()
+
+        self.check_progress()
+
     def export_peakml_file(self):
+        self.progress_details_text.set("Exporting file...")
+
         try:
             filepath = self.get_filepath()
 
@@ -397,6 +410,8 @@ class MainView():
                 self.data.export_data_object_to_file(filepath)
         except Exception as err:
             print (err)
+        
+        self.progress_details_text.set("File exported.")
 
     # Menu Methods
 
@@ -405,21 +420,35 @@ class MainView():
             filepath = fd.askopenfilename()
             self.set_filepath(filepath)    
             self.import_file()
-        except IOError:
+        except IOError as ioerr:
             print("An error occurred")
+            print(ioerr)
+        except Exception as err:
+            print("An error occurred")
+            print(err)
 
     def file_save(self):
         # Ask 'Are you sure you want to update the imported file '<filename>'?
-
-        self.export_peakml_file()
+        try:
+            self.export_peakml_file()
+        except IOError as ioerr:
+            print("An error occurred")
+            print(ioerr)
+        except Exception as err:
+            print("An error occurred")
+            print(err)
 
     def file_save_as(self):
         try:
             filepath = fd.asksaveasfilename(defaultextension=".peakml")
             self.set_filepath(filepath)    
             self.export_peakml_file()
-        except IOError:
+        except IOError as ioerr:
             print("An error occurred")
+            print(ioerr)
+        except Exception as err:
+            print("An error occurred")
+            print(err)
 
     def get_filepath(self):
         return self.filepath
@@ -430,19 +459,15 @@ class MainView():
     def edit_preferences(self):
         self.preferences_dialog()
 
-    def close_application(self):
-        print("Not Implemented")
-
     # Info View Methods
 
     def refresh_info_view(self):
-        self.filename_text.set("Filename: " + self.data.get_filename())
-        self.peak_number_text.set("Nr peaks: " + self.data.get_nr_peaks() + " (" + str(self.data.get_total_nr_peaks()) + ")") 
+        self.filename_text.set(self.data.get_filename())
+        self.peak_number_text.set(self.data.get_nr_peaks() + " (" + str(self.data.get_total_nr_peaks()) + ")") 
 
     # Entry View Methods
 
     def refresh_entry_view(self, reload_entries):
-
         focused_row_id = self.selected_id.get()
         self.entry_tree.delete(*self.entry_tree.get_children())    
 
@@ -450,23 +475,14 @@ class MainView():
             self.df_entry = self.data.get_entry_list()
 
         for i in range(len(self.df_entry)):
-
             entry_row = self.df_entry.iloc[i]
-
-            if focused_row_id == entry_row["Sha1sum"]:
-                focus = "is_focus"
-            elif focused_row_id is None and i == 0:
-                focus = "is_focus"
-            else:
-                focus = "not_focus"
-
+            focus = "is_focus" if focused_row_id == entry_row["Sha1sum"] or (focused_row_id is None and i == 0) else "not_focus"
             self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], int(entry_row["Nrpeaks"])), tags=(entry_row["Sha1sum"], "has_ann" if entry_row["HasAnnotation"] else "no_ann", focus)) 
 
     def select_entry(self, event):
         self.refresh_entry_selected(False)
 
     def refresh_entry_selected(self, reload_entries):
-
         if reload_entries:
             self.entry_tree.focus(self.entry_tree.get_children()[0])
         
@@ -476,20 +492,12 @@ class MainView():
         self.data.set_selected_peak(focused_id)
 
         self.refresh_entry_view(False)
-        Utils.trace("ref3")
-        self.refresh_graph_view()
-        Utils.trace("ref4")
-        self.refresh_identification_view()
-        Utils.trace("ref5")
         self.refresh_sets_view()
-        Utils.trace("ref6")
+        self.refresh_graph_view()
+        self.refresh_identification_view()
         self.refresh_details_view()
-        Utils.trace("ref7")
-        self.refresh_filters_view()
-        Utils.trace("ref8")
 
     def refresh_views(self, reload_entries):
-        Utils.trace("ref0")
         self.refresh_info_view()
         Utils.trace("ref1")
         self.refresh_entry_view(reload_entries)
@@ -497,31 +505,26 @@ class MainView():
         self.refresh_entry_selected(reload_entries)
         Utils.trace("ref3")
         self.refresh_graph_view()
-        Utils.trace("ref4")
-        self.refresh_identification_view()
-        Utils.trace("ref5")
-        self.refresh_sets_view()
-        Utils.trace("ref6")
-        self.refresh_details_view()
-        Utils.trace("ref7")
-        self.refresh_filters_view()
-        Utils.trace("ref8")
+        #Utils.trace("ref4")
+        #self.refresh_identification_view()
+        #self.refresh_sets_view()
+        #self.refresh_details_view()
+        #self.refresh_filters_view()
 
     def update_sets_view(self, event):
-        # Save check status of each list
-        for item in self.sets_tree.get_children():
-            for child_item in self.sets_tree.get_children(item):
-                name = self.sets_tree.item(child_item)["values"][0]
-                selected_status = True
-                if self.sets_tree.item(child_item)["tags"][1] == "unchecked":
-                    selected_status = False
-
-                self.data.update_set_selection(name, selected_status)
-        # Refresh grid
-        self.refresh_graph_view()
+        x, y, widget = event.x, event.y, event.widget
+        elem = widget.identify("element", x, y)
+        if "image" in elem:
+            # Save check status of each list
+            for item in self.sets_tree.get_children():
+                for child_item in self.sets_tree.get_children(item):
+                    name = self.sets_tree.item(child_item)["values"][0]
+                    selected_status = False if self.sets_tree.item(child_item)["tags"][1] == "unchecked" else True
+                    self.data.update_set_selection(name, selected_status)
+            # Refresh grid
+            self.refresh_graph_view()
 
     def refresh_identification_view(self):
-        
         self.annotation_tree.delete(*self.annotation_tree.get_children())
         df_identifications = self.data.get_identification()
         smiles_details = None
@@ -535,8 +538,7 @@ class MainView():
 
         self.refresh_molecule_view(inchi_details, smiles_details)
 
-    def refresh_sets_view(self):
-        
+    def refresh_sets_view(self):  
         self.sets_tree.delete(*self.sets_tree.get_children())
         df_sets = self.data.get_sets()
         if df_sets is not None:
@@ -563,8 +565,7 @@ class MainView():
 
                             self.sets_tree.insert(folder, "end", set_child_row["Name"], values=(set_child_row["Name"]), tags=(select_child, colour_tag))
 
-    def refresh_details_view(self):
-        
+    def refresh_details_view(self):    
         self.details_tree.delete(*self.details_tree.get_children())
         df_details = self.data.get_details()
 
@@ -574,7 +575,6 @@ class MainView():
                 self.details_tree.insert("", i, i, values=(detail_row["Label"], detail_row["Value"]))
 
     def refresh_filters_view(self):
-
         self.filter_tree.delete(*self.filter_tree.get_children())
         df_filters = self.data.get_filters_list()
 
@@ -588,16 +588,16 @@ class MainView():
 
         if inchi_data is not None:
             mol = inchi.MolFromInchi(inchi_data)
-            mol_image = Draw.MolToImage(mol)
+            mol_image = Draw.MolToImage(mol, size=(300,200))
 
         elif smiles_data is not None:
             mol = Chem.MolFromSmiles(smiles_data)
-            mol_image = Draw.MolToImage(mol)       
+            mol_image = Draw.MolToImage(mol, size=(300,200))       
         else:
-            mol_image = Image.new(mode="RGB", size=(200,110), color = (0, 204, 102))
+            mol_image = Image.new(mode="RGB", size=(300,200), color = (255, 255, 255))
 
         self.mol_img = ImageTk.PhotoImage(mol_image)
-        self.molecule_canvas.create_image(200,110, image=self.mol_img)
+        self.molecule_canvas.create_image(150, 100, image=self.mol_img)
 
     # Graph View Methods
 
@@ -607,15 +607,11 @@ class MainView():
         self.generate_plots_int()
 
     def generate_plot_peak(self):
-
-        df = self.data.get_peak_plot()
-        
+        df = self.data.get_peak_plot()    
         plot_count = len(df)
-
         plots = {}
         self.axes_peak.clear()
         for i in range(plot_count):
-
             RT_values_arr = df.iloc[i]['RT_values']
             Intensity_values_arr = df.iloc[i]['Intensity_values']
             plot_label = df.iloc[i]["Label"]
@@ -643,10 +639,10 @@ class MainView():
 
     def generate_plot_derivatives(self):
         df = self.data.get_derivatives_plot()
-        self.generate_plot_der_all(df)
-        self.generate_plot_der_int(df)
+        self.generate_plot_der(df, "All")
+        self.generate_plot_der(df, "Log")
         
-    def generate_plot_der_all(self, data):
+    def generate_plot_der(self, data, type):
         self.axes_der_all.clear()
 
         mass_values = data['Mass']
@@ -663,30 +659,13 @@ class MainView():
         for i in range(len(data)):
             self.axes_der_all.annotate(label_values[i],(mass_values[i],intensity_values[i]))
 
+        if type == "Log":
+            self.axes_der_log.set_yscale('log')
+
         self.axes_der_all.set_xlabel("Mass")
         self.axes_der_all.set_ylabel("Intensity")
         self.figure_der_all.canvas.draw()
         self.figure_der_all.tight_layout()
-
-    def generate_plot_der_int(self, data):
-        self.axes_der_log.clear()
-
-        mass_values = data['Mass']
-        intensity_values = data['Intensity']
-        label_values = data['Description']
-                
-        self.axes_der_log.stem(mass_values, intensity_values, markerfmt=None)
-
-        for i in range(len(data)):
-            self.axes_der_log.annotate(label_values[i],(mass_values[i],intensity_values[i]))
-
-        self.axes_der_log.set_xlabel("Mass")
-        self.axes_der_log.set_ylabel("Intensity")
-
-        self.axes_der_log.set_yscale('log')
-        
-        self.figure_der_log.canvas.draw()
-        self.figure_der_log.tight_layout()
 
     def generate_plots_int(self):
         df = self.data.get_intensity_plot()

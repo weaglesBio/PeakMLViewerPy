@@ -138,7 +138,7 @@ def create_xml_from_peakml(data_obj):
         type = ET.SubElement(set, 'type')
         type.text = set_obj.type
         measurementids = ET.SubElement(set, 'measurementids')
-        measurementids.text = set_obj.measurementids
+        measurementids.text = set_obj.get_encoded_measurementids()
 
     measurements = ET.SubElement(header, 'measurements')
 
@@ -180,4 +180,7 @@ def create_xml_from_peakml(data_obj):
     
     add_peak_nodes(peakml, data_obj)
 
-    return finalise_xml_formatting(prettify(peakml))
+    prettified_xml = prettify(peakml)
+    finalised_xml = finalise_xml_formatting(prettified_xml)
+
+    return finalised_xml
