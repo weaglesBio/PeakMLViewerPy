@@ -11,10 +11,10 @@ def format_time_datetime(time):
     return datetime.fromtimestamp(float(time))
 
 def get_current_time():
-    return datetime.now().strftime("%H:%M:%S")
+    return datetime.now().strftime("%H:%M:%S.%f")
 
 def get_new_uuid():
-    return uuid.uuid4()
+    return str(uuid.uuid4())
 
 def get_colours(number):
     palette = sns.color_palette(None, number)

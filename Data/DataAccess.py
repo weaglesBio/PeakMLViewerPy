@@ -1,4 +1,3 @@
-from Data.DataObjects.PeakColour import PeakColour
 from numpy.lib.twodim_base import mask_indices
 import IO.MoleculeIO
 import gzip
@@ -34,29 +33,81 @@ class PeakMLData:
 
         self.settings = Settings()
 
+        self.df_entry = pd.DataFrame(columns=['UID','Type','Selected','RT','Mass','Intensity','Nrpeaks','HasAnnotation','Checked'])
+        self.df_filter = pd.DataFrame(columns=['ID','Type','Settings'])
+        self.df_plot_peak = pd.DataFrame(columns=['UID','Label','RT_values','Intensity_values','Colour','Selected'])
+        self.df_plot_peak.set_index("UID")
+        self.df_plot_derivative = pd.DataFrame(columns=['Mass','Intensity','Description'])
+        self.df_plot_intensity = pd.DataFrame(columns=['SetID','Intensities'])
+        self.df_identification = pd.DataFrame(columns=['ID','Formula','PPM','Adduct','Name','Class','Description','Smiles','InChi'])
+        self.df_set = pd.DataFrame(columns=['UID','Name','Color','Selected','Parent'])
+        self.df_set.set_index("UID")
+        self.df_annotation = pd.DataFrame(columns=['Label','Value'])
+
+
+    def get_entry_view(self):
+        return self.df_entry
+
+
+    def get_filter_view(self):
+        return self.df_filter
+
+
+    def get_plot_peak_view(self):
+        return self.df_plot_peak
+
+
+    def get_plot_derivative_view(self):
+        return self.df_plot_derivative
+
+
+    def get_plot_intensity_view(self):
+        return self.df_plot_intensity
+
+
+    def get_identification_view(self):
+        return self.df_identification
+
+
+    def get_set_view(self):
+        return self.df_set
+
+
+    def get_annotation_view(self):
+        return self.df_annotation
+
+
     def get_filepath(self):
         return self.filepath
+
 
     def get_path(self):
         return os.path.split(self.filepath)[0]
 
+
     def get_filename(self):
         return os.path.split(self.filepath)[1]
         
+
     def set_filepath(self, filepath):
         self.filepath = filepath
+
 
     def set_peakml_obj(self, current_obj):
         self.peakml_obj = current_obj
 
+
     def get_peakml_obj(self):
         return self.peakml_obj
+
 
     def get_molecule_database(self):
         return self.molecule_database 
 
+
     def get_nr_peaks(self):
         return self.peakml_obj.get_nr_peaks()
+
 
     def get_total_nr_peaks(self):      
         peak_count = 0
@@ -68,14 +119,18 @@ class PeakMLData:
 
         return peak_count
 
+
     def set_selected_peak(self, peak_id):
-        self.peakml_obj.set_selected_peak(peak_id)
+        self.peakml_obj.set_selected_peak_uid(peak_id)
+
 
     def get_selected_peak(self):
         return self.peakml_obj.get_selected_peak()
 
+
     def load_molecule_databases(self):
         self.molecule_database = MolIO.load_molecule_databases()
+
 
     def import_from_filepath(self, filepath):
         self.set_filepath(filepath)
@@ -111,6 +166,7 @@ class PeakMLData:
                     #w.write(decoded_output)
                     #w.close()
             except Exception as err:
+                print("Unable to open compressed file.")
                 print(err)
 
         if tree_data is not None:
@@ -121,6 +177,7 @@ class PeakMLData:
                 print("Unable to convert file to PeakML class stucture.")
                 print(err)
 
+
     def export_data_object_to_file(self, filepath):
 
         data_obj = self.get_peakml_obj()
@@ -130,98 +187,23 @@ class PeakMLData:
         r.write(xml_string)
         r.close()
 
-        # use panda dataframe for data - better than current object structure for queries?
-        # Will need to examine the complexity of the required queries.
 
-    def get_entry_list(self):
+    def update_entry_dataframe(self):
+        try:
+            self.df_entry = self.df_entry.iloc[0:0]
 
-        df = pd.DataFrame()
-
-        for peak_obj in self.get_peakml_obj().get_filtered_peaks():
-
-            selected = peak_obj.if_patternid_set()
-            
-            sha1sum = peak_obj.get_sha1sum()
-            scanid = peak_obj.get_scanid()
-            type = peak_obj.get_type()
-            rt = peak_obj.get_retention_time_formatted_string()
-            mass = peak_obj.get_mass()
-            intensity = peak_obj.get_intensity()
-            nr_peaks = peak_obj.get_nr_peaks()
-            checked = peak_obj.get_checked()
-
-            if peak_obj.get_specific_annotation('identification'):
-                has_annotation = True
-            else:
-                has_annotation = False
-
-            df = df.append({"Scanid": scanid, "Sha1sum": sha1sum, "Type": type, "Selected": selected, "RT": rt, "Mass": mass, "Intensity": intensity, "Nrpeaks": nr_peaks, "HasAnnotation": has_annotation, "Checked": checked}, ignore_index=True)
-
-        return df
+            for peak in self.get_peakml_obj().get_filtered_peaks():
+                has_annotation = True if peak.get_specific_annotation('identification') else False
+                self.df_entry = self.df_entry.append({"UID": peak.get_uid(), "Type": peak.get_type(), "Selected": peak.if_patternid_set(), "RT": peak.get_retention_time_formatted_string(), "Mass": peak.get_mass(), "Intensity": peak.get_intensity(), "Nrpeaks": peak.get_nr_peaks(), "HasAnnotation": has_annotation, "Checked": peak.get_checked()}, ignore_index=True)
+        except Exception as err:
+            print("Unable to update entry data")
+            print(err)
 
     def get_filters_list(self):
-        df = pd.DataFrame()
         for filter in self.get_peakml_obj().get_filters():
-            df = df.append({"ID": filter.get_id_str(), "Type": filter.get_type_value(), "Settings": filter.get_settings_value()}, ignore_index=True)
-        return df
+            self.df_filter = self.df_filter.append({"ID": filter.get_id_str(), "Type": filter.get_type_value(), "Settings": filter.get_settings_value()}, ignore_index=True)
+        return self.df_filter
 
-    def get_peak_plot(self): 
-        peakml_obj = self.get_peakml_obj()
-        selected_peak = peakml_obj.get_selected_peak()
-        peakset_obj = peakml_obj.get_peak_from_sha1sum(selected_peak)
-       
-        df = pd.DataFrame()
-
-        for peak_obj in peakset_obj.peaks:
-
-            measurement_obj = peakml_obj.header.get_measurement_by_id(peak_obj.measurementid)
-
-            label = measurement_obj.label
-            rt_values = peak_obj.peak_data.get_retention_times_formatted_datetime()
-            intensity_values = peak_obj.peak_data.get_intensities() 
-
-            colour = measurement_obj.get_colour()
-            selected = measurement_obj.get_selected() 
-
-            df = df.append({"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values, "Colour" : colour, "Selected" : selected }, ignore_index=True)
-
-        return df
-
-    def get_derivatives_plot(self):
-        peakml_obj = self.get_peakml_obj()
-        selected_peak = peakml_obj.get_selected_peak()
-        peak_main = peakml_obj.get_peak_from_sha1sum(selected_peak)
-        peakset_annotation_relationid = peak_main.get_specific_annotation('relation.id')
-
-        df = pd.DataFrame()
-
-        related_peaks = []
-
-        for peak in peakml_obj.peaks:
-            peak_annotation_relationid = peak.get_specific_annotation('relation.id')
-
-            if peak_annotation_relationid:
-                if peakset_annotation_relationid.value == peak_annotation_relationid.value:
-                    related_peaks.append(peak)
-            
-        for rel_peak in related_peaks:
-
-            mass = rel_peak.get_mass()
-            intensity = rel_peak.get_intensity()
-
-            ann_relation = rel_peak.get_specific_annotation('relation.ship')
-            ann_reaction = rel_peak.get_specific_annotation('reaction')
-
-            if ann_reaction:
-                description = ann_reaction.value
-            elif ann_relation:
-                description = ann_relation.value
-            else:
-                description = ""
-            
-            df = df.append({"Mass": float(mass), "Intensity": float(intensity), "Description": description}, ignore_index=True)
-        
-        return df
 
     # Returns the peak with one of the given list of measurement id's
     def get_peaks_with_measurementids(self, peaks, measurementids):
@@ -244,16 +226,71 @@ class PeakMLData:
 
         return measurement_peaks
 
-    def get_intensity_plot(self):
-        
-        try:
-            peakml_obj = self.get_peakml_obj()
-            selected_peak = peakml_obj.get_selected_peak()
-            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
-            peaks = peakset.peaks
-            df = pd.DataFrame()
+    def update_plot_data_frames_for_selected_entry(self):
+        # Get current peakset
+        selected_peakset = self.get_peakml_obj().get_selected_peak()
 
-            for set in peakml_obj.header.get_sets():
+        #Clear data frames
+        self.df_plot_peak = self.df_plot_peak.iloc[0:0]
+        self.df_plot_derivative = self.df_plot_derivative.iloc[0:0]
+        self.df_plot_intensity = self.df_plot_intensity.iloc[0:0]
+
+         # Plot peak dataframe
+        try:
+            for peak in selected_peakset.peaks:
+
+                measurement = self.get_peakml_obj().header.get_measurement_by_id(peak.measurementid)
+                uid = measurement.get_uid()
+                label = measurement.label
+                rt_values = peak.peak_data.get_retention_times_formatted_datetime()
+                intensity_values = peak.peak_data.get_intensities() 
+
+                colour = measurement.get_colour()
+                selected = measurement.get_selected() 
+
+                self.df_plot_peak = self.df_plot_peak.append({"UID": uid,"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values, "Colour" : colour, "Selected" : selected }, ignore_index=True)
+        except Exception as err:
+            print("Unable to update plot peak data")
+            print(err)
+
+        # Plot derivative dataframe
+        try:
+            peakset_annotation_relationid = self.get_peakml_obj().get_selected_peak().get_specific_annotation('relation.id')
+
+            related_peaks = []
+
+            for peak in self.get_peakml_obj().peaks:
+                peak_annotation_relationid = peak.get_specific_annotation('relation.id')
+
+                if peak_annotation_relationid:
+                    if peakset_annotation_relationid.value == peak_annotation_relationid.value:
+                        related_peaks.append(peak)
+                
+            for rel_peak in related_peaks:
+
+                mass = rel_peak.get_mass()
+                intensity = rel_peak.get_intensity()
+
+                ann_relation = rel_peak.get_specific_annotation('relation.ship')
+                ann_reaction = rel_peak.get_specific_annotation('reaction')
+
+                if ann_reaction:
+                    description = ann_reaction.value
+                elif ann_relation:
+                    description = ann_relation.value
+                else:
+                    description = ""
+                
+                self.df_plot_derivative = self.df_plot_derivative.append({"Mass": float(mass), "Intensity": float(intensity), "Description": description}, ignore_index=True)
+        except Exception as err:
+            print("Unable to update plot derivative data")
+            print(err)
+
+        # Plot intensity dataframe
+        try:           
+            peaks = selected_peakset.peaks
+
+            for set in self.get_peakml_obj().header.get_sets():
                 
                 # Get all the peaks for the set.
                 measurement_peaks = self.get_peaks_with_measurementids(peaks, set.get_measurementids())
@@ -262,149 +299,141 @@ class PeakMLData:
                 for measurement_peak in measurement_peaks:
                     intensities.append(measurement_peak.get_intensity())
 
-                df = df.append({"SetID": set.get_id(), "Intensities": intensities}, ignore_index=True)
+                self.df_plot_intensity = self.df_plot_intensity.append({"SetID": set.get_id(), "Intensities": intensities}, ignore_index=True)
         except Exception as err:
+            print("Unable to update plot intensity data")
             print(err)
 
-        return df
 
-    def get_identification(self):
-        
-        # Get current peak
-        peakml_obj = self.get_peakml_obj()
-        selected_peak = peakml_obj.get_selected_peak()
-        peakset_obj = peakml_obj.get_peak_from_sha1sum(selected_peak)
-
+    def update_data_frames_for_selected_entry(self):
         # Get molecule database
         molecule_database = self.get_molecule_database()
 
-        annotation_ids = []
-        annotation_ppms = []
-        annotation_adducts = []
+        # Get current peakset
+        selected_peakset = self.get_peakml_obj().get_selected_peak()
 
-        # Get peak annotation of label 'identification', value is multiple ids
-        annotation_identification = peakset_obj.get_specific_annotation('identification')
-        if annotation_identification:
-            annotation_ids = annotation_identification.value.split(', ')
-        else:
-            return None
+        #Clear data frames
+        self.df_identification = self.df_identification.iloc[0:0]
+        self.df_set = self.df_set.iloc[0:0]
+        self.df_annotation = self.df_annotation.iloc[0:0]
 
-        annotation_ppm = peakset_obj.get_specific_annotation('ppm')
-        if annotation_ppm:
-            annotation_ppms = annotation_ppm.value.split(', ')
-
-        annotation_adduct = peakset_obj.get_specific_annotation('adduct')
-        if annotation_adduct:
-            annotation_adducts = annotation_adduct.value.split(', ')
-        
-        df = pd.DataFrame()
-
-        ppm = None
-        adduct = None
-
-        for i in range(len(annotation_ids)):
-            try:
-                id = annotation_ids[i]
-                molecule = molecule_database[id]
-
-                if annotation_ppms and len(annotation_ppms) > 0:
-                    if i < len(annotation_ppms):
-                        ppm = annotation_ppms[i]
-
-                if annotation_adducts and len(annotation_adducts) > 0:
-                    if i < len(annotation_adducts):
-                        adduct = annotation_adducts[i]
-
-                mol_formula = str(molecule.get_formula())
-                mol_name = molecule.get_name()
-                mol_classdesc = molecule.get_class_description()
-                mol_desc = molecule.get_description()
-                mol_smiles = molecule.get_smiles()
-                mol_inchi = molecule.get_inchi()
-
-                df = df.append({"ID": id, "Formula": mol_formula, "PPM": ppm, "Adduct": adduct, "Name": mol_name, "Class": mol_classdesc, "Description": mol_desc , "Smiles": mol_smiles, "InChi": mol_inchi}, ignore_index=True)
-            except Exception as err:
-                print(err)
-
-        return df
-
-    def get_sets(self):
+        # Identification dataframe
         try:
-            df = pd.DataFrame()
-            peakml_obj = self.get_peakml_obj()
-            selected_peak = peakml_obj.get_selected_peak()
-            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
+            identification_ids = []
+            identification_ppms = []
+            identification_adducts = []
 
+            identification_ppm = selected_peakset.get_specific_annotation('ppm')
+            if identification_ppm:
+                identification_ppms = identification_ppm.value.split(', ')
 
+            identification_adduct = selected_peakset.get_specific_annotation('adduct')
+            if identification_adduct:
+                identification_adducts = identification_adduct.value.split(', ')
+
+            ppm = None
+            adduct = None
+
+            # Get peak identification of label 'identification', value is multiple ids
+            identification_annotation = selected_peakset.get_specific_annotation('identification')
+            if identification_annotation:
+                identification_ids = identification_annotation.value.split(', ')
+
+                for i in range(len(identification_ids)):
+                
+                    id = identification_ids[i]
+                    molecule = molecule_database[id]
+
+                    if identification_ppms and len(identification_ppms) > 0:
+                        if i < len(identification_ppms):
+                            ppm = identification_ppms[i]
+
+                    if identification_adducts and len(identification_adducts) > 0:
+                        if i < len(identification_adducts):
+                            adduct = identification_adducts[i]
+
+                    mol_formula = str(molecule.get_formula())
+                    mol_name = molecule.get_name()
+                    mol_classdesc = molecule.get_class_description()
+                    mol_desc = molecule.get_description()
+                    mol_smiles = molecule.get_smiles()
+                    mol_inchi = molecule.get_inchi()
+
+                    self.df_identification = self.df_identification.append({"ID": id, "Formula": mol_formula, "PPM": ppm, "Adduct": adduct, "Name": mol_name, "Class": mol_classdesc, "Description": mol_desc , "Smiles": mol_smiles, "InChi": mol_inchi}, ignore_index=True)
+            
+        except Exception as err:
+            print("Unable to update identification data")
+            print(err)
+
+        # Set dataframe
+        try:
             # Set measurement colours from sets
-            for set_info in peakml_obj.header.get_sets():
+            for set_info in self.get_peakml_obj().header.get_sets():
 
-                df = df.append({"UID": set_info.get_uid(), "Name": set_info.get_id(), "Color": set_info.get_colour(), "Selected": set_info.get_selected(), "Parent": None}, ignore_index=True)
+                self.df_set = self.df_set.append({"UID": set_info.get_uid(), "Name": set_info.get_id(), "Color": set_info.get_colour(), "Selected": set_info.get_selected(), "Parent": None}, ignore_index=True)
 
-                measurement_peaks = self.get_peaks_with_measurementids(peakset.peaks, set_info.get_measurementids())
+                measurement_peaks = self.get_peaks_with_measurementids(selected_peakset.peaks, set_info.get_measurementids())
 
                 for measurement_peak in measurement_peaks:
-                    measurement = peakml_obj.header.get_measurement_by_id(measurement_peak.get_measurementid())
+                    measurement = self.get_peakml_obj().header.get_measurement_by_id(measurement_peak.get_measurementid())
 
                     measurement.set_colour(set_info.get_colour())
                     
-                    df = df.append({"UID": measurement.get_uid(), "Name": measurement.get_label(), "Color": set_info.get_colour(), "Selected": measurement.get_selected(), "Parent": set_info.get_id()}, ignore_index=True)
+                    self.df_set = self.df_set.append({"UID": measurement.get_uid(), "Name": measurement.get_label(), "Color": set_info.get_colour(), "Selected": measurement.get_selected(), "Parent": set_info.get_id()}, ignore_index=True)
                 
         except Exception as err:
+            print("Unable to update set data")
             print(err)
 
-        return df
-
-    def get_details(self):
-
+        # Annotation dataframe
         try:
-            peakml_obj = self.get_peakml_obj()
-            selected_peak = peakml_obj.get_selected_peak()
-            peakset = peakml_obj.get_peak_from_sha1sum(selected_peak)
-            df = pd.DataFrame()
-
-            for annotation in peakset.get_annotations():
-                df = df.append({"Label": annotation.get_label(), "Value": annotation.get_value()}, ignore_index=True)
-
+            for annotation in selected_peakset.get_annotations():
+                self.df_annotation = self.df_annotation.append({"Label": annotation.get_label(), "Value": annotation.get_value()}, ignore_index=True)
         except Exception as err:
+            print("Unable to update annotation data")
             print(err)
 
-        return df
-
-    def update_set_selection(self, measurement_sampleid, selected):
-
-        measurement = self.get_peakml_obj().header.get_measurement_by_sampleid(measurement_sampleid)
+    def update_set_selection(self, measurement_uid, selected):
+        measurement = self.get_peakml_obj().header.get_measurement_by_uid(measurement_uid)
         measurement.set_selected(selected)
+        self.df_plot_peak.at[self.df_plot_peak.index[self.df_plot_peak["UID"] == measurement_uid].tolist()[0], 'Selected'] = selected
 
-    def get_peak_set_data_by_selected_peak(self):
-        print("Not implemented")
 
     def add_filter_mass(self, mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option):
         self.get_peakml_obj().add_filter(FilterMass(mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option))
 
+
     def add_filter_intensity(self, intensity_min, intensity_unit):
         self.get_peakml_obj().add_filter(FilterIntensity(intensity_min, intensity_unit))
+
 
     def add_filter_retention_time(self, range_min, range_max):
         self.get_peakml_obj().add_filter(FilterRetentionTime(range_min, range_max))
 
+
     def add_filter_number_detections(self, detection_number):
         self.get_peakml_obj().add_filter(FilterNumberDetections(detection_number))
+
 
     def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
         self.get_peakml_obj().add_filter(FilterAnnotations(annotation_name, annotation_relation, annotation_value))
 
+
     def add_filter_sort(self):
         print("Not implemented")
+
 
     def add_filter_sort_times_series(self):
         print("Not implemented")
 
+
     def remove_filter_by_id(self, id):
         self.get_peakml_obj().remove_filter_by_id(id)
 
+
     def get_settings_preference_by_name(self, name):
         return self.settings.get_preference_by_name(name)
+
 
     def get_settings_database_paths(self):
         database_paths = self.settings.get_database_paths()

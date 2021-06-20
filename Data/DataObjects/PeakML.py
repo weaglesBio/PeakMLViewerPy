@@ -9,12 +9,17 @@ class PeakML():
     def get_nr_peaks(self):
         return self.header.nrpeaks
 
-    def set_selected_peak(self, peak_id):
-        self.selected_peak = peak_id
+    def set_selected_peak_uid(self, peak_uid):
+        self.selected_peak = peak_uid
 
-    def get_selected_peak(self):
+    def get_selected_peak_uid(self):
         return self.selected_peak
 
+    def get_selected_peak(self):
+        for peak in self.peaks:
+           if peak.uid == str(self.get_selected_peak_uid()):
+               return peak
+        
     def get_peak_from_scanid(self, scanid):
         for peak in self.peaks:
            if peak.scanid == scanid:

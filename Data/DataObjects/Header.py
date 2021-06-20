@@ -43,7 +43,7 @@ class Header(Annotatable):
 
     def get_measurement_by_uid(self, measurement_uid):
         for measurement in self.measurements:
-           if measurement.id == str(measurement_uid):
+           if measurement.get_uid() == measurement_uid:
                return measurement
     
     def get_set_by_measurementid(self, measurement_id):

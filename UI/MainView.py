@@ -160,9 +160,11 @@ class MainView():
         self.entry_tree.bind('<ButtonRelease-1>', self.select_entry)
         self.entry_tree.bind('<KeyRelease-Up>', self.select_entry)
         self.entry_tree.bind('<KeyRelease-Down>', self.select_entry)
-        self.entry_tree.tag_configure("has_ann", foreground="black")
-        self.entry_tree.tag_configure("no_ann", foreground="grey")
-        self.entry_tree.tag_configure("is_focus", foreground="white", background="blue")
+        self.entry_tree.tag_configure("has_ann_not_focus", foreground="black")
+        self.entry_tree.tag_configure("no_ann_not_focus", foreground="grey")
+        self.entry_tree.tag_configure("has_ann_is_focus", foreground="white", background="blue")
+        self.entry_tree.tag_configure("no_ann_is_focus", foreground="white", background="blue")
+
         self.entry_tree.grid(row=0, column=0, sticky="NEWS")
 
         self.entry_tree_vsb = ttk.Scrollbar(self.entry_grid_frame, orient="vertical", command=self.entry_tree.yview)
@@ -265,67 +267,35 @@ class MainView():
         canvas_int_log.draw()
 
         # Sets View
-        self.sets_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Sets")
+        self.set_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Sets")
 
-        self.sets_tree = ttkw.CheckboxTreeview(self.sets_grid_frame, height = 15, show=("headings","tree"), selectmode="browse")
-        self.sets_tree["columns"]=["Name"]
-        self.sets_tree.column("#0", width = 60, stretch = tk.YES)
-        self.sets_tree.column("#1", width = 150, stretch = tk.YES)
-        self.sets_tree.heading("#0", text="",)
-        self.sets_tree.heading("#1", text="Name")
-        self.sets_tree.bind('<ButtonRelease-1>', self.update_sets_view)
-        self.sets_tree.grid(row=0, column=0)
+        self.set_tree = ttkw.CheckboxTreeview(self.set_grid_frame, height = 15, show=("headings","tree"), selectmode="browse")
+        self.set_tree["columns"]=["Name"]
+        self.set_tree.column("#0", width = 60, stretch = tk.YES)
+        self.set_tree.column("#1", width = 150, stretch = tk.YES)
+        self.set_tree.heading("#0", text="",)
+        self.set_tree.heading("#1", text="Name")
+        self.set_tree.bind('<ButtonRelease-1>', self.update_sets_view)
+        self.set_tree.grid(row=0, column=0)
 
-        self.sets_tree_vsb = ttk.Scrollbar(self.sets_grid_frame, orient="vertical", command=self.sets_tree.yview)
-        self.sets_tree_vsb.grid(row=0, column=1, sticky="NEWS")
-        self.sets_tree_hsb = ttk.Scrollbar(self.sets_grid_frame, orient="horizontal", command=self.sets_tree.xview)
-        self.sets_tree_hsb.grid(row=1, column=0, sticky="NEWS")
-        self.sets_tree.configure(yscrollcommand=self.sets_tree_vsb.set, xscrollcommand=self.sets_tree_hsb.set)
+        self.set_tree_vsb = ttk.Scrollbar(self.set_grid_frame, orient="vertical", command=self.set_tree.yview)
+        self.set_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.set_tree_hsb = ttk.Scrollbar(self.set_grid_frame, orient="horizontal", command=self.set_tree.xview)
+        self.set_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.set_tree.configure(yscrollcommand=self.set_tree_vsb.set, xscrollcommand=self.set_tree_hsb.set)
 
-        self.sets_grid_frame.grid(row=0, column=0, sticky="NEWS")
+        self.set_grid_frame.grid(row=0, column=0, sticky="NEWS")
 
-        self.details_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Details")
+        self.annotation_grid_frame = tk.LabelFrame(self.middle_right_frame, padx=10, pady=10, text="Details")
 
-        self.details_tree = ttk.Treeview(self.details_grid_frame)
-        self.details_tree["columns"]=["Label","Value"]
-        self.details_tree.column("#0", width = 10, stretch = tk.YES)
-        self.details_tree.column("#1", width = 80, stretch = tk.YES)
-        self.details_tree.column("#2", width = 120, stretch = tk.YES)
-        self.details_tree.heading("#0", text="",)
-        self.details_tree.heading("#1", text="Label")
-        self.details_tree.heading("#2", text="Value")
-        self.details_tree.grid(row=0, column=0)
-
-        self.details_tree_vsb = ttk.Scrollbar(self.details_grid_frame, orient="vertical", command=self.details_tree.yview)
-        self.details_tree_vsb.grid(row=0, column=1, sticky="NEWS")
-        self.details_tree_hsb = ttk.Scrollbar(self.details_grid_frame, orient="horizontal", command=self.details_tree.xview)
-        self.details_tree_hsb.grid(row=1, column=0, sticky="NEWS")
-        self.details_tree.configure(yscrollcommand=self.details_tree_vsb.set, xscrollcommand=self.details_tree_hsb.set)
-
-        self.details_grid_frame.grid(row=1, column=0, sticky="NEWS")
-
-        # Annotation View
-
-        self.annotation_grid_frame = tk.LabelFrame(self.bottom_frame, padx=10, pady=10, text="Annotations")
-
-        self.annotation_tree = ttk.Treeview(self.annotation_grid_frame, height = 8)
-        self.annotation_tree["columns"]=["ID", "Formula", "PPM", "Adduct", "Name", "Class", "Description"]
-        self.annotation_tree.column("#0", width=10, minwidth=10, stretch = tk.NO)
-        self.annotation_tree.column("#1", width = 100, stretch = tk.YES)
-        self.annotation_tree.column("#2", width = 200, stretch = tk.YES)
-        self.annotation_tree.column("#3", width = 100, stretch = tk.YES)
-        self.annotation_tree.column("#4", width = 200, stretch = tk.YES)
-        self.annotation_tree.column("#5", width = 200)
-        self.annotation_tree.column("#6", width = 200, stretch = tk.YES)
-        self.annotation_tree.column("#7", width = 200, stretch = tk.YES)
-        self.annotation_tree.heading("#0", text="")
-        self.annotation_tree.heading("#1", text="ID")
-        self.annotation_tree.heading("#2", text="Formula")
-        self.annotation_tree.heading("#3", text="PPM")
-        self.annotation_tree.heading("#4", text="Adduct")
-        self.annotation_tree.heading("#5", text="Name")
-        self.annotation_tree.heading("#6", text="Class")
-        self.annotation_tree.heading("#7", text="Description")
+        self.annotation_tree = ttk.Treeview(self.annotation_grid_frame)
+        self.annotation_tree["columns"]=["Label","Value"]
+        self.annotation_tree.column("#0", width = 10, stretch = tk.YES)
+        self.annotation_tree.column("#1", width = 80, stretch = tk.YES)
+        self.annotation_tree.column("#2", width = 120, stretch = tk.YES)
+        self.annotation_tree.heading("#0", text="",)
+        self.annotation_tree.heading("#1", text="Label")
+        self.annotation_tree.heading("#2", text="Value")
         self.annotation_tree.grid(row=0, column=0)
 
         self.annotation_tree_vsb = ttk.Scrollbar(self.annotation_grid_frame, orient="vertical", command=self.annotation_tree.yview)
@@ -334,7 +304,39 @@ class MainView():
         self.annotation_tree_hsb.grid(row=1, column=0, sticky="NEWS")
         self.annotation_tree.configure(yscrollcommand=self.annotation_tree_vsb.set, xscrollcommand=self.annotation_tree_hsb.set)
 
-        self.annotation_grid_frame.grid(row=0, column=0)
+        self.annotation_grid_frame.grid(row=1, column=0, sticky="NEWS")
+
+        # Identification View
+
+        self.identification_grid_frame = tk.LabelFrame(self.bottom_frame, padx=10, pady=10, text="Annotations")
+
+        self.identification_tree = ttk.Treeview(self.identification_grid_frame, height = 8)
+        self.identification_tree["columns"]=["ID", "Formula", "PPM", "Adduct", "Name", "Class", "Description"]
+        self.identification_tree.column("#0", width=10, minwidth=10, stretch = tk.NO)
+        self.identification_tree.column("#1", width = 100, stretch = tk.YES)
+        self.identification_tree.column("#2", width = 200, stretch = tk.YES)
+        self.identification_tree.column("#3", width = 100, stretch = tk.YES)
+        self.identification_tree.column("#4", width = 200, stretch = tk.YES)
+        self.identification_tree.column("#5", width = 200)
+        self.identification_tree.column("#6", width = 200, stretch = tk.YES)
+        self.identification_tree.column("#7", width = 200, stretch = tk.YES)
+        self.identification_tree.heading("#0", text="")
+        self.identification_tree.heading("#1", text="ID")
+        self.identification_tree.heading("#2", text="Formula")
+        self.identification_tree.heading("#3", text="PPM")
+        self.identification_tree.heading("#4", text="Adduct")
+        self.identification_tree.heading("#5", text="Name")
+        self.identification_tree.heading("#6", text="Class")
+        self.identification_tree.heading("#7", text="Description")
+        self.identification_tree.grid(row=0, column=0)
+
+        self.identification_tree_vsb = ttk.Scrollbar(self.identification_grid_frame, orient="vertical", command=self.identification_tree.yview)
+        self.identification_tree_vsb.grid(row=0, column=1, sticky="NEWS")
+        self.identification_tree_hsb = ttk.Scrollbar(self.identification_grid_frame, orient="horizontal", command=self.identification_tree.xview)
+        self.identification_tree_hsb.grid(row=1, column=0, sticky="NEWS")
+        self.identification_tree.configure(yscrollcommand=self.identification_tree_vsb.set, xscrollcommand=self.identification_tree_hsb.set)
+
+        self.identification_grid_frame.grid(row=0, column=0)
 
         # Molecule View
         self.molecule_canvas_frame = tk.LabelFrame(self.bottom_frame, padx=10, pady=10, text="Molecule View")
@@ -362,16 +364,43 @@ class MainView():
     def show_progressbar(self, start):
         if start:
             self.progress_bar = ttk.Progressbar(self.progress_frame, orient=tk.HORIZONTAL, mode='indeterminate', takefocus=True)
-            self.progress_bar.grid(row=0, column=1)
+            self.progress_bar.grid(row=1, column=0)
             self.progress_bar.start()
         else:
             self.progress_bar.stop()
             self.progress_bar.destroy()
 
-    def import_file(self):
+    def import_peakml_file_with_progress(self):
         self.show_progressbar(True)
 
         self.thread = threading.Thread(target=self.import_peakml_file, args=())
+        self.thread.daemon = True
+        self.thread.start()
+
+        self.check_progress()
+
+    def export_peakml_file_with_progress(self):
+        self.show_progressbar(True)
+
+        self.thread = threading.Thread(target=self.export_peakml_file, args=())
+        self.thread.daemon = True
+        self.thread.start()
+
+        self.check_progress()
+
+    def refresh_entry_selected_with_progress(self):
+        self.show_progressbar(True)
+
+        self.thread = threading.Thread(target=self.refresh_entry_selected, args=())
+        self.thread.daemon = True
+        self.thread.start()
+
+        self.check_progress()
+
+    def refresh_entry_view_with_progress(self):
+        self.show_progressbar(True)
+
+        self.thread = threading.Thread(target=self.refresh_entry_view, args=(True))
         self.thread.daemon = True
         self.thread.start()
 
@@ -385,20 +414,14 @@ class MainView():
 
             if filepath:
                 self.data.import_from_filepath(filepath)
-                self.refresh_views(True)
+                self.refresh_info_view()
+                self.refresh_entry_view(True)
         except Exception as err:
-            print (err)
+            print("Error while importing file")
+            print(err)
+            self.progress_details_text.set("File import failed.")
 
         self.progress_details_text.set("File imported.")
-
-    def export_file(self):
-        self.show_progressbar(True)
-
-        self.thread = threading.Thread(target=self.export_peakml_file, args=())
-        self.thread.daemon = True
-        self.thread.start()
-
-        self.check_progress()
 
     def export_peakml_file(self):
         self.progress_details_text.set("Exporting file...")
@@ -409,7 +432,8 @@ class MainView():
             if filepath:
                 self.data.export_data_object_to_file(filepath)
         except Exception as err:
-            print (err)
+            print("Error while exporting file")
+            print(err)
         
         self.progress_details_text.set("File exported.")
 
@@ -419,9 +443,9 @@ class MainView():
         try:
             filepath = fd.askopenfilename()
             self.set_filepath(filepath)    
-            self.import_file()
+            self.import_peakml_file_with_progress()
         except IOError as ioerr:
-            print("An error occurred")
+            print("An IO error occurred")
             print(ioerr)
         except Exception as err:
             print("An error occurred")
@@ -430,7 +454,7 @@ class MainView():
     def file_save(self):
         # Ask 'Are you sure you want to update the imported file '<filename>'?
         try:
-            self.export_peakml_file()
+            self.export_peakml_file_with_progress()
         except IOError as ioerr:
             print("An error occurred")
             print(ioerr)
@@ -442,9 +466,9 @@ class MainView():
         try:
             filepath = fd.asksaveasfilename(defaultextension=".peakml")
             self.set_filepath(filepath)    
-            self.export_peakml_file()
+            self.export_peakml_file_with_progress()
         except IOError as ioerr:
-            print("An error occurred")
+            print("An IO error occurred")
             print(ioerr)
         except Exception as err:
             print("An error occurred")
@@ -468,23 +492,71 @@ class MainView():
     # Entry View Methods
 
     def refresh_entry_view(self, reload_entries):
+        Utils.trace("ref1")
+        self.progress_details_text.set("Loading entry view...")
+
         focused_row_id = self.selected_id.get()
         self.entry_tree.delete(*self.entry_tree.get_children())    
 
-        if reload_entries:
-            self.df_entry = self.data.get_entry_list()
+        Utils.trace("ref2")
 
-        for i in range(len(self.df_entry)):
-            entry_row = self.df_entry.iloc[i]
-            focus = "is_focus" if focused_row_id == entry_row["Sha1sum"] or (focused_row_id is None and i == 0) else "not_focus"
-            self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], int(entry_row["Nrpeaks"])), tags=(entry_row["Sha1sum"], "has_ann" if entry_row["HasAnnotation"] else "no_ann", focus)) 
+        if reload_entries:
+            self.data.update_entry_dataframe()
+            self.df_entry = self.data.get_entry_view()
+            focused_row_id = ''
+
+        Utils.trace("ref3")
+
+        if self.df_entry is not None:
+            for i in range(len(self.df_entry)):
+                entry_row = self.df_entry.iloc[i]
+                if focused_row_id == entry_row["UID"]:
+                    focus = "has_ann_is_focus" if entry_row["HasAnnotation"] else "no_ann_is_focus"
+                elif (focused_row_id is None or focused_row_id == '') and i == 0:
+                    focus = "has_ann_is_focus" if entry_row["HasAnnotation"] else "no_ann_is_focus"
+                else: 
+                    focus = "has_ann_not_focus" if entry_row["HasAnnotation"] else "no_ann_not_focus"
+
+                self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], int(entry_row["Nrpeaks"])), tags=(entry_row["UID"], focus)) 
+
+        Utils.trace("ref4")
+
+        if reload_entries:
+            self.entry_tree.focus(self.entry_tree.get_children()[0])    
+            focused_entry = self.entry_tree.item(self.entry_tree.focus())
+            focused_id = focused_entry["tags"][0]    
+            self.selected_id.set(focused_id)
+            self.data.set_selected_peak(focused_id)
+
+        Utils.trace("ref5")
+        self.progress_details_text.set("Loading selected entry details for views...")
+
+        self.data.update_data_frames_for_selected_entry()
+        self.data.update_plot_data_frames_for_selected_entry()
+
+        Utils.trace("ref6")
+
+        self.refresh_set_view()
+
+        Utils.trace("ref7")
+
+        self.refresh_annotation_view()
+
+        Utils.trace("ref8")
+
+        self.refresh_identification_view()
+
+        Utils.trace("ref9")
+        self.progress_details_text.set("Loading selected entry plots...")
+        self.refresh_graph_view()
+
+        Utils.trace("ref10")
+        self.progress_details_text.set("Entry loaded.")
 
     def select_entry(self, event):
-        self.refresh_entry_selected(False)
+        self.refresh_entry_selected_with_progress()
 
-    def refresh_entry_selected(self, reload_entries):
-        if reload_entries:
-            self.entry_tree.focus(self.entry_tree.get_children()[0])
+    def refresh_entry_selected(self):
         
         focused_entry = self.entry_tree.item(self.entry_tree.focus())
         focused_id = focused_entry["tags"][0]    
@@ -492,55 +564,38 @@ class MainView():
         self.data.set_selected_peak(focused_id)
 
         self.refresh_entry_view(False)
-        self.refresh_sets_view()
-        self.refresh_graph_view()
-        self.refresh_identification_view()
-        self.refresh_details_view()
-
-    def refresh_views(self, reload_entries):
-        self.refresh_info_view()
-        Utils.trace("ref1")
-        self.refresh_entry_view(reload_entries)
-        Utils.trace("ref2")
-        self.refresh_entry_selected(reload_entries)
-        Utils.trace("ref3")
-        self.refresh_graph_view()
-        #Utils.trace("ref4")
-        #self.refresh_identification_view()
-        #self.refresh_sets_view()
-        #self.refresh_details_view()
-        #self.refresh_filters_view()
 
     def update_sets_view(self, event):
         x, y, widget = event.x, event.y, event.widget
         elem = widget.identify("element", x, y)
         if "image" in elem:
             # Save check status of each list
-            for item in self.sets_tree.get_children():
-                for child_item in self.sets_tree.get_children(item):
-                    name = self.sets_tree.item(child_item)["values"][0]
-                    selected_status = False if self.sets_tree.item(child_item)["tags"][1] == "unchecked" else True
-                    self.data.update_set_selection(name, selected_status)
+            for item in self.set_tree.get_children():
+                for child_item in self.set_tree.get_children(item):
+                    uid = self.set_tree.item(child_item)["tags"][0]
+                    selected_status = False if self.set_tree.item(child_item)["tags"][2] == "unchecked" else True
+                    self.data.update_set_selection(uid, selected_status)
             # Refresh grid
-            self.refresh_graph_view()
+            #self.data.update_plot_data_frames_for_selected_entry()
+            self.generate_plot_peak()
 
     def refresh_identification_view(self):
-        self.annotation_tree.delete(*self.annotation_tree.get_children())
-        df_identifications = self.data.get_identification()
+        self.identification_tree.delete(*self.identification_tree.get_children())
+        df_identification = self.data.get_identification_view()
         smiles_details = None
         inchi_details = None
-        if df_identifications is not None:
-            for i in range(len(df_identifications)):
-                identification_row = df_identifications.iloc[i]
-                self.annotation_tree.insert("",i,i, values=(identification_row["ID"],identification_row["Formula"],identification_row["PPM"],identification_row["Adduct"],identification_row["Name"],identification_row["Class"],identification_row["Description"]))
+        if df_identification is not None:
+            for i in range(len(df_identification)):
+                identification_row = df_identification.iloc[i]
+                self.identification_tree.insert("",i,i, values=(identification_row["ID"],identification_row["Formula"],identification_row["PPM"],identification_row["Adduct"],identification_row["Name"],identification_row["Class"],identification_row["Description"]))
                 smiles_details = identification_row["Smiles"]
                 inchi_details = identification_row["InChi"]
 
         self.refresh_molecule_view(inchi_details, smiles_details)
 
-    def refresh_sets_view(self):  
-        self.sets_tree.delete(*self.sets_tree.get_children())
-        df_sets = self.data.get_sets()
+    def refresh_set_view(self):  
+        self.set_tree.delete(*self.set_tree.get_children())
+        df_sets = self.data.get_set_view()
         if df_sets is not None:
             df_sets_parent = df_sets.loc[df_sets['Parent'].isnull()]
 
@@ -552,8 +607,8 @@ class MainView():
                     select_parent = "checked" if set_parent_row["Selected"] else "unchecked"
 
                     colour_tag = "colour_" + name_parent
-                    self.sets_tree.tag_configure(colour_tag, foreground=set_parent_row["Color"])
-                    folder = self.sets_tree.insert("", i, name_parent, values=(name_parent), tags=(select_parent, colour_tag))
+                    self.set_tree.tag_configure(colour_tag, foreground=set_parent_row["Color"])
+                    folder = self.set_tree.insert("", i, name_parent, values=(name_parent), tags=("uid",select_parent, colour_tag))
                     
                     df_sets_child = df_sets.loc[df_sets['Parent'] == name_parent]
 
@@ -563,16 +618,16 @@ class MainView():
                             set_child_row = df_sets_child.iloc[j]    
                             select_child = "checked" if set_child_row["Selected"] else "unchecked"
 
-                            self.sets_tree.insert(folder, "end", set_child_row["Name"], values=(set_child_row["Name"]), tags=(select_child, colour_tag))
+                            self.set_tree.insert(folder, "end", set_child_row["Name"], values=(set_child_row["Name"]), tags=(set_child_row["UID"], select_child, colour_tag))
 
-    def refresh_details_view(self):    
-        self.details_tree.delete(*self.details_tree.get_children())
-        df_details = self.data.get_details()
+    def refresh_annotation_view(self):    
+        self.annotation_tree.delete(*self.annotation_tree.get_children())
+        df_annotation = self.data.get_annotation_view()
 
-        if df_details is not None:
-            for i in range(len(df_details)):
-                detail_row = df_details.iloc[i]
-                self.details_tree.insert("", i, i, values=(detail_row["Label"], detail_row["Value"]))
+        if df_annotation is not None:
+            for i in range(len(df_annotation)):
+                annotation_row = df_annotation.iloc[i]
+                self.annotation_tree.insert("", i, i, values=(annotation_row["Label"], annotation_row["Value"]))
 
     def refresh_filters_view(self):
         self.filter_tree.delete(*self.filter_tree.get_children())
@@ -602,12 +657,17 @@ class MainView():
     # Graph View Methods
 
     def refresh_graph_view(self):
+        
+        Utils.trace("plot1")
         self.generate_plot_peak()
+        Utils.trace("plot2")
         self.generate_plot_derivatives()
+        Utils.trace("plot3")
         self.generate_plots_int()
+        Utils.trace("plot4")
 
     def generate_plot_peak(self):
-        df = self.data.get_peak_plot()    
+        df = self.data.get_plot_peak_view()    
         plot_count = len(df)
         plots = {}
         self.axes_peak.clear()
@@ -633,17 +693,13 @@ class MainView():
         self.figure_peak.canvas.draw()
         self.figure_peak.tight_layout()
 
-    def set_plot_colour(self, plot_label):
-        colour = self.data.get_peak_colour_by_sampleid(plot_label)
-        return colour
-
     def generate_plot_derivatives(self):
-        df = self.data.get_derivatives_plot()
-        self.generate_plot_der(df, "All")
-        self.generate_plot_der(df, "Log")
+        df = self.data.get_plot_derivative_view()
+        self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
+        self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
         
-    def generate_plot_der(self, data, type):
-        self.axes_der_all.clear()
+    def generate_plot_der(self, data, type, figure_der, axes_der):
+        axes_der.clear()
 
         mass_values = data['Mass']
         intensity_values = data['Intensity']
@@ -652,23 +708,23 @@ class MainView():
         intensity_values_float = []
 
         for j in range(len(intensity_values)):
-                intensity_values_float.append(float(intensity_values[j]))
+            intensity_values_float.append(float(intensity_values[j]))
 
-        self.axes_der_all.stem(mass_values, intensity_values, markerfmt=None)
+        axes_der.stem(mass_values, intensity_values, markerfmt=None)
 
         for i in range(len(data)):
-            self.axes_der_all.annotate(label_values[i],(mass_values[i],intensity_values[i]))
+            axes_der.annotate(label_values[i],(mass_values[i],intensity_values[i]))
 
         if type == "Log":
-            self.axes_der_log.set_yscale('log')
+            axes_der.set_yscale('log')
 
-        self.axes_der_all.set_xlabel("Mass")
-        self.axes_der_all.set_ylabel("Intensity")
-        self.figure_der_all.canvas.draw()
-        self.figure_der_all.tight_layout()
+        axes_der.set_xlabel("Mass")
+        axes_der.set_ylabel("Intensity")
+        figure_der.canvas.draw()
+        figure_der.tight_layout()
 
     def generate_plots_int(self):
-        df = self.data.get_intensity_plot()
+        df = self.data.get_plot_intensity_view()
         self.generate_plot_int_all(df)
         self.generate_plot_int_log(df)
 
@@ -744,12 +800,12 @@ class MainView():
             self.filter_sort_dialog()
         elif option == "Sort time-series":
             self.filter_sort_time_series_dialog()
-        self.refresh_views(True)
+        self.refresh_entry_view_with_progress()
 
     def remove_filter(self):
         focused_filter = self.filter_tree.item(self.filter_tree.focus())
         self.data.remove_filter_by_id(focused_filter["tags"][0])
-        self.refresh_views(True)
+        self.refresh_entry_view_with_progress()
 
     def filter_mass_dialog(self):
         dlg = FilterMassDialog(self.root,"Filter mass")
@@ -784,16 +840,3 @@ class MainView():
         #self.data.add_filter_intensity(dlg.intensity_min, dlg.intensity_unit)
 
         self.data.update_settings()
-
-   # def start_progress(self, name):
-   #     self.progress = ProgressBarDialog(self.root, name)
-        
-
-    #def end_progress(self):
-    #    self.progress.close()
-        
-    #def start_progress_bar(self):
-    #    self.progress_bar.progress_start()
-
-    #def stop_progress_bar(self):
-    #    self.progress_bar.progress_stop()

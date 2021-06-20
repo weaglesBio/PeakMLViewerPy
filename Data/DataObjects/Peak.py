@@ -1,4 +1,4 @@
-import Utilities as u
+import Utilities as Utils
 from Data.DataObjects.Annotatable import Annotatable
 
 class Peak(Annotatable):
@@ -16,7 +16,11 @@ class Peak(Annotatable):
         self.peak_data = peak_data
         self.checked = False
         self.peaks = []
+        self.uid = Utils.get_new_uuid()
   
+    def get_uid(self):
+        return self.uid
+
     def add_peak(self, peak):
         self.peaks.append(peak)
 
@@ -39,10 +43,10 @@ class Peak(Annotatable):
         return self.sha1sum
 
     def get_retention_time_formatted_string(self):
-        return u.format_time_string(self.get_retention_time())
+        return Utils.format_time_string(self.get_retention_time())
 
     def get_retention_time_formatted_datetime(self):
-        return u.format_time_datetime(self.get_retention_time())
+        return Utils.format_time_datetime(self.get_retention_time())
 
     def get_retention_time(self):
         return self.retentiontime
