@@ -576,7 +576,6 @@ class MainView():
                     selected_status = False if self.set_tree.item(child_item)["tags"][2] == "unchecked" else True
                     self.data.update_set_selection(uid, selected_status)
             # Refresh grid
-            #self.data.update_plot_data_frames_for_selected_entry()
             self.generate_plot_peak()
 
     def refresh_identification_view(self):
