@@ -149,8 +149,8 @@ class MainView():
         self.entry_tree["columns"]=["RT","Mass", "Intensity", "Nr_peaks"]
         self.entry_tree.column("#0", width=40, stretch = tk.YES)
         self.entry_tree.column("#1", width=100, stretch = tk.YES)
-        self.entry_tree.column("#2", width=100, stretch = tk.YES)
-        self.entry_tree.column("#3", width=100, stretch = tk.YES)
+        self.entry_tree.column("#2", width=80, stretch = tk.YES)
+        self.entry_tree.column("#3", width=80, stretch = tk.YES)
         self.entry_tree.column("#4", width=50, stretch = tk.YES)
         self.entry_tree.heading("#0", text="")
         self.entry_tree.heading("#1", text="Retention time")
@@ -199,7 +199,9 @@ class MainView():
 
         self.filter_control_frame = tk.Frame(self.filter_frame)
 
-        option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Filter Annotations", "Sort", "Sort time-series"]
+        #option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Filter Annotations", "Sort", "Sort time-series"]
+        option_list = ["Filter Mass", "Filter Intensity", "Filter Retention Time", "Filter Number Detections", "Sort"]
+
         self.filter_option_selected = tk.StringVar(self.root)
         self.filter_option_selected.set("Select Filter...")
 
@@ -400,7 +402,7 @@ class MainView():
     def refresh_entry_view_with_progress(self):
         self.show_progressbar(True)
 
-        self.thread = threading.Thread(target=self.refresh_entry_view, args=(True))
+        self.thread = threading.Thread(target=self.refresh_entry_view_with_reload, args=())
         self.thread.daemon = True
         self.thread.start()
 
@@ -491,21 +493,24 @@ class MainView():
 
     # Entry View Methods
 
+    def refresh_entry_view_with_reload(self):
+        self.refresh_entry_view(True)
+
     def refresh_entry_view(self, reload_entries):
-        Utils.trace("ref1")
+        #Utils.trace("ref1")
         self.progress_details_text.set("Loading entry view...")
 
         focused_row_id = self.selected_id.get()
         self.entry_tree.delete(*self.entry_tree.get_children())    
 
-        Utils.trace("ref2")
+        #Utils.trace("ref2")
 
         if reload_entries:
             self.data.update_entry_dataframe()
             self.df_entry = self.data.get_entry_view()
             focused_row_id = ''
 
-        Utils.trace("ref3")
+        #Utils.trace("ref3")
 
         if self.df_entry is not None:
             for i in range(len(self.df_entry)):
@@ -519,7 +524,7 @@ class MainView():
 
                 self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], int(entry_row["Nrpeaks"])), tags=(entry_row["UID"], focus)) 
 
-        Utils.trace("ref4")
+        #Utils.trace("ref4")
 
         if reload_entries:
             self.entry_tree.focus(self.entry_tree.get_children()[0])    
@@ -528,29 +533,29 @@ class MainView():
             self.selected_id.set(focused_id)
             self.data.set_selected_peak(focused_id)
 
-        Utils.trace("ref5")
+        #Utils.trace("ref5")
         self.progress_details_text.set("Loading selected entry details for views...")
 
         self.data.update_data_frames_for_selected_entry()
         self.data.update_plot_data_frames_for_selected_entry()
 
-        Utils.trace("ref6")
+        #Utils.trace("ref6")
 
         self.refresh_set_view()
 
-        Utils.trace("ref7")
+        #Utils.trace("ref7")
 
         self.refresh_annotation_view()
 
-        Utils.trace("ref8")
+        #Utils.trace("ref8")
 
         self.refresh_identification_view()
 
-        Utils.trace("ref9")
+        #Utils.trace("ref9")
         self.progress_details_text.set("Loading selected entry plots...")
         self.refresh_graph_view()
 
-        Utils.trace("ref10")
+        #Utils.trace("ref10")
         self.progress_details_text.set("Entry loaded.")
 
     def select_entry(self, event):
@@ -657,13 +662,13 @@ class MainView():
 
     def refresh_graph_view(self):
         
-        Utils.trace("plot1")
+        #Utils.trace("plot1")
         self.generate_plot_peak()
-        Utils.trace("plot2")
+        #Utils.trace("plot2")
         self.generate_plot_derivatives()
-        Utils.trace("plot3")
+        #Utils.trace("plot3")
         self.generate_plots_int()
-        Utils.trace("plot4")
+        #Utils.trace("plot4")
 
     def generate_plot_peak(self):
         df = self.data.get_plot_peak_view()    
@@ -709,7 +714,7 @@ class MainView():
         for j in range(len(intensity_values)):
             intensity_values_float.append(float(intensity_values[j]))
 
-        axes_der.stem(mass_values, intensity_values, markerfmt=None)
+        axes_der.stem(mass_values, intensity_values, markerfmt=" ")
 
         for i in range(len(data)):
             axes_der.annotate(label_values[i],(mass_values[i],intensity_values[i]))
@@ -765,16 +770,19 @@ class MainView():
             for i in range(len(Intensities)):
                 Intensities_float.append(float(Intensities[i]))
 
-            Intensity_mean = stats.mean(Intensities_float)
-            Intensity_max = max(Intensities_float)
-            Intensity_min = min(Intensities_float)
-            Intensity_pos = Intensity_max - Intensity_mean
-            Intensity_neg = Intensity_mean - Intensity_min
 
-            Set_ID_arr.append(SetID)
-            Intensity_mean_arr.append(Intensity_mean)
-            Intensity_neg_arr.append(Intensity_neg)
-            Intensity_pos_arr.append(Intensity_pos)
+            if len(Intensities_float):
+
+                Intensity_mean = stats.mean(Intensities_float)
+                Intensity_max = max(Intensities_float)
+                Intensity_min = min(Intensities_float)
+                Intensity_pos = Intensity_max - Intensity_mean
+                Intensity_neg = Intensity_mean - Intensity_min
+
+                Set_ID_arr.append(SetID)
+                Intensity_mean_arr.append(Intensity_mean)
+                Intensity_neg_arr.append(Intensity_neg)
+                Intensity_pos_arr.append(Intensity_pos)
 
         self.axes_int_log.errorbar(Set_ID_arr, Intensity_mean_arr, yerr=[Intensity_neg_arr,Intensity_pos_arr])
 
@@ -784,22 +792,26 @@ class MainView():
         self.figure_int_log.tight_layout()
 
     def add_filter(self):
+        refresh = False
+
         option = self.filter_option_selected.get()
         if option == "Filter Mass":
-            self.filter_mass_dialog()
+            refresh = self.filter_mass_dialog()
         elif option == "Filter Intensity":
-            self.filter_intensity_dialog()
+            refresh = self.filter_intensity_dialog()
         elif option == "Filter Retention Time":
-            self.filter_retention_time_dialog()
+            refresh = self.filter_retention_time_dialog()
         elif option == "Filter Number Detections":
-            self.filter_number_detections_dialog()
+            refresh = self.filter_number_detections_dialog()
         elif option == "Filter Annotations":
-            self.filter_annotations_dialog()
+            refresh = self.filter_annotations_dialog()
         elif option == "Sort":
-            self.filter_sort_dialog()
+            refresh = self.filter_sort_dialog()
         elif option == "Sort time-series":
-            self.filter_sort_time_series_dialog()
-        self.refresh_entry_view_with_progress()
+            refresh = self.filter_sort_time_series_dialog()
+
+        if refresh:
+            self.refresh_entry_view_with_progress()
 
     def remove_filter(self):
         focused_filter = self.filter_tree.item(self.filter_tree.focus())
@@ -808,34 +820,64 @@ class MainView():
 
     def filter_mass_dialog(self):
         dlg = FilterMassDialog(self.root,"Filter mass")
-        self.data.add_filter_mass(dlg.mass_min, dlg.mass_max, dlg.formula, dlg.formula_ppm, dlg.mass_charge, dlg.filter_option)
+        if dlg.submit:
+            self.data.add_filter_mass(dlg.mass_min, dlg.mass_max, dlg.formula, dlg.formula_ppm, dlg.mass_charge, dlg.filter_option)
+            return True
+        else:
+            return False
 
     def filter_intensity_dialog(self):
         dlg = FilterIntensityDialog(self.root,"Filter intensity")
-        self.data.add_filter_intensity(dlg.intensity_min, dlg.intensity_unit)
+        if dlg.submit:
+            self.data.add_filter_intensity(dlg.intensity_min)
+            return True
+        else:
+            return False
 
     def filter_retention_time_dialog(self):
         dlg = FilterRetentionTimeDialog(self.root,"Filter retention-time")
-        self.data.add_filter_retention_time(dlg.range_min, dlg.range_max)
+        if dlg.submit:
+            self.data.add_filter_retention_time(dlg.retention_time_min_hr, dlg.retention_time_max_hr, dlg.retention_time_min_minu, dlg.retention_time_max_minu)
+            return True
+        else:
+            return False
 
     def filter_number_detections_dialog(self):
         dlg = FilterNumberDetectionsDialog(self.root,"Filter number of detections")
-        self.data.add_filter_number_detections(dlg.detection_number)
+        if dlg.submit:
+            self.data.add_filter_number_detections(dlg.detection_number)
+            return True
+        else:
+            return False
 
     def filter_annotations_dialog(self):
         dlg = FilterAnnotationsDialog(self.root,"Filter annotations")
-        self.data.add_filter_annotations(dlg.annotation_name, dlg.annotation_relation, dlg.annotation_value)
+        if dlg.submit:
+            self.data.add_filter_annotations(dlg.annotation_name, dlg.annotation_relation, dlg.annotation_value)
+            return True
+        else:
+            return False
 
     def filter_sort_dialog(self):
         dlg = SortDialog(self.root,"Sort")
-        self.data.add_filter_sort()
+        if dlg.submit:
+            self.data.add_filter_sort()
+            return True
+        else:
+            return False
 
     def filter_sort_time_series_dialog(self):
         dlg = SortTimeSeriesDialog(self.root,"Sort time series")
-        self.data.add_filter_sort_times_series()
+        if dlg.submit:
+            self.data.add_filter_sort_times_series()
+            return True
+        else:
+            return False
 
     def preferences_dialog(self):
         dlg = PreferencesDialog(self.root,"Preferences", self.data)
-        #self.data.add_filter_intensity(dlg.intensity_min, dlg.intensity_unit)
+        if dlg.submit:
+            self.data.update_settings(dlg.decdp, dlg.databases)
+            self.refresh_info_view()
+            self.refresh_entry_view_with_progress()
 
-        self.data.update_settings()

@@ -1,4 +1,23 @@
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+def load_preference_decdp():
+    try:
+            # If errors while attempt to read, requires conversion.
+        with open("settings.xml") as f:
+            settings_tree_data = f.read()
+
+    except Exception as err:
+        print(err)
+
+    settings_root = ET.fromstring(settings_tree_data)
+    decdp = settings_root.find("./settings/decdp")
+    if decdp is not None:
+
+
+        return int(decdp.text)
+    else:
+        return 3
 
 def load_preferences():
     preferences = []
@@ -51,5 +70,14 @@ def write_settings(settings):
     for database_path in settings.get_database_paths(): 
         ET.SubElement(databases_node,"database").text = database_path
 
-    tree = ET.ElementTree(peakmlviewer_node)
-    tree.write("settings.xml")
+    #tree = ET.ElementTree(peakmlviewer_node)
+    settings_str = prettify(peakmlviewer_node)
+
+    r = open("settings.xml", "w")
+    r.write(settings_str)
+    r.close()
+
+def prettify(etree):
+    et_string = ET.tostring(etree)
+    md_string = minidom.parseString(et_string)
+    return md_string.toprettyxml(indent="\t")

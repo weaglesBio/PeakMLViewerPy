@@ -2,10 +2,9 @@ from Data.DataObjects.Filter import Filter
 import Data.Enums as Enums
 
 class FilterIntensity(Filter):
-    def __init__(self, intensity_min, intensity_unit):
+    def __init__(self, intensity_min):
         Filter.__init__(self, Enums.FilterType.FilterIntensity)
         self.intensity_min = intensity_min
-        self.intensity_unit = intensity_unit
 
     def get_filter_intensity_type_value(self):
         return "Intensity filter"

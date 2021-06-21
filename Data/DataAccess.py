@@ -1,5 +1,4 @@
 from numpy.lib.twodim_base import mask_indices
-import IO.MoleculeIO
 import gzip
 from xml.dom import minidom
 import pandas as pd
@@ -8,6 +7,7 @@ import os.path
 import IO.PeakMLReader as Read
 import IO.PeakMLWriter as Write
 import IO.MoleculeIO as MolIO
+import IO.SettingsIO as SetIO
 
 from Data.DataObjects.FilterMass import FilterMass
 from Data.DataObjects.FilterIntensity import FilterIntensity
@@ -331,8 +331,8 @@ class PeakMLData:
             if identification_adduct:
                 identification_adducts = identification_adduct.value.split(', ')
 
-            ppm = None
-            adduct = None
+            ppm = ""
+            adduct = ""
 
             # Get peak identification of label 'identification', value is multiple ids
             identification_annotation = selected_peakset.get_specific_annotation('identification')
@@ -346,7 +346,7 @@ class PeakMLData:
 
                     if identification_ppms and len(identification_ppms) > 0:
                         if i < len(identification_ppms):
-                            ppm = identification_ppms[i]
+                            ppm = Utils.convert_float_to_sf(identification_ppms[i])
 
                     if identification_adducts and len(identification_adducts) > 0:
                         if i < len(identification_adducts):
@@ -403,12 +403,12 @@ class PeakMLData:
         self.get_peakml_obj().add_filter(FilterMass(mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option))
 
 
-    def add_filter_intensity(self, intensity_min, intensity_unit):
-        self.get_peakml_obj().add_filter(FilterIntensity(intensity_min, intensity_unit))
+    def add_filter_intensity(self, intensity_min):
+        self.get_peakml_obj().add_filter(FilterIntensity(intensity_min))
 
 
-    def add_filter_retention_time(self, range_min, range_max):
-        self.get_peakml_obj().add_filter(FilterRetentionTime(range_min, range_max))
+    def add_filter_retention_time(self, retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu):
+        self.get_peakml_obj().add_filter(FilterRetentionTime(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
 
 
     def add_filter_number_detections(self, detection_number):
@@ -443,3 +443,9 @@ class PeakMLData:
             df = df.append({"Name": tail, "Path": path}, ignore_index=True)
 
         return df
+
+    def update_settings(self, decdp, databases):
+
+        self.settings.set_preference_by_name("decdp", decdp)
+        self.settings.set_database_paths(databases["Path"].tolist())
+        SetIO.write_settings(self.settings)

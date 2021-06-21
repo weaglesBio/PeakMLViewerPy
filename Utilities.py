@@ -1,14 +1,25 @@
 from datetime import datetime
+from decimal import getcontext
 import numpy as np
 import base64
 import uuid
 import seaborn as sns
+import IO.SettingsIO as SettingsIO
+import decimal as dec
 
 def format_time_string(time):
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
 
 def format_time_datetime(time):
     return datetime.fromtimestamp(float(time))
+
+def format_time_hr_int(time):
+    date_time = datetime.fromtimestamp(float(time))
+    return date_time.hour
+
+def format_time_min_int(time):
+    date_time = datetime.fromtimestamp(float(time))
+    return date_time.minute
 
 def get_current_time():
     return datetime.now().strftime("%H:%M:%S.%f")
@@ -20,8 +31,14 @@ def get_colours(number):
     palette = sns.color_palette(None, number)
     return palette.as_hex()
 
-def convert_float_to_sf(value,number):
-    print("Not implemented")
+def convert_float_to_sf(value):
+    number = SettingsIO.load_preference_decdp()
+    decimal_val = float(value)
+
+    if decimal_val < 1000 and decimal_val > -1000:
+        return(round(decimal_val, number))
+    else:
+        return("{val:.{fig}e}".format(val=decimal_val, fig=number))
 
 ## Debugging methods
 

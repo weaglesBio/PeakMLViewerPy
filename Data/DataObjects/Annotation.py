@@ -1,3 +1,4 @@
+import Utilities as Utils
 class Annotation():
     def __init__(self, unit, ontologyref, label, value, valuetype):
         self.unit = unit
@@ -10,4 +11,7 @@ class Annotation():
         return self.label
 
     def get_value(self):
-        return self.value
+        if self.label == "ppm":
+            return Utils.convert_float_to_sf(self.value)
+        else:
+            return self.value

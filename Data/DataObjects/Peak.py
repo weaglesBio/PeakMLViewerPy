@@ -37,7 +37,7 @@ class Peak(Annotatable):
         return self.patternid
 
     def get_mass(self):
-        return self.mass
+        return Utils.convert_float_to_sf(self.mass)
 
     def get_sha1sum(self):
         return self.sha1sum
@@ -48,11 +48,17 @@ class Peak(Annotatable):
     def get_retention_time_formatted_datetime(self):
         return Utils.format_time_datetime(self.get_retention_time())
 
+    def get_retention_time_hr_int(self):
+        return Utils.format_time_hr_int(self.get_retention_time())
+
+    def get_retention_time_min_int(self):
+        return Utils.format_time_min_int(self.get_retention_time())
+
     def get_retention_time(self):
         return self.retentiontime
 
     def get_intensity(self):
-        return self.intensity
+        return Utils.convert_float_to_sf(self.intensity)
 
     def get_nr_peaks(self):
         return round(len(self.peaks))

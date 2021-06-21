@@ -1,10 +1,12 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-
+import tkinter.filedialog as fd
+import os.path
 class PreferencesDialog(tk.simpledialog.Dialog):
     def __init__(self, parent, title, data):
         self.decdp = data.get_settings_preference_by_name('decdp')
         self.databases = data.get_settings_database_paths()
+        self.submit = False
         super().__init__(parent, title)
     
     def body(self, frame):
@@ -58,6 +60,10 @@ class PreferencesDialog(tk.simpledialog.Dialog):
         self.database_add.grid(row=0, column=0, padx=(5,5), pady=(2,2), sticky="NEWS")
         self.database_remove.grid(row=1, column=0, padx=(5,5), pady=(0,0), sticky="NEWS")
 
+        self.refresh_databases_grid()
+
+    def refresh_databases_grid(self):
+        self.database_tree.delete(*self.database_tree.get_children())    
         if self.databases is not None:
             for i in range(len(self.databases)):
                 database_row = self.databases.iloc[i]
@@ -72,18 +78,28 @@ class PreferencesDialog(tk.simpledialog.Dialog):
         self.bind("<Escape>", lambda event: self.close_btn_clicked())
 
     def save_btn_clicked(self):
-        self.annotation_name = self.val_decdp.get()
-        #self.databases = 
-        
-        #self.annotation_relation = self.option_annotation_relation_selected.get()
-        #self.annotation_value = self.ent_annotation_value.get()
+        self.decdp = self.val_decdp.get()
+        self.submit = True
         self.destroy()
 
     def close_btn_clicked(self):
         self.destroy()
     
     def add_database(self):
-        print("Not implemented")
+        try:
+            filepath = fd.askopenfilename()  
+            if filepath:
+                head, tail = os.path.split(filepath)
+                self.databases = self.databases.append({"Name": tail, "Path": filepath}, ignore_index=True)
+                self.refresh_databases_grid()
+        except IOError as ioerr:
+            print("An IO error occurred")
+            print(ioerr)
+        except Exception as err:
+            print("An error occurred")
+            print(err)
 
     def remove_database(self):
-        print("Not implemented")
+        focused_entry = self.database_tree.item(self.database_tree.focus())
+        self.databases.drop(self.databases[self.databases["Name"] == focused_entry["values"][0]].index, inplace=True)
+        self.refresh_databases_grid()

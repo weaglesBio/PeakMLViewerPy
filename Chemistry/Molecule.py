@@ -5,14 +5,14 @@ class Molecule:
         self.name = name
         self.formula = formula
 
-        self.mass = None
-        self.inchi = None
-        self.smiles = None
-        self.description = None
-        self.class_description = None
-        self.synonyms = None
-        self.retention_time = None
-        self.polarity = None
+        self.mass = ""
+        self.inchi = ""
+        self.smiles = ""
+        self.description = ""
+        self.class_description = ""
+        self.synonyms = ""
+        self.retention_time = ""
+        self.polarity = ""
 
     def get_databaseid(self):
         return self.databaseid

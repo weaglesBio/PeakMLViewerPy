@@ -8,6 +8,7 @@ class FilterMassDialog(tk.simpledialog.Dialog):
         self.formula_ppm = None
         self.charge = None
         self.filter_option = None
+        self.submit = False
 
         super().__init__(parent, title)
     
@@ -68,9 +69,9 @@ class FilterMassDialog(tk.simpledialog.Dialog):
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
-        self.btn_cancel.pack(side="right")
+        self.btn_cancel.pack(side="right", padx=(5,10), pady=(5,10))
         self.btn_ok = tk.Button(self, text='OK', width=5, command=self.ok_btn_clicked)
-        self.btn_ok.pack(side="right")
+        self.btn_ok.pack(side="right", padx=(5,10), pady=(5,10))
         self.bind("<Return>", lambda event: self.ok_btn_clicked())
         self.bind("<Escape>", lambda event: self.cancel_btn_clicked())
 
@@ -81,6 +82,7 @@ class FilterMassDialog(tk.simpledialog.Dialog):
         self.mass_formula_ppm = self.ent_formula_ppm.get()
         self.mass_charge = self.ent_formula_charge.get()
         self.filter_option = self.selected_option.get()
+        self.submit = True
         self.destroy()
 
     def cancel_btn_clicked(self):
