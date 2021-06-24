@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
-from Data.DataObjects.PeakML import PeakML
 import base64
 import numpy as np
 
+from Data.DataObjects.PeakML import PeakML
 from Data.DataObjects.Header import Header
 from Data.DataObjects.Annotation import Annotation
 from Data.DataObjects.Peak import Peak
@@ -13,7 +13,6 @@ from Data.DataObjects.ApplicationInfo import ApplicationInfo
 from Data.DataObjects.MeasurementInfo import MeasurementInfo
 from Data.DataObjects.ScanInfo import ScanInfo
 from Data.DataObjects.FileInfo import FileInfo
-
 import Utilities as Utils
 
 

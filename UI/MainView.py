@@ -8,10 +8,10 @@ import ttkwidgets as ttkw
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.dates import DateFormatter
+import pandas as pd
 import statistics as stats
 from PIL import ImageTk, Image
 from rdkit import Chem
-from rdkit.Chem.Draw import IPythonConsole, ShowMol
 from rdkit.Chem import Draw
 from rdkit.Chem import inchi
 
@@ -31,6 +31,8 @@ import threading
 class MainView():
 
     def __init__(self, data):
+
+        self.df_entry = pd.DataFrame(columns=['UID','Type','Selected','RT','Mass','Intensity','Nrpeaks','HasAnnotation','Checked'])
 
         self.root = tk.Tk()
 
@@ -444,8 +446,9 @@ class MainView():
     def file_open(self):
         try:
             filepath = fd.askopenfilename()
-            self.set_filepath(filepath)    
-            self.import_peakml_file_with_progress()
+            if filepath:
+                self.set_filepath(filepath)    
+                self.import_peakml_file_with_progress()
         except IOError as ioerr:
             print("An IO error occurred")
             print(ioerr)
@@ -467,8 +470,9 @@ class MainView():
     def file_save_as(self):
         try:
             filepath = fd.asksaveasfilename(defaultextension=".peakml")
-            self.set_filepath(filepath)    
-            self.export_peakml_file_with_progress()
+            if filepath:
+                self.set_filepath(filepath)    
+                self.export_peakml_file_with_progress()
         except IOError as ioerr:
             print("An IO error occurred")
             print(ioerr)
@@ -481,6 +485,11 @@ class MainView():
 
     def set_filepath(self,filepath):
         self.filepath = filepath
+
+    def get_min_max_retention_time(self):
+        rt_list = self.df_entry["RT"].tolist()
+        rt_list.sort()
+        return rt_list[0], rt_list[-1]
 
     def edit_preferences(self):
         self.preferences_dialog()
@@ -539,6 +548,9 @@ class MainView():
         self.data.update_data_frames_for_selected_entry()
         self.data.update_plot_data_frames_for_selected_entry()
 
+        self.refresh_info_view()
+
+        self.refresh_filters_view()
         #Utils.trace("ref6")
 
         self.refresh_set_view()
@@ -814,9 +826,11 @@ class MainView():
             self.refresh_entry_view_with_progress()
 
     def remove_filter(self):
-        focused_filter = self.filter_tree.item(self.filter_tree.focus())
-        self.data.remove_filter_by_id(focused_filter["tags"][0])
-        self.refresh_entry_view_with_progress()
+        if self.filter_tree.isEmpty:
+            focused_filter = self.filter_tree.item(self.filter_tree.focus())
+            if focused_filter:
+                self.data.remove_filter_by_id(focused_filter["tags"][0])
+                self.refresh_entry_view_with_progress()
 
     def filter_mass_dialog(self):
         dlg = FilterMassDialog(self.root,"Filter mass")
@@ -835,9 +849,10 @@ class MainView():
             return False
 
     def filter_retention_time_dialog(self):
-        dlg = FilterRetentionTimeDialog(self.root,"Filter retention-time")
+        rt_min, rt_max = self.get_min_max_retention_time()
+        dlg = FilterRetentionTimeDialog(self.root,"Filter retention-time", rt_min, rt_max)
         if dlg.submit:
-            self.data.add_filter_retention_time(dlg.retention_time_min_hr, dlg.retention_time_max_hr, dlg.retention_time_min_minu, dlg.retention_time_max_minu)
+            self.data.add_filter_retention_time(dlg.retention_time_min_sec, dlg.retention_time_max_sec, dlg.retention_time_min_minu, dlg.retention_time_max_minu)
             return True
         else:
             return False

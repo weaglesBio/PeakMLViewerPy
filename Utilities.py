@@ -1,11 +1,8 @@
 from datetime import datetime
 from decimal import getcontext
-import numpy as np
-import base64
 import uuid
 import seaborn as sns
 import IO.SettingsIO as SettingsIO
-import decimal as dec
 
 def format_time_string(time):
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))

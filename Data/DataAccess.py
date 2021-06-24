@@ -1,4 +1,3 @@
-from numpy.lib.twodim_base import mask_indices
 import gzip
 from xml.dom import minidom
 import pandas as pd
@@ -34,6 +33,7 @@ class PeakMLData:
         self.settings = Settings()
 
         self.df_entry = pd.DataFrame(columns=['UID','Type','Selected','RT','Mass','Intensity','Nrpeaks','HasAnnotation','Checked'])
+        self.df_entry.set_index("UID")
         self.df_filter = pd.DataFrame(columns=['ID','Type','Settings'])
         self.df_plot_peak = pd.DataFrame(columns=['UID','Label','RT_values','Intensity_values','Colour','Selected'])
         self.df_plot_peak.set_index("UID")
@@ -200,8 +200,10 @@ class PeakMLData:
             print(err)
 
     def get_filters_list(self):
+        self.df_filter = self.df_filter.iloc[0:0]
         for filter in self.get_peakml_obj().get_filters():
             self.df_filter = self.df_filter.append({"ID": filter.get_id_str(), "Type": filter.get_type_value(), "Settings": filter.get_settings_value()}, ignore_index=True)
+
         return self.df_filter
 
 

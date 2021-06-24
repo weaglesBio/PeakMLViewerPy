@@ -1,0 +1,12 @@
+# Ignore the dist folder
+dist
+
+#Ignore the build folder
+build
+
+#Ignore the pychache files
+*.pyc
+*.pyo
+__pycache__\*.cpython-39.pyc
+UI\__pycache__\*.cpython-39.pyc
+Data\__pycache__\*.cpython-39.pyc

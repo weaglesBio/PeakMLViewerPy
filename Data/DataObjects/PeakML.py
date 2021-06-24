@@ -46,4 +46,7 @@ class PeakML():
         return self.filters
 
     def remove_filter_by_id(self, id):
-        [self.filters.pop(i) for i in range(len(self.filters)) if self.filters[i].get_id_str() == id]
+        for i in range(len(self.filters)):
+            if self.filters[i].get_id_str() == id:
+                self.filters.pop(i)
+                print("Test")
