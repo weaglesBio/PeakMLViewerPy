@@ -4,6 +4,8 @@ dist
 #Ignore the build folder
 build
 
+test_files
+
 #Ignore the pychache files
 *.pyc
 *.pyo
