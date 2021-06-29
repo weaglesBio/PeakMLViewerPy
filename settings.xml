@@ -2,7 +2,7 @@
 <peakmlviewer>
 	<settings>
 		<smooth>true</smooth>
-		<decdp>6</decdp>
+		<decdp>3</decdp>
 		<databases>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/01_StdMix.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/02_StdMix.xml</database>
@@ -19,6 +19,7 @@
 			<database>C:/Source/MetabolomicModellingMSc/Databases/standard.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/Streptomyces_clavuligerus_db.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/trypanocyc.xml</database>
+			<database>C:/Source/MetabolomicModellingMSc/test_files/009_kegg.xml</database>
 		</databases>
 	</settings>
 </peakmlviewer>
