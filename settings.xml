@@ -2,7 +2,7 @@
 <peakmlviewer>
 	<settings>
 		<smooth>true</smooth>
-		<decdp>6</decdp>
+		<decdp>3</decdp>
 		<databases>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/01_StdMix.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/03_StdMix.xml</database>
