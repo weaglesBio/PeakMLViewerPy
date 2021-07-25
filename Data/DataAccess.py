@@ -1,448 +1,383 @@
-import gzip
-from xml.dom import minidom
-import pandas as pd
-import os.path
+from Data.PeakML.Peak import Peak
+from Data.PeakML.PeakML import PeakML
+from Data.Settings import Settings
+from Data.View.EntryDataView import EntryDataView
+from Data.View.FilterDataView import FilterDataView
+from Data.View.PlotPeakDataView import PlotPeakDataView
+from Data.View.PlotDerivativesDataView import PlotDerivativesDataView
+from Data.View.PlotIntensityAllDataView import PlotIntensityAllDataView
+from Data.View.PlotIntensityLogDataView import PlotIntensityLogDataView
+from Data.View.SetDataView import SetDataView
+from Data.View.AnnotationDataView import AnnotationDataView
+from Data.View.IdentificationDataView import IdentificationDataView
 
-import IO.PeakMLReader as Read
-import IO.PeakMLWriter as Write
+from Data.Filter.MassFilter import MassFilter
+from Data.Filter.IntensityFilter import IntensityFilter
+from Data.Filter.RetentionTimeFilter import RetentionTimeFilter
+from Data.Filter.NumberDetectionsFilter import NumberDetectionsFilter
+from Data.Filter.AnnotationFilter import AnnotationFilter
+from Data.Filter.SortFilter import SortFilter
+from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
+
 import IO.MoleculeIO as MolIO
 import IO.SettingsIO as SetIO
 
-from Data.DataObjects.FilterMass import FilterMass
-from Data.DataObjects.FilterIntensity import FilterIntensity
-from Data.DataObjects.FilterRetentionTime import FilterRetentionTime
-from Data.DataObjects.FilterNumberDetections import FilterNumberDetections
-from Data.DataObjects.FilterAnnotations import FilterAnnotations
-from Data.DataObjects.FilterSort import FilterSort
-from Data.DataObjects.FilterSortTimeSeries import FilterSortTimeSeries
-from Data.Settings import Settings
+import Logger as lg
+import Progress as p
 
-import Utilities as Utils
+import pandas as pd
+import os.path
 
-# The purpose of this class is to encapsulate all data access logic, the methods here are the one used by the ui layer
-# They should be a specific and descriptive in their naming as possible.
+class DataAccess:
 
-class PeakMLData:
+    @property
+    def settings(self) -> Settings:
+        return self._settings
+
+    @property
+    def entry_view_dataframe(self) -> pd.DataFrame:
+        return self._entry_view.dataframe
+
+    @property
+    def filter_view_dataframe(self) -> pd.DataFrame:
+        return self._filter_view.dataframe
+    
+    @property
+    def plot_peak_view_dataframe(self) -> pd.DataFrame:
+        return self._plot_peak_view.dataframe
+
+    @property
+    def plot_der_view_dataframe(self) -> pd.DataFrame:
+        return self._plot_der_view.dataframe
+    
+    @property
+    def plot_int_all_view_dataframe(self) -> pd.DataFrame:
+        return self._plot_int_all_view.dataframe
+    
+    @property
+    def plot_int_log_view_dataframe(self) -> pd.DataFrame:
+        return self._plot_int_log_view.dataframe
+    
+    @property
+    def set_view_dataframe(self) -> pd.DataFrame:
+        return self._set_view.dataframe
+    
+    @property
+    def annotation_view_dataframe(self) -> pd.DataFrame:
+        return self._annotation_view.dataframe
+
+    @property
+    def identification_view_dataframe(self) -> pd.DataFrame:
+        return self._identification_view.dataframe
+
+    @property
+    def import_peakml_path(self):
+        return os.path.split(self.import_peakml_filepath)[0]
+
+    @property
+    def import_peakml_filename(self):
+        return os.path.split(self.import_peakml_filepath)[1]
+
+    @property
+    def import_peakml_filepath(self) -> str:
+        return self._import_peakml_filepath
+
+    @import_peakml_filepath.setter
+    def import_peakml_filepath(self, import_peakml_filepath: str):
+        self._import_peakml_filepath = import_peakml_filepath
+
+    @property
+    def import_ipa_filepath(self) -> str:
+        return self._import_ipa_filepath
+
+    @import_ipa_filepath.setter
+    def import_ipa_filepath(self, import_ipa_filepath: str):
+        self._import_ipa_filepath = import_ipa_filepath
+
+    @property
+    def export_peakml_filepath(self) -> str:
+        return self._export_peakml_filepath
+
+    @export_peakml_filepath.setter
+    def export_peakml_filepath(self, export_peakml_filepath: str):
+        self._export_peakml_filepath = export_peakml_filepath
+
+    @property
+    def selected_entry_uid(self) -> str:
+        # Get first row with selected is true from entry
+        df = self.entry_view_dataframe
+        selected_df = df.loc[df["Selected"] == True]
+        return selected_df["UID"].values[0]
+
+    @selected_entry_uid.setter
+    def selected_entry_uid(self, uid: str):
+        self._entry_view.update_selected(uid)
+
+    @property
+    def selected_identification_uid(self) -> str:
+        # Get first row with selected is true from entry
+        df = self.identification_view_dataframe
+        selected_df = df.loc[df["Selected"] == True]
+        return selected_df["UID"].values[0]
+
+    @selected_identification_uid.setter
+    def selected_identification_uid(self, uid: str):
+        self._identification_view.update_selected(uid)
+
+    @property
+    def nr_peaks_details(self) -> str:
+        return f"{str(self._entry_view.nr_peaks)} ({str(self._entry_view.nr_peaks_total)})"
+
+    @property
+    def ipa_imported(self) -> bool:
+        return self._ipa_imported
+
+    @property
+    def ipa_imported(self) -> bool:
+        return self._ipa_imported
+
+    @property
+    def prior_probabilities_modified(self) -> bool:
+        return self._prior_probabilities_modified
 
     def __init__(self):
-        self.peakMLData = None
-        self.peakml_obj = None
-        self.filepath = None
-        self.molecule_database = None
 
-        self.settings = Settings()
+        self._peakml = PeakML()
+        self._settings = Settings()
+        self._molecule_database = MolIO.load_molecule_databases()
+        self._filters = []
+        self._ipa_imported = False
+        self._prior_probabilities_modified = False
 
-        self.df_entry = pd.DataFrame(columns=['UID','Type','Selected','RT','Mass','Intensity','Nrpeaks','HasAnnotation','Checked'])
-        self.df_entry.set_index("UID")
-        self.df_filter = pd.DataFrame(columns=['ID','Type','Settings'])
-        self.df_plot_peak = pd.DataFrame(columns=['UID','Label','RT_values','Intensity_values','Colour','Selected'])
-        self.df_plot_peak.set_index("UID")
-        self.df_plot_derivative = pd.DataFrame(columns=['Mass','Intensity','Description'])
-        self.df_plot_intensity = pd.DataFrame(columns=['SetID','Intensities'])
-        self.df_identification = pd.DataFrame(columns=['ID','Formula','PPM','Adduct','Name','Class','Description','Smiles','InChi'])
-        self.df_set = pd.DataFrame(columns=['UID','Name','Color','Selected','Parent'])
-        self.df_set.set_index("UID")
-        self.df_annotation = pd.DataFrame(columns=['Label','Value'])
+        self._entry_view = EntryDataView()
+        self._filter_view = FilterDataView()
+        self._plot_peak_view = PlotPeakDataView()
+        self._plot_der_view = PlotDerivativesDataView()
+        self._plot_int_all_view = PlotIntensityAllDataView()
+        self._plot_int_log_view = PlotIntensityLogDataView()      
+        self._set_view = SetDataView()
+        self._annotation_view = AnnotationDataView()
+        self._identification_view = IdentificationDataView()
 
+    # Import Peakml object data
+    def import_peakml_data(self):
+        try:
+            p.update_progress("Importing PeakML file.", 5)
+            self._peakml.import_from_file(self.import_peakml_filepath)
 
-    def get_entry_view(self):
-        return self.df_entry
+            p.update_progress("Loading view data.", 20)
+            self.load_view_data_from_peakml()
 
+            self._ipa_imported = False
+            self._prior_probabilities_modified = False
 
-    def get_filter_view(self):
-        return self.df_filter
+        except Exception as err:
+            lg.log_error(f'An error when importing peakML data: {err}')
 
+    def import_ipa_data(self):
+        try:
+            p.update_progress("Importing IPA file.", 5)
+            self._peakml.import_ipa_from_file(self.import_ipa_filepath)
 
-    def get_plot_peak_view(self):
-        return self.df_plot_peak
+            p.update_progress("Loading view data.", 20)
+            self.load_view_data_from_peakml()
 
+            self._ipa_imported = True
+            self._prior_probabilities_modified = False
 
-    def get_plot_derivative_view(self):
-        return self.df_plot_derivative
+        except Exception as err:
+            lg.log_error(f'An error when importing IPA data: {err}')
 
+    # Load view data from peakml object
+    def load_view_data_from_peakml(self):
 
-    def get_plot_intensity_view(self):
-        return self.df_plot_intensity
+        try:
+            lg.log_progress("Begin load view data from PeakML")
 
+            filtered_peaks = self.filter_peaks(self._peakml.peaks)
 
-    def get_identification_view(self):
-        return self.df_identification
+            p.update_progress("Loading entry view data", 20)
+            self._entry_view.load_data(filtered_peaks)
+            lg.log_progress("Entry view data loaded.")
 
+            p.update_progress("Loading filter view data", 27)
+            self._filter_view.load_data(self._filters)
+            lg.log_progress("Filter view data loaded.")
+            
+            self.update_selected_entry()
 
-    def get_set_view(self):
-        return self.df_set
+        except Exception as err:
+            lg.log_error(f'An error when loading view data: {err}')
 
+    def update_selected_entry(self):
 
-    def get_annotation_view(self):
-        return self.df_annotation
+        try:
+            lg.log_progress("Begin load view data for selected entry")
 
+            filtered_peaks = self.filter_peaks(self._peakml.peaks)
+            selected_peak = self._peakml.get_peak_by_uid(self.selected_entry_uid)
 
-    def get_filepath(self):
-        return self.filepath
+            p.update_progress("Loading set view data", 30)
+            self._set_view.load_data(selected_peak, self._peakml.header)
+            lg.log_progress("Set view data loaded.")
 
+            p.update_progress("Loading peak plot data", 32)
+            self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            lg.log_progress("Peak plot data loaded.")
 
-    def get_path(self):
-        return os.path.split(self.filepath)[0]
+            p.update_progress("Loading derivatives plot data", 35)
+            self._plot_der_view.load_plot_data_for_selected_peak(selected_peak, filtered_peaks)
+            lg.log_progress("Derivatives plot data loaded.")
 
+            p.update_progress("Loading intensity plot data", 37)
+            self._plot_int_all_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            lg.log_progress("Intensity plot data loaded.")
 
-    def get_filename(self):
-        return os.path.split(self.filepath)[1]
+            p.update_progress("Loading intensity log plot data", 40)
+            self._plot_int_log_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            lg.log_progress("Intensity log plot data loaded.")
+            
+            p.update_progress("Loading annotation view data", 42)
+            self._annotation_view.load_data_for_selected_peak(selected_peak)
+            lg.log_progress("Annotation view data loaded.")
+
+            p.update_progress("Loading identification view data", 45)
+            self._identification_view.load_data_for_selected_peak(selected_peak, self._molecule_database)
+            lg.log_progress("Identification view data loaded.")
+
+        except Exception as err:
+            lg.log_error(f'An error when loading selected entry data: {err}')
+
+    # Export PeakML object data to file
+    def export_peakml(self):
+        self._peakml.export(self.export_peakml_filepath)
+
+    def update_entry_checked_status(self, uid: str, checked: bool):
+        self._entry_view.update_checked_status(uid, checked)
+
+    def update_set_checked_status(self, uid: str, checked: bool):
+        self._set_view.update_checked_status(uid, checked)
+
+    def update_identification_checked_status(self, uid: str, checked: bool):
+        self._identification_view.update_checked_status(uid, checked)
+
+    def remove_checked_entries(self):
+        for uid_to_delete in self._entry_view.get_checked_entries_uid():
+            self._peakml.remove_peak_by_uid(uid_to_delete)
+
+        #TODO: Change to remove the rows and only reload if selected has been removed.
+
+        self.load_view_data_from_peakml()
+
+    def get_selected_identification_details(self):
+        uid, id, prior, notes = self._identification_view.get_details(self.selected_identification_uid)
+        return uid, id, prior, notes
+
+    def remove_checked_identifications(self):
+        prior_updated = self._identification_view.remove_checked()
+
+        if prior_updated:
+            self._prior_probabilities_modified = True
+
+        #Save updated identification dataframe to selected peak. 
+        self.update_peak_identifications()
+
+    def update_identification_details(self, uid, prior, notes):
+        prior_updated = self._identification_view.update_details(uid, prior, notes)
+
+        if prior_updated:
+            self._prior_probabilities_modified = True
         
-
-    def set_filepath(self, filepath):
-        self.filepath = filepath
-
-
-    def set_peakml_obj(self, current_obj):
-        self.peakml_obj = current_obj
-
-
-    def get_peakml_obj(self):
-        return self.peakml_obj
-
-
-    def get_molecule_database(self):
-        return self.molecule_database 
-
-
-    def get_nr_peaks(self):
-        return self.peakml_obj.get_nr_peaks()
-
-
-    def get_total_nr_peaks(self):      
-        peak_count = 0
-        for peak in self.peakml_obj.peaks:
-            if peak.get_type() == 'peakset':
-                peak_count += len(peak.peaks)
-            else:
-                peak_count += 1
-
-        return peak_count
-
-
-    def set_selected_peak(self, peak_id):
-        self.peakml_obj.set_selected_peak_uid(peak_id)
-
-
-    def get_selected_peak(self):
-        return self.peakml_obj.get_selected_peak()
-
-
-    def load_molecule_databases(self):
-        self.molecule_database = MolIO.load_molecule_databases()
-
-
-    def import_from_filepath(self, filepath):
-        self.set_filepath(filepath)
-
-        tree_data = None
-
-        # Files can be gzipped, so if unable to read file directly, a second attempt is made with decompression.
-        attempt_compressed = False
-
-        try:
-            # If errors while attempt to read, requires conversion.
-            with open(filepath) as f:
-                tree_data = f.read()
-        except:
-            attempt_compressed = True
-            
-        if attempt_compressed:
-            try:
-                with gzip.open(filepath) as g:
-                    tree_data = g.read()
-                    tree_data = tree_data.decode()
-                    tree_data = tree_data.replace('\n','')
-                    tree_data = tree_data.replace('\t','')
-                    tree_data = tree_data.encode()
-
-                    ## Section for debugging and testing by comparing decoded version with output version.
-                    #md_string = minidom.parseString(tree_data)
-                    #decoded_output = md_string.toprettyxml(indent="\t")
-                    #decoded_output = decoded_output.replace('<?xml version="1.0" ?>','<?xml version="1.0" encoding="UTF-8"?>\n\n\n<?xml-stylesheet type="text/xml" href=""?>\n')
-                    #decoded_output = decoded_output.replace("/>"," />")
-
-                    #w = open(self.get_path() + "decoded_" + self.get_filename(), "w")
-                    #w.write(decoded_output)
-                    #w.close()
-            except Exception as err:
-                print("Unable to open compressed file.")
-                print(err)
-
-        if tree_data is not None:
-            try:
-                data_obj = Read.importElementTreeFromPeakMLFile(tree_data, filepath)
-                self.set_peakml_obj(data_obj)
-            except Exception as err:
-                print("Unable to convert file to PeakML class stucture.")
-                print(err)
-
-
-    def export_data_object_to_file(self, filepath):
-
-        data_obj = self.get_peakml_obj()
-        xml_string = Write.create_xml_from_peakml(data_obj)
-
-        r = open(filepath, "w")
-        r.write(xml_string)
-        r.close()
-
-
-    def update_entry_dataframe(self):
-        try:
-            self.df_entry = self.df_entry.iloc[0:0]
-
-            for peak in self.get_peakml_obj().get_filtered_peaks():
-                has_annotation = True if peak.get_specific_annotation('identification') else False
-                self.df_entry = self.df_entry.append({"UID": peak.get_uid(), "Type": peak.get_type(), "Selected": peak.if_patternid_set(), "RT": peak.get_retention_time_formatted_string(), "Mass": peak.get_mass(), "Intensity": peak.get_intensity(), "Nrpeaks": peak.get_nr_peaks(), "HasAnnotation": has_annotation, "Checked": peak.get_checked()}, ignore_index=True)
-        except Exception as err:
-            print("Unable to update entry data")
-            print(err)
-
-    def get_filters_list(self):
-        self.df_filter = self.df_filter.iloc[0:0]
-        for filter in self.get_peakml_obj().get_filters():
-            self.df_filter = self.df_filter.append({"ID": filter.get_id_str(), "Type": filter.get_type_value(), "Settings": filter.get_settings_value()}, ignore_index=True)
-
-        return self.df_filter
-
-
-    # Returns the peak with one of the given list of measurement id's
-    def get_peaks_with_measurementids(self, peaks, measurementids):
-
-        measurement_peaks = []
-
-        for peak in peaks:
-            peak_has_measurement = False
-
-            peak_data = peak.get_peak_data()
-            peak_data_measurementids = peak_data.get_measurementids()
-
-            for peak_data_measurementid in peak_data_measurementids:
-                for measurementid in measurementids:
-                    if peak_data_measurementid == measurementid:
-                        peak_has_measurement = True
-
-            if peak_has_measurement:      
-                measurement_peaks.append(peak)
-
-        return measurement_peaks
-
-    def update_plot_data_frames_for_selected_entry(self):
-        # Get current peakset
-        selected_peakset = self.get_peakml_obj().get_selected_peak()
-
-        #Clear data frames
-        self.df_plot_peak = self.df_plot_peak.iloc[0:0]
-        self.df_plot_derivative = self.df_plot_derivative.iloc[0:0]
-        self.df_plot_intensity = self.df_plot_intensity.iloc[0:0]
-
-         # Plot peak dataframe
-        try:
-            for peak in selected_peakset.peaks:
-
-                measurement = self.get_peakml_obj().header.get_measurement_by_id(peak.measurementid)
-                uid = measurement.get_uid()
-                label = measurement.label
-                rt_values = peak.peak_data.get_retention_times_formatted_datetime()
-                intensity_values = peak.peak_data.get_intensities() 
-
-                colour = measurement.get_colour()
-                selected = measurement.get_selected() 
-
-                self.df_plot_peak = self.df_plot_peak.append({"UID": uid,"Label": label, "RT_values": rt_values, "Intensity_values": intensity_values, "Colour" : colour, "Selected" : selected }, ignore_index=True)
-        except Exception as err:
-            print("Unable to update plot peak data")
-            print(err)
-
-        # Plot derivative dataframe
-        try:
-            peakset_annotation_relationid = self.get_peakml_obj().get_selected_peak().get_specific_annotation('relation.id')
-
-            related_peaks = []
-
-            for peak in self.get_peakml_obj().peaks:
-                peak_annotation_relationid = peak.get_specific_annotation('relation.id')
-
-                if peak_annotation_relationid:
-                    if peakset_annotation_relationid.value == peak_annotation_relationid.value:
-                        related_peaks.append(peak)
-                
-            for rel_peak in related_peaks:
-
-                mass = rel_peak.get_mass()
-                intensity = rel_peak.get_intensity()
-
-                ann_relation = rel_peak.get_specific_annotation('relation.ship')
-                ann_reaction = rel_peak.get_specific_annotation('reaction')
-
-                if ann_reaction:
-                    description = ann_reaction.value
-                elif ann_relation:
-                    description = ann_relation.value
-                else:
-                    description = ""
-                
-                self.df_plot_derivative = self.df_plot_derivative.append({"Mass": float(mass), "Intensity": float(intensity), "Description": description}, ignore_index=True)
-        except Exception as err:
-            print("Unable to update plot derivative data")
-            print(err)
-
-        # Plot intensity dataframe
-        try:           
-            peaks = selected_peakset.peaks
-
-            for set in self.get_peakml_obj().header.get_sets():
-                
-                # Get all the peaks for the set.
-                measurement_peaks = self.get_peaks_with_measurementids(peaks, set.get_measurementids())
-
-                intensities = []
-                for measurement_peak in measurement_peaks:
-                    intensities.append(measurement_peak.get_intensity())
-
-                self.df_plot_intensity = self.df_plot_intensity.append({"SetID": set.get_id(), "Intensities": intensities}, ignore_index=True)
-        except Exception as err:
-            print("Unable to update plot intensity data")
-            print(err)
-
-
-    def update_data_frames_for_selected_entry(self):
-        # Get molecule database
-        molecule_database = self.get_molecule_database()
-
-        # Get current peakset
-        selected_peakset = self.get_peakml_obj().get_selected_peak()
-
-        #Clear data frames
-        self.df_identification = self.df_identification.iloc[0:0]
-        self.df_set = self.df_set.iloc[0:0]
-        self.df_annotation = self.df_annotation.iloc[0:0]
-
-        # Identification dataframe
-        try:
-            identification_ids = []
-            identification_ppms = []
-            identification_adducts = []
-
-            identification_ppm = selected_peakset.get_specific_annotation('ppm')
-            if identification_ppm:
-                identification_ppms = identification_ppm.value.split(', ')
-
-            identification_adduct = selected_peakset.get_specific_annotation('adduct')
-            if identification_adduct:
-                identification_adducts = identification_adduct.value.split(', ')
-
-            ppm = ""
-            adduct = ""
-
-            # Get peak identification of label 'identification', value is multiple ids
-            identification_annotation = selected_peakset.get_specific_annotation('identification')
-            if identification_annotation:
-                identification_ids = identification_annotation.value.split(', ')
-
-                for i in range(len(identification_ids)):
-                
-                    id = identification_ids[i]
-                    molecule = molecule_database[id]
-
-                    if identification_ppms and len(identification_ppms) > 0:
-                        if i < len(identification_ppms):
-                            ppm = Utils.convert_float_to_sf(identification_ppms[i])
-
-                    if identification_adducts and len(identification_adducts) > 0:
-                        if i < len(identification_adducts):
-                            adduct = identification_adducts[i]
-
-                    mol_formula = str(molecule.get_formula())
-                    mol_name = molecule.get_name()
-                    mol_classdesc = molecule.get_class_description()
-                    mol_desc = molecule.get_description()
-                    mol_smiles = molecule.get_smiles()
-                    mol_inchi = molecule.get_inchi()
-
-                    self.df_identification = self.df_identification.append({"ID": id, "Formula": mol_formula, "PPM": ppm, "Adduct": adduct, "Name": mol_name, "Class": mol_classdesc, "Description": mol_desc , "Smiles": mol_smiles, "InChi": mol_inchi}, ignore_index=True)
-            
-        except Exception as err:
-            print("Unable to update identification data")
-            print(err)
-
-        # Set dataframe
-        try:
-            # Set measurement colours from sets
-            for set_info in self.get_peakml_obj().header.get_sets():
-
-                self.df_set = self.df_set.append({"UID": set_info.get_uid(), "Name": set_info.get_id(), "Color": set_info.get_colour(), "Selected": set_info.get_selected(), "Parent": None}, ignore_index=True)
-
-                measurement_peaks = self.get_peaks_with_measurementids(selected_peakset.peaks, set_info.get_measurementids())
-
-                for measurement_peak in measurement_peaks:
-                    measurement = self.get_peakml_obj().header.get_measurement_by_id(measurement_peak.get_measurementid())
-
-                    measurement.set_colour(set_info.get_colour())
-                    
-                    self.df_set = self.df_set.append({"UID": measurement.get_uid(), "Name": measurement.get_label(), "Color": set_info.get_colour(), "Selected": measurement.get_selected(), "Parent": set_info.get_id()}, ignore_index=True)
-                
-        except Exception as err:
-            print("Unable to update set data")
-            print(err)
-
-        # Annotation dataframe
-        try:
-            for annotation in selected_peakset.get_annotations():
-                self.df_annotation = self.df_annotation.append({"Label": annotation.get_label(), "Value": annotation.get_value()}, ignore_index=True)
-        except Exception as err:
-            print("Unable to update annotation data")
-            print(err)
-
-    def update_set_selection(self, measurement_uid, selected):
-        measurement = self.get_peakml_obj().header.get_measurement_by_uid(measurement_uid)
-        measurement.set_selected(selected)
-        self.df_plot_peak.at[self.df_plot_peak.index[self.df_plot_peak["UID"] == measurement_uid].tolist()[0], 'Selected'] = selected
-
-
-    def add_filter_mass(self, mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option):
-        self.get_peakml_obj().add_filter(FilterMass(mass_min, mass_max, formula, formula_ppm, mass_charge, filter_option))
-
+        #Save updated identification dataframe to selected peak. 
+        self.update_peak_identifications()
+ 
+    def update_peak_identifications(self):
+        #Save updated identification dataframe to selected peak. 
+        ann_identification, ann_ppm, ann_adduct, ann_prior, ann_post, ann_notes = self._identification_view.get_identification_annotations()
+        
+        peak = self._peakml.peaks[self.selected_entry_uid]
+        peak.update_specific_annotation('identification',ann_identification)
+        peak.update_specific_annotation('ppm',ann_ppm)
+        peak.update_specific_annotation('adduct',ann_adduct)
+
+
+        peak.update_specific_annotation('prior',ann_prior)
+        peak.update_specific_annotation('post',ann_post)
+            #self._prior_probabilities_modified = True
+        
+        peak.update_specific_annotation('notes',ann_notes)
+        self._peakml.peaks[self.selected_entry_uid] = peak
+
+    def get_set_checked_status(self, label: str):
+        return self._set_view.get_checked_status_from_label(label)
+
+#region Filters
+
+    def add_filter(self, filter):
+        self._filters.append(filter)
+        self.load_view_data_from_peakml()
+
+    def add_filter_mass(self, mass_min, mass_max): #, formula, formula_ppm, mass_charge, filter_option
+        self.add_filter(MassFilter(mass_min, mass_max)) #, formula, formula_ppm, mass_charge, filter_option
 
     def add_filter_intensity(self, intensity_min):
-        self.get_peakml_obj().add_filter(FilterIntensity(intensity_min))
-
+        self.add_filter(IntensityFilter(intensity_min))
 
     def add_filter_retention_time(self, retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu):
-        self.get_peakml_obj().add_filter(FilterRetentionTime(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
-
+        self.add_filter(RetentionTimeFilter(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
 
     def add_filter_number_detections(self, detection_number):
-        self.get_peakml_obj().add_filter(FilterNumberDetections(detection_number))
-
+        self.add_filter(NumberDetectionsFilter(detection_number))
 
     def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
-        self.get_peakml_obj().add_filter(FilterAnnotations(annotation_name, annotation_relation, annotation_value))
-
+        self.add_filter(AnnotationFilter(annotation_name, annotation_relation, annotation_value))
 
     def add_filter_sort(self):
         print("Not implemented")
 
-
     def add_filter_sort_times_series(self):
         print("Not implemented")
 
-
     def remove_filter_by_id(self, id):
-        self.get_peakml_obj().remove_filter_by_id(id)
+        updated_filter_list = []
+        for filter in self._filters:
+            if filter.uid != id:
+                updated_filter_list.append(filter)
 
+        self._filters = updated_filter_list
+        self.load_view_data_from_peakml()
 
+    def get_min_max_mass(self):
+        return self._entry_view.mass_min, self._entry_view.mass_max
+
+    def get_min_max_intensity(self):
+        return self._entry_view.intensity_min, self._entry_view.intensity_max
+
+    def get_min_max_retention_time(self):
+        return self._entry_view.retention_time_min, self._entry_view.retention_time_max
+
+    def get_min_max_samples_count(self):
+        return self._entry_view.sample_count_min, self._entry_view.sample_count_max
+
+    def filter_peaks(self, peaks_dic: dict[str, Peak]):
+    
+        for filter in self._filters:
+            peaks_dic = filter.apply_to_peak_list(peaks_dic)
+
+        return peaks_dic
+
+#endregion
+
+#region Settings
     def get_settings_preference_by_name(self, name):
         return self.settings.get_preference_by_name(name)
-
 
     def get_settings_database_paths(self):
         database_paths = self.settings.get_database_paths()
         df = pd.DataFrame()
         for path in database_paths:
-            head, tail = os.path.split(path)
-            df = df.append({"Name": tail, "Path": path}, ignore_index=True)
+            filename = os.path.split(path)[1]
+            df = df.append({"Name": filename, "Path": path}, ignore_index=True)
 
         return df
 
@@ -451,3 +386,6 @@ class PeakMLData:
         self.settings.set_preference_by_name("decdp", decdp)
         self.settings.set_database_paths(databases["Path"].tolist())
         SetIO.write_settings(self.settings)
+
+#endregion
+

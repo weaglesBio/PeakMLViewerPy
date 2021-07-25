@@ -1,6 +1,6 @@
 import tkinter as tk
-
-class SortTimeSeriesDialog(tk.simpledialog.Dialog):
+from UI.ViewerDialog import ViewerDialog
+class SortTimeSeriesDialog(ViewerDialog):
     def __init__(self, parent, title):
         self.submit = False
         super().__init__(parent, title)

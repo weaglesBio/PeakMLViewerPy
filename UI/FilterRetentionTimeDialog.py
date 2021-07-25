@@ -1,7 +1,8 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from UI.ViewerDialog import ViewerDialog
 
-class FilterRetentionTimeDialog(tk.simpledialog.Dialog):
+class FilterRetentionTimeDialog(ViewerDialog):
     def __init__(self, parent, title, rt_min, rt_max):
 
         self.rt_min_sec = 0
@@ -25,7 +26,7 @@ class FilterRetentionTimeDialog(tk.simpledialog.Dialog):
         self.retention_time_max_minu = None
         self.submit = False
 
-        super().__init__(parent, title)
+        super().__init__(parent, title, width=200, height=160)
 
     def body(self, frame):
 
@@ -39,20 +40,20 @@ class FilterRetentionTimeDialog(tk.simpledialog.Dialog):
         self.val_mini_min = tk.StringVar(frame, value=self.rt_min_minu)
         self.val_max_min = tk.StringVar(frame, value=self.rt_max_minu)
 
-        self.spbx_mini_sec = ttk.Spinbox(frame, width=5, from_=0, to=59, textvariable=self.val_mini_sec)
-        self.spbx_max_sec = ttk.Spinbox(frame, width=5, from_=0, to=59, textvariable=self.val_max_sec)
-        self.spbx_mini_min = ttk.Spinbox(frame, width=5, from_=0, to=self.rt_max_minu, textvariable=self.val_mini_min)
-        self.spbx_max_min = ttk.Spinbox(frame, width=5, from_=0, to=self.rt_max_minu, textvariable=self.val_max_min)
+        self.spbx_mini_sec = ttk.Spinbox(frame, width=5, from_=0, to=59, state='readonly', textvariable=self.val_mini_sec)
+        self.spbx_max_sec = ttk.Spinbox(frame, width=5, from_=0, to=59, state='readonly', textvariable=self.val_max_sec)
+        self.spbx_mini_min = ttk.Spinbox(frame, width=5, from_=0, to=self.rt_max_minu, state='readonly',  textvariable=self.val_mini_min)
+        self.spbx_max_min = ttk.Spinbox(frame, width=5, from_=0, to=self.rt_max_minu, state='readonly', textvariable=self.val_max_min)
 
         self.lbl_mini.grid(row=1, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.lbl_max.grid(row=2, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.lbl_minu.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.lbl_sec.grid(row=0, column=2, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.spbx_mini_min.grid(row=1, column=1, padx=(2,2), pady=(5,5), state='readonly', sticky="NEWS")
-        self.spbx_mini_sec.grid(row=1, column=2, padx=(2,2), pady=(5,5), state='readonly', sticky="NEWS")
-        self.spbx_max_min.grid(row=2, column=1, padx=(2,2), pady=(5,5), state='readonly', sticky="NEWS")
-        self.spbx_max_sec.grid(row=2, column=2, padx=(2,2), pady=(5,5), state='readonly', sticky="NEWS")
+        self.spbx_mini_min.grid(row=1, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
+        self.spbx_mini_sec.grid(row=1, column=2, padx=(2,2), pady=(5,5), sticky="NEWS")
+        self.spbx_max_min.grid(row=2, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
+        self.spbx_max_sec.grid(row=2, column=2, padx=(2,2), pady=(5,5), sticky="NEWS")
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)

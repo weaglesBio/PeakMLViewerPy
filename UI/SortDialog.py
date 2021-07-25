@@ -1,10 +1,10 @@
 import tkinter as tk
-
-class SortDialog(tk.simpledialog.Dialog):
-    def __init__(self, parent, title):
+from UI.ViewerDialog import ViewerDialog
+class SortDialog(ViewerDialog):
+    def __init__(self, parent):
         self.sort_type = None
         self.submit = False
-        super().__init__(parent, title)
+        super().__init__(parent, "Sort")
     
     def body(self, frame):
 

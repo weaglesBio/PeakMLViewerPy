@@ -2,12 +2,14 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.filedialog as fd
 import os.path
-class PreferencesDialog(tk.simpledialog.Dialog):
+import Logger as lg
+from UI.ViewerDialog import ViewerDialog
+class PreferencesDialog(ViewerDialog):
     def __init__(self, parent, title, data):
         self.decdp = data.get_settings_preference_by_name('decdp')
         self.databases = data.get_settings_database_paths()
         self.submit = False
-        super().__init__(parent, title)
+        super().__init__(parent, title, width=420, height=250)
     
     def body(self, frame):
 
@@ -25,7 +27,7 @@ class PreferencesDialog(tk.simpledialog.Dialog):
         self.val_decdp = tk.StringVar(value=self.decdp)
 
         self.lbl_decdp = tk.Label(self.tab_appearance, width=15, text="Decimal Points:")
-        self.spbx_decdp = ttk.Spinbox(self.tab_appearance, width=15, from_=0, to=30, state='readonly', textvariable=self.val_decdp)
+        self.spbx_decdp = tk.Spinbox(self.tab_appearance, width=15, from_=0, to=30, state='readonly', textvariable=self.val_decdp)
 
         self.lbl_decdp.grid(row=0, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
         self.spbx_decdp.grid(row=0, column=1, padx=(2,2), pady=(5,5),sticky="NEWS")
@@ -89,15 +91,13 @@ class PreferencesDialog(tk.simpledialog.Dialog):
         try:
             filepath = fd.askopenfilename()  
             if filepath:
-                head, tail = os.path.split(filepath)
-                self.databases = self.databases.append({"Name": tail, "Path": filepath}, ignore_index=True)
+                filename = os.path.split(filepath)[1]
+                self.databases = self.databases.append({"Name": filename, "Path": filepath}, ignore_index=True)
                 self.refresh_databases_grid()
         except IOError as ioerr:
-            print("An IO error occurred")
-            print(ioerr)
+            lg.log_error("Error (IO): {ioerr}")
         except Exception as err:
-            print("An error occurred")
-            print(err)
+            lg.log_error(f"Error: {err}")
 
     def remove_database(self):
         focused_entry = self.database_tree.item(self.database_tree.focus())

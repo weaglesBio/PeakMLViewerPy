@@ -1,8 +1,10 @@
 from datetime import datetime
-from decimal import getcontext
+#from decimal import getcontext
 import uuid
 import seaborn as sns
 import IO.SettingsIO as SettingsIO
+
+# Collection of static helper methods
 
 def format_time_string(time):
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
@@ -20,6 +22,13 @@ def format_time_min_int(time):
 
 def get_current_time():
     return datetime.now().strftime("%H:%M:%S.%f")
+    #return datetime.now().strftime("%H:%M:%S")
+
+def get_datetime_string():
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+def get_datetime_full_string():
+    return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def get_new_uuid():
     return str(uuid.uuid4())
@@ -28,14 +37,44 @@ def get_colours(number):
     palette = sns.color_palette(None, number)
     return palette.as_hex()
 
-def convert_float_to_sf(value):
-    number = SettingsIO.load_preference_decdp()
-    decimal_val = float(value)
+def to_float(value: str) -> float:
+    try:
+        val_float = float(value)
+    except ValueError:
+        return None
 
-    if decimal_val < 1000 and decimal_val > -1000:
-        return(round(decimal_val, number))
+    return val_float
+
+def is_float(value: str) -> bool:
+    try:
+        val_float = float(value)
+        if val_float:
+            return True
+    except ValueError:
+        return False
+
+def is_integer(value: str) -> bool:
+    try:
+        val_float = int(value)
+        if val_float:
+            return True
+    except ValueError:
+        return False
+
+def convert_float_to_sf(value, sfnum: int = SettingsIO.load_preference_decdp()):
+    
+    if value != '':
+        decimal_val = float(value)
+
+        if decimal_val < 1000 and decimal_val > -1000:
+            return str(round(decimal_val, sfnum))
+        else:
+            return ("{val:.{fig}e}".format(val=decimal_val, fig=sfnum))
     else:
-        return("{val:.{fig}e}".format(val=decimal_val, fig=number))
+        return ''
+
+
+
 
 ## Debugging methods
 

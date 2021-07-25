@@ -1,71 +1,50 @@
 import tkinter as tk
+from UI.ViewerDialog import ViewerDialog
 
-class FilterMassDialog(tk.simpledialog.Dialog):
-    def __init__(self, parent, title):
-        self.mass_min = None
-        self.mass_max = None
-        self.formula = None
-        self.formula_ppm = None
-        self.charge = None
-        self.filter_option = None
+class FilterMassDialog(ViewerDialog):
+    def __init__(self, parent, title, mass_min, mass_max):
+        self.mass_min = mass_min
+        self.mass_max = mass_max
+
         self.submit = False
 
-        super().__init__(parent, title)
-    
+        self.validate_mass_min_details = tk.StringVar()
+        self.validate_mass_max_details = tk.StringVar()
+
+        super().__init__(parent, title, width=200, height=180)
+
     def body(self, frame):
 
-        #|----------|------------|----------------|----------------|----------------------|
-        #| radio A  | mass label | mass min entry | mass max entry |                      |
-        #|----------|------------|----------------|----------------|----------------------|
-        #| radio B  | formula lbl| formula entry  | formula ppm ent| formula charge entry |
-        #|----------|------------|----------------|----------------|----------------------|
-        self.selected_option = tk.StringVar()
-        self.selected_option.set("mass")
+        # Register validation methods
+        validate_mass_min = frame.register(self.confirm_valid_mass_min)
+        validate_mass_max = frame.register(self.confirm_valid_mass_max)
 
-        self.radio_option_mass = tk.Radiobutton(frame, width=5, text="", variable=self.selected_option, value='mass', command=self.select_filter)
-        self.radio_option_formula = tk.Radiobutton(frame, width=5, text="", variable=self.selected_option, value='formula', command=self.select_filter)
+        self.lbl_mass_min = tk.Label(frame, text="Min:")
+        self.lbl_mass_min.grid(row=0, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.mass_label = tk.Label(frame, width=15, text="Mass range")
-        self.ent_mass_min = tk.Entry(frame, width=15)
-        self.ent_mass_max = tk.Entry(frame, width=15)
+        self.ent_mass_min = tk.Entry(frame)
+        self.ent_mass_min.insert('end', self.mass_min)
+        self.ent_mass_min.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.formula_label = tk.Label(frame, width=15, text="Formula")
-        self.ent_formula = tk.Entry(frame, width=15)
-        self.ent_formula_ppm = tk.Entry(frame, width=15)
-        self.ent_formula_charge = tk.Entry(frame, width=5)
+        # %P - on entry based on what change will result in.
+        self.ent_mass_min.config(validate="key", validatecommand=(validate_mass_min,'%P'))
 
-        self.ent_formula_charge.insert(tk.END, '1')
+        self.lbl_validate_mass_min = tk.Label(frame, fg="#ff0000", textvariable = self.validate_mass_min_details)
+        self.lbl_validate_mass_min.grid(row=1, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.radio_option_mass.grid(row=0, column=0)
-        self.radio_option_formula.grid(row=1, column=0)
-        self.mass_label.grid(row=0, column=1)
-        self.ent_mass_min.grid(row=0, column=2)
-        self.ent_mass_max.grid(row=0, column=3)
-        self.formula_label.grid(row=1, column=1)
-        self.ent_formula.grid(row=1, column=2)
-        self.ent_formula_ppm.grid(row=1, column=3)
-        self.ent_formula_charge.grid(row=1, column=4)
+        self.lbl_mass_max = tk.Label(frame, text="Max:")
+        self.lbl_mass_max.grid(row=2, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.ent_mass_min.config(state='normal')
-        self.ent_mass_max.config(state='normal')
-        self.ent_formula.config(state='disabled')
-        self.ent_formula_ppm.config(state='disabled')
-        self.ent_formula_charge.config(state='disabled')
+        self.ent_mass_max = tk.Entry(frame)
+        self.ent_mass_max.insert('end', self.mass_max)
+        self.ent_mass_max.grid(row=2, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-    def select_filter(self):
-        if self.selected_option.get() == "mass":
-            self.ent_mass_min.config(state='normal')
-            self.ent_mass_max.config(state='normal')
-            self.ent_formula.config(state='disabled')
-            self.ent_formula_ppm.config(state='disabled')
-            self.ent_formula_charge.config(state='disabled')
+        # %P - on entry based on what change will result in.
+        self.ent_mass_max.config(validate="key", validatecommand=(validate_mass_max,'%P'))
 
-        elif self.selected_option.get() == "formula":
-            self.ent_mass_min.config(state='disabled')
-            self.ent_mass_max.config(state='disabled')
-            self.ent_formula.config(state='normal')
-            self.ent_formula_ppm.config(state='normal')
-            self.ent_formula_charge.config(state='normal')
+        self.lbl_validate_mass_max = tk.Label(frame, fg="#ff0000", textvariable = self.validate_mass_max_details)
+        self.lbl_validate_mass_max.grid(row=3, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
+
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -78,12 +57,45 @@ class FilterMassDialog(tk.simpledialog.Dialog):
     def ok_btn_clicked(self):
         self.mass_min = self.ent_mass_min.get()
         self.mass_max = self.ent_mass_max.get()
-        self.mass_formula = self.ent_formula.get()
-        self.mass_formula_ppm = self.ent_formula_ppm.get()
-        self.mass_charge = self.ent_formula_charge.get()
-        self.filter_option = self.selected_option.get()
+
         self.submit = True
         self.destroy()
 
     def cancel_btn_clicked(self):
         self.destroy()
+
+    def confirm_valid_mass_min(self, input):
+        is_valid = True
+
+        try:
+            float(input)     
+        except ValueError:
+            is_valid = False
+
+        if is_valid:
+            self.validate_mass_max_details.set("")
+            self.btn_ok["state"] = "normal"
+        else:
+            self.validate_mass_max_details.set("Must be a decimal")
+            self.btn_ok["state"] = "disabled"
+
+        # Required to update value in entry.
+        return True
+
+    def confirm_valid_mass_max(self, input):
+        is_valid = True
+
+        try:
+            float(input)     
+        except ValueError:
+            is_valid = False
+
+        if is_valid:
+            self.validate_mass_max_details.set("")
+            self.btn_ok["state"] = "normal"
+        else:
+            self.validate_mass_max_details.set("Must be a decimal")
+            self.btn_ok["state"] = "disabled"
+
+        # Required to update value in entry.
+        return True

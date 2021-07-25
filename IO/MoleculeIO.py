@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-from Chemistry.Molecule import Molecule
+from Data.Molecule import Molecule
+import Logger as lg
 
 def load_molecule_databases():
 
@@ -11,7 +12,7 @@ def load_molecule_databases():
             settings_tree_data = f.read()
 
     except Exception as err:
-        print(err)
+        lg.log_error(f'Unable to read molecule library paths from settings xml: {err}')
 
     settings_root = ET.fromstring(settings_tree_data)
 
@@ -32,41 +33,41 @@ def load_molecule_databases():
                 inchi = compound_node.find("./inchi")
                 smiles = compound_node.find("./smiles")
                 synonyms = compound_node.find("./synonyms")
-                retentiontime = compound_node.find("./retentiontime")
+                retention_time = compound_node.find("./retentiontime")
                 description = compound_node.find("./description")
-                classdesc = compound_node.find("./class")
+                class_desc = compound_node.find("./class")
                 mass = compound_node.find("./monoisotopicmass")
                 polarity = compound_node.find("./polarity")
 
                 molecule = Molecule(id.text, name.text, formula.text)
                 if inchi is not None:
-                    molecule.set_inchi(inchi.text)
+                    molecule.inchi = inchi.text
 
                 if smiles is not None:
-                    molecule.set_smiles(smiles.text)
+                    molecule.smiles = smiles.text
 
                 if synonyms is not None:    
-                    molecule.set_synonyms(synonyms.text)
+                    molecule.synonyms = synonyms.text
 
                 if description is not None:
-                    molecule.set_description(description.text)
+                    molecule.description = description.text
 
-                if classdesc is not None:
-                    molecule.set_class_description(classdesc.text)
+                if class_desc is not None:
+                    molecule.class_description = class_desc.text
 
-                if retentiontime is not None:
-                    molecule.set_retention_time(float(retentiontime.text) * 60.0)
+                if retention_time is not None:
+                    molecule.retention_time = float(retention_time.text) * 60.0
 
                 if mass is not None and mass.text is not None and len(mass.text) > 0:
-                        molecule.set_mass(mass.text)
+                    molecule.mass = mass.text
                         
                 if polarity is not None:
-                    molecule.set_polarity(polarity.text)
+                    molecule.polarity = polarity.text
 
                 molecules[id.text] = molecule
 
         except Exception as err:
-            print(err)
+            lg.log_error(f'Unable to import details from molecule library: {err}')
 
     return molecules
             

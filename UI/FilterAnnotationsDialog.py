@@ -1,12 +1,12 @@
 import tkinter as tk
-
-class FilterAnnotationsDialog(tk.simpledialog.Dialog):
+from UI.ViewerDialog import ViewerDialog
+class FilterAnnotationsDialog(ViewerDialog):
     def __init__(self, parent, title):
         self.annotation_name = None
         self.annotation_relation = None
         self.annotation_value = None
         self.submit = False
-        super().__init__(parent, title)
+        super().__init__(parent, title, width=200, height=200)
     
     def body(self, frame):
         option_annotation_relation_list = ["=", ">", "<", "like"]

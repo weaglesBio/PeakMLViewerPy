@@ -12,3 +12,14 @@ test_files
 __pycache__\*.cpython-39.pyc
 UI\__pycache__\*.cpython-39.pyc
 Data\__pycache__\*.cpython-39.pyc
+
+
+#Ignore .log files
+*.log
+
+#Ignore generated log files
+*.txt
+
+
+#Ignore demo projects
+DemoProj
