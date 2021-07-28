@@ -19,13 +19,13 @@ class EntryDataView(BaseDataView):
 
         super().__init__(['Type','RT','Mass','Intensity','Nrpeaks','HasAnnotation'])
 
-    @property
-    def selected_peak_uid(self):
-        return self._selected_peak_uid
+    # @property
+    # def selected_peak_uid(self):
+    #     return self._selected_peak_uid
 
-    @selected_peak_uid.setter
-    def selected_peak_uid(self, selected_peak_uid: str):
-        self._selected_peak_uid = selected_peak_uid
+    # @selected_peak_uid.setter
+    # def selected_peak_uid(self, selected_peak_uid: str):
+    #     self._selected_peak_uid = selected_peak_uid
 
     @property
     def nr_peaks(self) -> int:
@@ -154,3 +154,11 @@ class EntryDataView(BaseDataView):
     def get_checked_entries_uid(self):
         selected_df = self.dataframe.loc[self.dataframe["Checked"] == True]
         return selected_df["UID"].tolist()
+
+    
+    def check_if_any_checked(self):
+        for item in self.datalist:
+            if item.checked == True:
+                return True
+
+        return False

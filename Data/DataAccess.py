@@ -23,6 +23,7 @@ import IO.MoleculeIO as MolIO
 import IO.SettingsIO as SetIO
 
 import Logger as lg
+import Utilities as u
 import Progress as p
 
 import pandas as pd
@@ -114,6 +115,17 @@ class DataAccess:
         self._entry_view.update_selected(uid)
 
     @property
+    def selected_filter_uid(self) -> str:
+        # Get first row with selected is true from entry
+        df = self.filter_view_dataframe
+        selected_df = df.loc[df["Selected"] == True]
+        return selected_df["UID"].values[0]
+
+    @selected_filter_uid.setter
+    def selected_filter_uid(self, uid: str):
+        self._filter_view.update_selected(uid)
+
+    @property
     def selected_identification_uid(self) -> str:
         # Get first row with selected is true from entry
         df = self.identification_view_dataframe
@@ -140,12 +152,18 @@ class DataAccess:
     def prior_probabilities_modified(self) -> bool:
         return self._prior_probabilities_modified
 
+    @property 
+    def measurement_colours(self) -> dict[str, str]:
+        return self._measurement_colours
+
+
     def __init__(self):
 
         self._peakml = PeakML()
         self._settings = Settings()
         self._molecule_database = MolIO.load_molecule_databases()
         self._filters = []
+        self._measurement_colours = {}
         self._ipa_imported = False
         self._prior_probabilities_modified = False
 
@@ -164,6 +182,8 @@ class DataAccess:
         try:
             p.update_progress("Importing PeakML file.", 5)
             self._peakml.import_from_file(self.import_peakml_filepath)
+
+            self.assign_measurement_colours()
 
             p.update_progress("Loading view data.", 20)
             self.load_view_data_from_peakml()
@@ -203,26 +223,39 @@ class DataAccess:
             p.update_progress("Loading filter view data", 27)
             self._filter_view.load_data(self._filters)
             lg.log_progress("Filter view data loaded.")
+
+            p.update_progress("Loading set view data", 30)
+            self._set_view.load_data(self._peakml.header, self.measurement_colours)
+            lg.log_progress("Set view data loaded.")
             
             self.update_selected_entry()
 
         except Exception as err:
             lg.log_error(f'An error when loading view data: {err}')
 
+    def assign_measurement_colours(self):
+        self._measurement_colours = {}
+
+        set_count = len(self._peakml.header.sets)
+        colours = u.get_colours(set_count)
+
+        for i in range(set_count):
+            set = self._peakml.header.sets[i]
+            self._measurement_colours[f"S-{set.id}"] = colours[i]
+
+            for measurement_id in set.linked_peak_measurement_ids:
+                self._measurement_colours[f"M-{measurement_id}"] = colours[i]
+
     def update_selected_entry(self):
 
         try:
-            lg.log_progress("Begin load view data for selected entry")
+            lg.log_progress("Begin load view data for selected entry.")
 
             filtered_peaks = self.filter_peaks(self._peakml.peaks)
             selected_peak = self._peakml.get_peak_by_uid(self.selected_entry_uid)
 
-            p.update_progress("Loading set view data", 30)
-            self._set_view.load_data(selected_peak, self._peakml.header)
-            lg.log_progress("Set view data loaded.")
-
             p.update_progress("Loading peak plot data", 32)
-            self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header, self.measurement_colours)
             lg.log_progress("Peak plot data loaded.")
 
             p.update_progress("Loading derivatives plot data", 35)
@@ -261,6 +294,9 @@ class DataAccess:
     def update_identification_checked_status(self, uid: str, checked: bool):
         self._identification_view.update_checked_status(uid, checked)
 
+    def check_if_any_checked_entries(self):
+        return self._entry_view.check_if_any_checked()
+
     def remove_checked_entries(self):
         for uid_to_delete in self._entry_view.get_checked_entries_uid():
             self._peakml.remove_peak_by_uid(uid_to_delete)
@@ -273,8 +309,11 @@ class DataAccess:
         uid, id, prior, notes = self._identification_view.get_details(self.selected_identification_uid)
         return uid, id, prior, notes
 
+    def check_if_any_checked_identifications(self):
+        return self._identification_view.check_if_any_checked()
+
     def remove_checked_identifications(self):
-        prior_updated = self._identification_view.remove_checked()
+        prior_updated = self._identification_view.remove_checked(self.ipa_imported)
 
         if prior_updated:
             self._prior_probabilities_modified = True
@@ -299,7 +338,6 @@ class DataAccess:
         peak.update_specific_annotation('identification',ann_identification)
         peak.update_specific_annotation('ppm',ann_ppm)
         peak.update_specific_annotation('adduct',ann_adduct)
-
 
         peak.update_specific_annotation('prior',ann_prior)
         peak.update_specific_annotation('post',ann_post)

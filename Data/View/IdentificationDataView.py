@@ -190,6 +190,13 @@ class IdentificationDataView(BaseDataView):
         # Deletion after IPA import will update prior.
         return ipa_imported
 
+    def check_if_any_checked(self):
+        for item in self.datalist:
+            if item.checked == True:
+                return True
+
+        return False
+
     def get_identification_annotations(self):
 
         ann_identification = ", ".join(self.dataframe["ID"].tolist())

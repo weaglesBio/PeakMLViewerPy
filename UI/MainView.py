@@ -1,16 +1,12 @@
 import tkinter as tk
-from tkinter.constants import Y
 import tkinter.ttk as ttk
 import tkinter.filedialog as fd
-import tkinter.simpledialog as sd
 import tkinter.messagebox as mb
 import ttkwidgets as ttkw
 #If package only available as pip, install with anaconda prompt
-
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.dates import DateFormatter
-import pandas as pd
 import statistics as stats
 from PIL import ImageTk, Image
 from rdkit import Chem
@@ -18,6 +14,8 @@ from rdkit.Chem import Draw
 from rdkit.Chem import inchi
 import time
 import threading
+import os
+import base64
 
 from UI.ProgressDialog import ProgressDialog
 from UI.LogDialog import LogDialog
@@ -30,7 +28,7 @@ from UI.FilterAnnotationsDialog import FilterAnnotationsDialog
 from UI.SortDialog import SortDialog
 from UI.SortTimeSeriesDialog import SortTimeSeriesDialog
 from UI.PreferencesDialog import PreferencesDialog
-
+import Icon as i
 import Enums as e
 import Utilities as u
 import Logger as lg
@@ -39,6 +37,17 @@ import Progress as p
 # Globals
 configure_timer = None
 class MainView():
+
+# Need to look at more intelligent resizing
+# Define starting layout
+# Having it grow and shrink with resizing OF MAIN WINDOW
+# individual parts can be manually adjusted.
+# when resizing
+# Each widget resizes to max first, then summary plot expands to fill rest.
+# VF0 does not change.
+# Can resizing below a certain size be prevented, does it need to be?
+# Need to define natural max layout for all other widgets
+# Target for the day: 9 hours
 
     @property
     def filter_options(self) -> dict[e.Filter, str]:
@@ -121,7 +130,16 @@ class MainView():
         self.root = tk.Tk()
 
         self.root.title('PeakMLViewerPy')
-        self.root.iconbitmap(True,'favicon.ico')
+
+        #Read icon details and set
+        icon_data = base64.b64decode(i.img)
+        temp_file = "temp.ico"
+        icon_file = open(temp_file, "wb")
+        icon_file.write(icon_data)
+        icon_file.close()
+        self.root.wm_iconbitmap(True, temp_file)
+        os.remove(temp_file)
+
         self.root.resizable(None, None)
 
         self.set_height = 720
@@ -141,7 +159,7 @@ class MainView():
         self.peak_number_text = tk.StringVar()
         self.warning_text = tk.StringVar()
         self.filter_option_selected = tk.StringVar(self.root)
-        self.filter_option_selected.set("Select Filter...")
+        self.filter_option_selected.set("Filter mass range")
 
         self.progress_text = tk.StringVar()
         self.progress_text.set("No file imported.")
@@ -199,7 +217,7 @@ class MainView():
         self.mid_frame = tk.PanedWindow(self.viewer_frame, orient=tk.HORIZONTAL)
         self.viewer_frame.add(self.mid_frame)
 
-        # Bottom - Identification View
+        # Bottom - Identification Viewce
         self.bot_frame = tk.LabelFrame(self.viewer_frame, padx=10, pady=10, text="Identities")
         self.viewer_frame.add(self.bot_frame)
 
@@ -250,10 +268,11 @@ class MainView():
         # Entry View
         entry_control_frame = tk.Frame(self.mid_left_top_frame)
         entry_control_frame.pack(side=tk.BOTTOM)
-        entry_delete_checked_btn = tk.Button(entry_control_frame, text="Delete Checked", command=self.delete_checked_entries)
-        entry_delete_checked_btn.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEWS")
+        self.entry_delete_checked_btn = tk.Button(entry_control_frame, text="Delete Checked", command=self.delete_checked_entries)
+        self.entry_delete_checked_btn["state"] = "disabled"
+        self.entry_delete_checked_btn.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEWS")
 
-        self.entry_tree = self.initialize_grid(self.mid_left_top_frame, True, 15, [("Selected", 40), ("Retention time", 100), ("Mass", 80), ("Intensity", 80), ("Samples", 50)])
+        self.entry_tree = self.initialize_grid(self.mid_left_top_frame, True, [("Selected", 40), ("Retention time", 100), ("Mass", 80), ("Intensity", 80), ("Samples", 50)])
 
         self.entry_tree.bind('<ButtonRelease-1>', self.select_entry)
         self.entry_tree.bind('<KeyRelease-Up>', self.select_entry)
@@ -262,7 +281,7 @@ class MainView():
         self.entry_tree.tag_configure("no_ann_not_focus", foreground="grey")
         self.entry_tree.tag_configure("has_ann_is_focus", foreground="white", background="blue")
         self.entry_tree.tag_configure("no_ann_is_focus", foreground="white", background="blue")
-        
+   
         # Filter View
         option_list = [
             self.filter_options[e.Filter.Mass], 
@@ -272,13 +291,19 @@ class MainView():
             ]
         filter_control_frame = tk.Frame(self.mid_left_bot_frame)
         filter_control_frame.pack(side=tk.BOTTOM)
-        filter_opm = tk.OptionMenu(filter_control_frame, self.filter_option_selected, *option_list)
-        filter_opm.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEWS")
-        filter_add_btn = tk.Button(filter_control_frame, text="Add", command=self.add_filter)
-        filter_add_btn.grid(row=0, column=1, padx=(2,2), pady=(2,2), sticky="NEWS")
-        filter_remove_btn = tk.Button(filter_control_frame, text="Remove", command=self.remove_filter)
-        filter_remove_btn.grid(row=0, column=2, padx=(2,2), pady=(2,2), sticky="NEWS")
-        self.filter_tree = self.initialize_grid(self.mid_left_bot_frame, False, 5, [("Selected", 10), ("Type", 100), ("Settings", 100)])
+        self.filter_opm = tk.OptionMenu(filter_control_frame, self.filter_option_selected, *option_list)
+        self.filter_opm.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEWS")
+        self.filter_add_btn = tk.Button(filter_control_frame, text="Add", command=self.add_filter)
+        self.filter_add_btn["state"] = "disabled"
+        self.filter_add_btn.grid(row=0, column=1, padx=(2,2), pady=(2,2), sticky="NEWS")
+        self.filter_remove_btn = tk.Button(filter_control_frame, text="Remove", command=self.remove_filter)
+        self.filter_remove_btn["state"] = "disabled"
+        self.filter_remove_btn.grid(row=0, column=2, padx=(2,2), pady=(2,2), sticky="NEWS")
+        self.filter_tree = self.initialize_grid(self.mid_left_bot_frame, False, [("Selected", 10), ("Type", 100), ("Settings", 100)])
+
+        self.filter_tree.bind('<ButtonRelease-1>', self.select_filter)
+        self.filter_tree.tag_configure("not_focus", foreground="black")
+        self.filter_tree.tag_configure("is_focus", foreground="white", background="blue")
 
         # Plot View
         self.tabs_plot = ttk.Notebook(self.mid_cen_frame)
@@ -314,11 +339,11 @@ class MainView():
         self.figure_int_log, self.axes_int_log = self.initialize_plot(self.tab_int_log)
 
         # Set View
-        self.set_tree = self.initialize_grid(self.mid_right_top_frame, True, 10, [("Selected", 60), ("Name", 150)])
+        self.set_tree = self.initialize_grid(self.mid_right_top_frame, True, [("Selected", 60), ("Name", 150)])
         self.set_tree.bind('<ButtonRelease-1>', self.update_sets_view)
 
         # Annotation View
-        self.ann_tree = self.initialize_grid(self.mid_right_mid_frame, False, 5, [("Selected", 10), ("Label", 80), ("Value", 120)])
+        self.ann_tree = self.initialize_grid(self.mid_right_mid_frame, False, [("Selected", 10), ("Label", 80), ("Value", 120)])
 
         # Molecule View
         self.molecule_canvas = tk.Canvas(self.mid_right_bot_frame, bg="white")
@@ -339,12 +364,14 @@ class MainView():
         # Identification View
         iden_control_frame = tk.Frame(self.bot_frame)
         iden_control_frame.pack(side=tk.RIGHT)
-        iden_edit_selected_btn = tk.Button(iden_control_frame, text="Edit Selected", command=self.edit_selected_identity)
-        iden_edit_selected_btn.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEW")
-        iden_delete_checked_btn = tk.Button(iden_control_frame, text="Delete Checked", command=self.delete_checked_identities)
-        iden_delete_checked_btn.grid(row=1, column=0, padx=(2,2), pady=(2,2), sticky="NEW")
+        self.iden_edit_selected_btn = tk.Button(iden_control_frame, text="Edit Selected", command=self.edit_selected_identity)
+        self.iden_edit_selected_btn["state"] = "disabled"
+        self.iden_edit_selected_btn.grid(row=0, column=0, padx=(2,2), pady=(2,2), sticky="NEW")
+        self.iden_delete_checked_btn = tk.Button(iden_control_frame, text="Delete Checked", command=self.delete_checked_identities)
+        self.iden_delete_checked_btn["state"] = "disabled"
+        self.iden_delete_checked_btn.grid(row=1, column=0, padx=(2,2), pady=(2,2), sticky="NEW")
 
-        self.iden_tree = self.initialize_grid(self.bot_frame, True, 8, [("Selected", 40), ("ID", 100), ("Formula", 150), ("PPM", 100), ("Adduct", 150), ("Name", 150), ("Class", 150), ("Description", 200), ("Prior", 100), ("Post", 100), ("Notes", 200)])
+        self.iden_tree = self.initialize_grid(self.bot_frame, True, [("Selected", 40), ("ID", 100), ("Formula", 150), ("PPM", 100), ("Adduct", 150), ("Name", 150), ("Class", 150), ("Description", 200), ("Prior", 100), ("Post", 100), ("Notes", 200)])
 
         self.iden_tree.bind('<ButtonRelease-1>', self.select_iden)
         self.iden_tree.bind('<KeyRelease-Up>', self.select_iden)
@@ -352,7 +379,7 @@ class MainView():
         self.iden_tree.tag_configure("not_focus", foreground="black")
         self.iden_tree.tag_configure("is_focus", foreground="white", background="blue")
         
-        # Set initial widget layout
+        # Set initial widget layout vf_0, vf_1, mf_0, mf_1, mlf_0, mrf_0, mrf_1
         self.update_layout(43, 551, 303, 1011, 303, 153, 261)
 
         self.root.config(menu=self.menubar)
@@ -432,7 +459,7 @@ class MainView():
 
     def update_layout_if_resize(self):
 
-        print("Resize check.")
+        #print("Resize check.")
 
         current_height = self.root_frame.winfo_height()
         current_width = self.root_frame.winfo_width()
@@ -440,22 +467,22 @@ class MainView():
         # Update layout, if overall window size has changed.
         if (current_height != self.set_height or current_width != self.set_width):
 
-            print("Resize occurred.")
+            #print("Resize occurred.")
 
             height_change = current_height - self.set_height 
             width_change = current_width - self.set_width
 
-            print(f"hc {height_change} = {current_height} - {self.set_height}")
-            print(f"wc {width_change} = {current_width} - {self.set_width}")
+            #print(f"hc {height_change} = {current_height} - {self.set_height}")
+            #print(f"wc {width_change} = {current_width} - {self.set_width}")
 
             self.set_height = current_height
             self.set_width = current_width
 
-            print(f"luh {self.set_height} = {current_height}")
-            print(f"luw {self.set_width} = {current_width}")
+            #print(f"luh {self.set_height} = {current_height}")
+            #print(f"luw {self.set_width} = {current_width}")
 
-            print(f"hc {height_change}")
-            print(f"wc {width_change}")
+            #print(f"hc {height_change}")
+            #print(f"wc {width_change}")
 
             # info_view_w = width
             # info_view_h = vf0
@@ -484,23 +511,43 @@ class MainView():
             mf0_u = self.set_mf0
             # Increasing the width should be able to increase this an unlimited amount.
             mf1_u = self.set_mf1 + width_change
-            # 
+            #
+        
+            #self.adjust_mlf(vf1_u, mf0_u)
             mlf0_u = self.set_mlf0
+
+
             # 
             mrf0_u = self.set_mrf0
             # 
             mrf1_u = self.set_mrf1
-            print(f"vf0_u {vf0_u}")
-            print(f"vf1_u {vf1_u} = {self.set_vf1} + {height_change}")
-            print(f"mf0_u {mf0_u}")
-            print(f"mf1_u {mf1_u} = {self.set_mf1} + {width_change}")
-            print(f"mlf0_u {mlf0_u}")
-            print(f"mrf0_u {mrf0_u}")
-            print(f"mrf1_u {mrf1_u}")
+            #print(f"vf0_u {vf0_u}")
+            #print(f"vf1_u {vf1_u} = {self.set_vf1} + {height_change}")
+            #print(f"mf0_u {mf0_u}")
+            #print(f"mf1_u {mf1_u} = {self.set_mf1} + {width_change}")
+            #print(f"mlf0_u {mlf0_u}")
+            #print(f"mrf0_u {mrf0_u}")
+            #print(f"mrf1_u {mrf1_u}")
 
             self.update_layout(vf0_u, vf1_u, mf0_u, mf1_u, mlf0_u, mrf0_u, mrf1_u)
 
-            self.get_current_layout("UPDATED")
+            #self.get_current_layout("UPDATED")
+
+
+            def adjust_mlf(self, vf1, mf0):
+
+
+                return mlf0
+
+            def adjust_mrf(self, vf1, mf0):
+
+
+                return mrf0, mrf1
+
+            #get_adjusted mlf0 from widget heigh method.
+
+            #get
+
 
 #endregion
 
@@ -518,7 +565,7 @@ class MainView():
 
         return figure, axes
         
-    def initialize_grid(self, frame, is_checkbox, grid_height, columns):        
+    def initialize_grid(self, frame, is_checkbox, columns):        
         if is_checkbox:
             tree = ttkw.CheckboxTreeview(frame, selectmode="browse", columns=len(columns))
         else:
@@ -576,7 +623,7 @@ class MainView():
 
     def start_progress_dialog(self):
         self.progress_dlg = ProgressDialog(self.root, self.progress_text, self.progress_val)
-        self.progress_dlg.progress_start()
+        #self.progress_dlg.progress_start()
 
     def run_process_with_progress(self, func):
         self.show_progressbar(True)
@@ -712,13 +759,13 @@ class MainView():
         self.refresh_entry_grid()
         lg.log_progress("Entry grid loaded.")
 
-        self.refresh_to_selected_entry()
-
-    def refresh_to_selected_entry(self):
-
         p.update_progress("Loading sets grid", 60)
         self.refresh_set_grid()
         lg.log_progress("Sets grid loaded.")
+
+        self.refresh_to_selected_entry()
+
+    def refresh_to_selected_entry(self):
 
         p.update_progress("Loading annotation grid", 65)
         self.refresh_annotation_grid()
@@ -761,6 +808,17 @@ class MainView():
                 # Add entries to tree
                 self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], entry_row["Nrpeaks"]), tags=(entry_row["UID"], focus, "checked" if entry_row["Checked"] == True else "unchecked")) 
 
+        # If any entries, enable button for adding filters.
+        if len(self.entry_tree.get_children()) > 0:
+            self.filter_add_btn["state"] = "normal"    
+        else:
+            self.filter_add_btn["state"] = "disabled"
+
+        # If any checked entries, enable button for deleting checked entries.
+        if self.data.check_if_any_checked_entries():
+            self.entry_delete_checked_btn["state"] = "normal"
+        else:
+            self.entry_delete_checked_btn["state"] = "disabled"
 
     def select_entry(self, event):
      
@@ -776,6 +834,11 @@ class MainView():
             uid = self.entry_tree.item(checked_item)["tags"][0]
             selected_status = False if self.entry_tree.item(checked_item)["tags"][2] == "unchecked" else True
             self.data.update_entry_checked_status(uid, selected_status)
+
+            if self.data.check_if_any_checked_entries():
+                self.entry_delete_checked_btn["state"] = "normal"
+            else:
+                self.entry_delete_checked_btn["state"] = "disabled"
         else:
             # Get focused entry
             focused_entry = self.entry_tree.item(self.entry_tree.focus())
@@ -922,6 +985,16 @@ class MainView():
                     smiles_details = iden_row["Smiles"]
                     inchi_details = iden_row["InChi"]
 
+        if len(self.iden_tree.get_children()) > 0:
+            self.iden_edit_selected_btn["state"] = "normal"
+        else:
+            self.iden_edit_selected_btn["state"] = "disabled"
+
+        if self.data.check_if_any_checked_identifications():
+            self.iden_delete_checked_btn["state"] = "normal"
+        else:
+            self.iden_delete_checked_btn["state"] = "disabled"
+
         self.refresh_molecule_canvas(inchi_details, smiles_details)
 
     def refresh_molecule_canvas(self, inchi_data, smiles_data):
@@ -948,6 +1021,11 @@ class MainView():
             uid = self.iden_tree.item(checked_item)["tags"][0]
             selected_status = False if self.iden_tree.item(checked_item)["tags"][2] == "unchecked" else True
             self.data.update_identification_checked_status(uid, selected_status)
+
+            if self.data.check_if_any_checked_identifications():
+                self.iden_delete_checked_btn["state"] = "normal"
+            else:
+                self.iden_delete_checked_btn["state"] = "disabled"
         else:
             self.refresh_iden_selected()
 
@@ -970,6 +1048,7 @@ class MainView():
         if reply == True:
             self.data.remove_checked_identifications()
             self.refresh_identification_grid()
+            self.refresh_info_values()
 
     def edit_selected_identity(self):
         self.open_edit_identity_dialog()
@@ -1031,6 +1110,7 @@ class MainView():
 
     def generate_plot_derivatives(self):
         df = self.data.plot_der_view_dataframe
+
         self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
         self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
         
@@ -1051,12 +1131,12 @@ class MainView():
         for i in range(len(data)):
             axes_der.annotate(label_values[i],(mass_values[i],intensity_values[i]))
 
+        axes_der.set_xscale('linear')
+
         if type == "Log":
             axes_der.set_yscale('log')
-            axes_der.set_xscale('linear')
         else:
             axes_der.set_yscale('linear')
-            axes_der.set_xscale('linear')
 
         axes_der.set_xlabel("Mass")
         axes_der.set_ylabel("Intensity")
@@ -1141,7 +1221,27 @@ class MainView():
         if df_filters is not None:
             for i in range(len(df_filters)):
                 filter_row = df_filters.iloc[i]
-                self.filter_tree.insert("", i, i, values=(filter_row["Type"], filter_row["Settings"]), tags=(filter_row["ID"]))
+
+                focus = "is_focus" if filter_row["Selected"] == True else "not_focus"
+                self.filter_tree.insert("", i, i, values=(filter_row["Type"], filter_row["Settings"]), tags=(filter_row["UID"], focus))
+
+        # Toggle disability of remove filter button depending on if filter values exist.
+        if len(self.filter_tree.get_children()) > 0:
+            self.filter_remove_btn["state"] = "normal"
+        else:
+            self.filter_remove_btn["state"] = "disabled"
+
+    def select_filter(self, event):
+        self.refresh_filter_selected()
+
+    def refresh_filter_selected(self):
+        focused_filter = self.filter_tree.item(self.filter_tree.focus())
+
+        if focused_filter["tags"]:
+            focused_id = focused_filter["tags"][0]
+            self.data.selected_filter_uid = focused_id
+
+        self.refresh_filters_grid()
 
     def add_filter(self):
         refresh = False
@@ -1166,14 +1266,10 @@ class MainView():
             self.run_process_with_progress(self.load_data_from_views)
 
     def remove_filter(self):
-        focused_filter = self.filter_tree.item(self.filter_tree.focus())
-        if focused_filter:
+        # Need to include progress on this section
+        self.data.remove_filter_by_id(self.data.selected_filter_uid)
 
-            # Need to include progress on this section
-            self.data.remove_filter_by_id(focused_filter["tags"][0])
-            
-            
-            self.run_process_with_progress(self.load_data_from_views)
+        self.run_process_with_progress(self.load_data_from_views)
 
     def open_filter_mass_dialog(self):
         title = self.filter_options[e.Filter.Mass]

@@ -58,12 +58,14 @@ class EditIdentityDialog(ViewerDialog):
         
         self.txt_notes_frame.grid(row=3, column=1, padx=(2,2), pady=(2,2), sticky="NEWS")
 
+        # To prevent save attempts before validation
+        self.txt_notes.bind("<KeyPress>", self.disable_save_during_entry)
         self.txt_notes.bind("<KeyRelease>", self.confirm_notes_length)
 
         self.lbl_notes_validate = tk.Label(frame, width=5, fg="#000000", textvariable = self.validate_notes_details)
         self.lbl_notes_validate.grid(row=4, column=1, padx=(0,0), pady=(0,5),sticky="NEWS")
 
-        self.validate_notes_details.set(f"{len(self.txt_notes.get('1.0',tk.END))}/140")
+        self.validate_notes_details.set(f"{len(self.txt_notes.get('1.0',tk.END))-1}/140")
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -95,28 +97,22 @@ class EditIdentityDialog(ViewerDialog):
             float(input)     
         except ValueError:
             self.validate_prior_details.set("Must be a decimal")
-            #print("Input must be a decimal")
             return False
 
         # Must be greater than or equal to 0
         if float(input) < 0:
             self.validate_prior_details.set("Must be >= 0")
-            #print("Input must be greater than or equal to 0")
             return False
 
         # Must be less than or equal to 1
         if float(input) > 1:
             self.validate_prior_details.set("Must be <= 1")
-            #print("Input must be less than or equal to 1")
             return False
 
         # Must be max 2 decimal places, so four characters long in total.
         if len(input) > 4:
             self.validate_prior_details.set("Max 2 decimal places")
-            #print("Input must be max 2 decimal places, so four characters long in total.")
             return False
-
-        #print("Input valid")
 
         # If passes all criteria
         self.validate_prior_details.set("")
@@ -130,7 +126,6 @@ class EditIdentityDialog(ViewerDialog):
         #TODO Key press - is incorrect number
         # Key release potential for unacceptable length - need to handle one.
 
-
         if current_char_count > 140:
             self.lbl_notes_validate.config(fg="#ff0000")
             self.btn_ok["state"] = "disabled"
@@ -138,4 +133,6 @@ class EditIdentityDialog(ViewerDialog):
             self.lbl_notes_validate.config(fg="#000000")
             self.btn_ok["state"] = "normal"
 
+    def disable_save_during_entry(self, event):   
+        self.btn_ok["state"] = "disabled"
             

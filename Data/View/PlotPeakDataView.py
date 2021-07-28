@@ -1,5 +1,3 @@
-import pandas as pd
-import Utilities as u
 import Logger as lg
 
 from Data.View.BaseDataView import BaseDataView
@@ -9,7 +7,7 @@ class PlotPeakDataView(BaseDataView):
     def __init__(self):
         super().__init__(['Label','RT_values','Intensity_values','Colour'])
 
-    def load_plot_data_for_selected_peak(self, peak, peakml_header):
+    def load_plot_data_for_selected_peak(self, peak, peakml_header, colours):
         
         try:
             self.clear_datalist()
@@ -19,9 +17,8 @@ class PlotPeakDataView(BaseDataView):
                 label = measurement.label
                 retention_times = peak.peak_data.get_retention_times_formatted_datetime() 
                 intensities = peak.peak_data.get_intensities()
-                color = measurement.colour 
 
-                self.add_item(label, retention_times, intensities, color)
+                self.add_item(label, retention_times, intensities, colours[f"M-{measurement.id}"])
 
             self.refresh_dataframe()
 

@@ -4,7 +4,7 @@ from UI.ViewerDialog import ViewerDialog
 class LogDialog(ViewerDialog):
     def __init__(self, parent):
         self.submit = False
-        super().__init__(parent, "View Log", width=200, height=200)
+        super().__init__(parent, "View Log", width=600, height=440)
     
     def body(self, frame):
         self.log_text = tk.Text(frame)

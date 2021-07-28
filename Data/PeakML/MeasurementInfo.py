@@ -12,10 +12,6 @@ class MeasurementInfo():
         self._scans = []
         self._files = []
 
-        # Internal attributes
-        self.selected = True
-        self.colour = None
-
     @property
     def id(self) -> int:
         return self._id
@@ -53,25 +49,3 @@ class MeasurementInfo():
 
     def add_file(self, file: FileInfo):
         self.files.append(file)
-
-    @property
-    def colour(self) -> str:
-        return self._colour
-    
-    @colour.setter
-    def colour(self, colour: str):
-        self._colour = colour
-
-    @property
-    def selected(self) -> bool:
-        return self._selected
-
-    @selected.setter
-    def selected(self, selected: bool):
-        self._selected = selected
-
-    def toggle_selected_status(self):
-        if self.selected:
-            self._selected = True
-        else:
-            self._selected = False

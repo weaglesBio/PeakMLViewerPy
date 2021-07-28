@@ -38,8 +38,8 @@ class ProgressDialog(ViewerDialog):
         if self.progress_text.get() == "Completed":
             self.progress_stop()
 
-    def progress_start(self):
-        self.progress_bar.start()
+    #def progress_start(self):
+        #self.progress_bar.start()
     
     def progress_stop(self):
         #self.progress_bar.stop()

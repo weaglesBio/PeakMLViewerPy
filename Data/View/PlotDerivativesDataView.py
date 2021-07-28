@@ -1,5 +1,3 @@
-import pandas as pd
-import Utilities as u
 import Logger as lg
 
 from Data.View.BaseDataView import BaseDataView
@@ -7,7 +5,7 @@ from Data.View.PlotDerivativesItem import PlotDerivativesItem
 
 class PlotDerivativesDataView(BaseDataView):
     def __init__(self):
-        super().__init__(['Label','RT_values','Intensity_values','Colour'])
+        super().__init__(['Mass','Intensity','Description'])
 
     def load_plot_data_for_selected_peak(self, selected_peak, peak_dic):
         try:

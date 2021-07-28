@@ -1,11 +1,10 @@
-# Required libraries for development
+## PeakMLViewerPy - Version 0.1.0
+
+## Setting up development environment
 
 
-
-# Publishing project executable
+## Publishing project as executable
 
 ```
-pyinstaller PeakMLViewerPy.py
-```
-
 pyinstaller --onefile -w -F -i "favicon.ico" PeakMLViewerPy.py
+```

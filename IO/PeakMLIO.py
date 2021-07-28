@@ -157,6 +157,8 @@ def add_peaks(parent_element, peakset, parent_peak_num):
                 measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
                 peak_data.measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = int)
 
+            #print(f"Subpeak {(peak_iter+1)} of {peak_elements_len}")
+            #print(peak_data.measurement_ids)
         else:
             peak_data = None
 
@@ -192,12 +194,10 @@ def import_element_tree_from_peakml_file(tree_data):
 
     # Add 'Set Info' records to PeakHeader
     set_elements = header_element.findall("./sets/set")
-    set_elements_len = len(set_elements)
-    colours = u.get_colours(len(set_elements))
     set_iter = 0
     for set_element in set_elements:
 
-        p.update_progress(f"Importing header sample {(set_iter+1)} of {set_elements_len}")
+        p.update_progress(f"Importing header sample {(set_iter+1)} of {len(set_elements)}")
 
         id = set_element.find("./id")
         type = set_element.find("./type")
@@ -209,7 +209,7 @@ def import_element_tree_from_peakml_file(tree_data):
             measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
             measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = int)
 
-        set = SetInfo(id.text, type.text, measurement_ids, colours[set_iter])
+        set = SetInfo(id.text, type.text, measurement_ids)
         header_obj.add_set(set)
 
         set_iter += 1
@@ -284,6 +284,19 @@ def import_element_tree_from_peakml_file(tree_data):
 
     # Add 'Peak' records to peakset list
     add_peaks(root, peakset, None)
+
+    # Finding the peaks linked into sets by measurement id
+    for peak in peakset:
+
+        # does the peak data contain the id.
+        for subpeak in peak.peaks:
+
+            for set in header_obj.sets:
+
+                for measurement_id in set.measurement_ids:
+
+                    if measurement_id in subpeak.peak_data.measurement_ids:
+                        set.add_linked_peak_measurement_ids(subpeak.measurement_id)
 
     # Convert peakset to dictionary with peak uids.
     peakset_dict = {}

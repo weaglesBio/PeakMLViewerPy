@@ -2,10 +2,9 @@
 <peakmlviewer>
 	<settings>
 		<smooth>true</smooth>
-		<decdp>3</decdp>
+		<decdp>5</decdp>
 		<databases>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/01_StdMix.xml</database>
-			<database>C:/Source/MetabolomicModellingMSc/Databases/03_StdMix.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/04_ESI-contaminants.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/05_LDonovani.xml</database>
 			<database>C:/Source/MetabolomicModellingMSc/Databases/ecocyc.xml</database>

@@ -1,20 +1,13 @@
 from Data.View.BaseItem import BaseItem
 
 class FilterItem(BaseItem):
-    def __init__(self, id: str, type: str = "", settings: str = ""):
-        super().__init__()
+    def __init__(self, uid: str, type: str = "", settings: str = ""):
+        
+        # Set filter uid as filter item uid
+        super().__init__(uid)
 
-        self.id = id
         self.type = type
         self.settings = settings
-
-    @property
-    def id(self) -> str:
-        return self._id
-    
-    @id.setter
-    def id(self, id: str):
-        self._id = id
 
     @property
     def type(self) -> str:

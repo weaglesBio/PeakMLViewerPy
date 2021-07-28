@@ -1,16 +1,15 @@
 import base64
 
 class SetInfo():
-    def __init__(self, id: int, type: str, measurement_ids: str, colour: str):
+    def __init__(self, id: int, type: str, measurement_ids_byte_array: bytearray):
 
-        # PeakML attributes
         self.id = id
         self.type = type
-        self.measurement_ids = measurement_ids
+        self.measurement_ids_byte_array = measurement_ids_byte_array
+        self.measurement_ids = measurement_ids_byte_array.tolist()
 
-        # Application attributes
-        self.colour = colour
-        self.selected = True
+        # Application methods
+        self._linked_peak_measurement_ids = []
 
     @property
     def id(self) -> int:
@@ -29,34 +28,40 @@ class SetInfo():
         self._type = type
 
     @property
-    def colour(self) -> str:
-        return self._colour
+    def measurement_ids_byte_array(self) -> bytearray:
+        return self._measurement_ids_byte_array
     
-    @colour.setter
-    def colour(self, colour: str):
-        self._colour = colour
+    @measurement_ids_byte_array.setter
+    def measurement_ids_byte_array(self, measurement_ids_byte_array: bytearray):
+        self._measurement_ids_byte_array = measurement_ids_byte_array
 
     @property
-    def selected(self) -> bool:
-        return self._selected
+    def measurement_ids(self) -> list[str]:
+        return self._measurement_ids
+    
+    @measurement_ids.setter
+    def measurement_ids(self, measurement_ids: list[str]):
+        self._measurement_ids = measurement_ids
 
-    @selected.setter
-    def selected(self, selected: bool):
-        self._selected = selected
+    @property
+    def linked_peak_measurement_ids(self):
+        return self._linked_peak_measurement_ids
 
-    def toggle_selected_status(self):
-        if self.selected:
-            self._selected = True
-        else:
-            self._selected = False
+    @linked_peak_measurement_ids.setter
+    def linked_peak_measurement_ids(self, linked_peak_measurement_ids: list[str]):
+        self._linked_peak_measurement_ids = linked_peak_measurement_ids
+
+    def add_linked_peak_measurement_ids(self, peak_measurement_id):
+
+        if peak_measurement_id not in self.linked_peak_measurement_ids:
+            self._linked_peak_measurement_ids.append(peak_measurement_id)
 
     # Returns string of plain-text (UTF-8) measurementids
-
-    def get_measurement_ids(self):
-        return self.measurement_ids
+    # def get_measurement_ids_str(self):
+    #     return ", ".join(self.measurement_ids)
 
     # Returns measurementids as raw encoded string
     def get_encoded_measurement_ids(self):
-        encoded = base64.b64encode(self.measurement_ids)
+        encoded = base64.b64encode(self.measurement_ids_byte_array)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
