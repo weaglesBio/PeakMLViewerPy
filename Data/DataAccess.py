@@ -11,6 +11,8 @@ from Data.View.SetDataView import SetDataView
 from Data.View.AnnotationDataView import AnnotationDataView
 from Data.View.IdentificationDataView import IdentificationDataView
 
+import Data.Molecules.MoleculeDatabaseData as MolData
+
 from Data.Filter.MassFilter import MassFilter
 from Data.Filter.IntensityFilter import IntensityFilter
 from Data.Filter.RetentionTimeFilter import RetentionTimeFilter
@@ -18,6 +20,9 @@ from Data.Filter.NumberDetectionsFilter import NumberDetectionsFilter
 from Data.Filter.AnnotationFilter import AnnotationFilter
 from Data.Filter.SortFilter import SortFilter
 from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
+
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 import IO.MoleculeIO as MolIO
 import IO.SettingsIO as SetIO
@@ -160,8 +165,23 @@ class DataAccess:
     def __init__(self):
 
         self._peakml = PeakML()
-        self._settings = Settings()
+        
+        # Check directory exists
+        # if not os.path.isdir('MoleculeDatabases'):
+        #     molecule_databases = self.prepare_molecule_databases()
+
         self._molecule_database = MolIO.load_molecule_databases()
+
+        # Check file exists
+        # if not os.path.isfile('settings.xml'):
+        #     self._settings = Settings()
+
+        #     self.settings.set_preference_by_name("decdp", 3)
+        #     self.settings.set_database_paths(molecule_databases)
+        #     SetIO.write_settings(self.settings)
+        # else:
+        self._settings = Settings(SetIO.load_preferences(), SetIO.load_database_paths())
+        
         self._filters = []
         self._measurement_colours = {}
         self._ipa_imported = False
@@ -176,6 +196,131 @@ class DataAccess:
         self._set_view = SetDataView()
         self._annotation_view = AnnotationDataView()
         self._identification_view = IdentificationDataView()
+
+    def prepare_molecule_databases(self):
+
+        try:
+            directory = "MoleculeDatabases"
+            os.mkdir(directory)
+
+            database_list = []
+
+            StdMixOne_path = os.path.join(directory, "01_StdMix.xml")
+            database_list.append(StdMixOne_path)
+            f = open(StdMixOne_path, "w+")
+            #f.write(minidom.parseString(MolData.StdMixOne))
+            f.write(minidom.parseString(MolData.StdMixOne).toprettyxml(indent="\t"))
+            f.close()
+
+            StdMixTwo_path = os.path.join(directory, "02_StdMix.xml")
+            database_list.append(StdMixTwo_path)
+            f = open(StdMixTwo_path, "w+") 
+            #f.write(u.prettify_xml(MolData.StdMixTwo))
+            f.write(minidom.parseString(MolData.StdMixTwo).toprettyxml(indent="\t"))
+            f.close()
+
+            StdMixThree_path = os.path.join(directory, "03_StdMix.xml")
+            database_list.append(StdMixThree_path)
+            f = open(StdMixThree_path, "w+")
+            #f.write(u.prettify_xml(MolData.StdMixThree))
+            f.write(minidom.parseString(MolData.StdMixThree).toprettyxml(indent="\t"))
+            f.close()
+
+            ESIContaminantsFour_path = os.path.join(directory, "04_ESI-contaminants.xml")
+            database_list.append(ESIContaminantsFour_path)
+            f = open(ESIContaminantsFour_path, "w+")
+            #f.write(u.prettify_xml(MolData.ESIContaminantsFour))
+            f.write(minidom.parseString(MolData.ESIContaminantsFour).toprettyxml(indent="\t"))
+            f.close()
+
+            LDonovaniFive_path = os.path.join(directory, "05_LDonovani.xml")
+            database_list.append(LDonovaniFive_path)
+            f = open(LDonovaniFive_path, "w+")
+            #f.write(u.prettify_xml(MolData.LDonovaniFive))
+            f.write(minidom.parseString(MolData.LDonovaniFive).toprettyxml(indent="\t"))
+            f.close()
+
+            ecocyc_path = os.path.join(directory, "ecocyc.xml")
+            database_list.append(ecocyc_path)
+            f = open(ecocyc_path, "w+")
+            #f.write(u.prettify_xml(MolData.ecocyc))
+            f.write(minidom.parseString(MolData.ecocyc).toprettyxml(indent="\t"))
+            f.close()
+
+            hmdb_path = os.path.join(directory, "hmdb.xml")
+            database_list.append(hmdb_path)
+            f = open(hmdb_path, "w+")
+            #f.write(u.prettify_xml(MolData.hmdb))
+            f.write(minidom.parseString(MolData.hmdb).toprettyxml(indent="\t"))
+            f.close()
+
+            kegg_path = os.path.join(directory, "kegg.xml")
+            database_list.append(kegg_path)
+            f = open(kegg_path, "w+")
+            #f.write(u.prettify_xml(MolData.kegg))
+            f.write(minidom.parseString(MolData.kegg).toprettyxml(indent="\t"))
+            f.close()
+
+            MetaCyc_path = os.path.join(directory, "MetaCyc.xml")
+            database_list.append(MetaCyc_path)
+            f = open(MetaCyc_path, "w+")
+            #f.write(u.prettify_xml(MolData.MetaCyc))
+            f.write(minidom.parseString(MolData.MetaCyc).toprettyxml(indent="\t"))
+            f.close()
+
+            Mycoplasma_hyopneumoniae_path = os.path.join(directory, "Mycoplasma_hyopneumoniae.xml")
+            database_list.append(Mycoplasma_hyopneumoniae_path)
+            f = open(Mycoplasma_hyopneumoniae_path, "w+")
+            #f.write(u.prettify_xml(MolData.Mycoplasma_hyopneumoniae))
+            f.write(minidom.parseString(MolData.Mycoplasma_hyopneumoniae).toprettyxml(indent="\t"))
+            f.close()
+
+            peptides_path = os.path.join(directory, "peptides.xml")
+            database_list.append(peptides_path)
+            f = open(peptides_path, "w+")
+            #f.write(u.prettify_xml(MolData.peptides))
+            f.write(minidom.parseString(MolData.peptides).toprettyxml(indent="\t"))
+            f.close()
+
+            scocyc_path = os.path.join(directory, "scocyc.xml")
+            database_list.append(scocyc_path)
+            f = open(scocyc_path, "w+")
+            #f.write(u.prettify_xml(MolData.scocyc))
+            f.write(minidom.parseString(MolData.scocyc).toprettyxml(indent="\t"))
+            f.close()
+
+            standard_path = os.path.join(directory, "standard.xml")
+            database_list.append(standard_path)
+            f = open(standard_path, "w+")
+            #f.write(u.prettify_xml(MolData.standard))
+            f.write(minidom.parseString(MolData.standard).toprettyxml(indent="\t"))
+            f.close()
+
+            Streptomyces_clavuligerus_db_path = os.path.join(directory, "Streptomyces_clavuligerus_db.xml")
+            database_list.append(Streptomyces_clavuligerus_db_path)
+            f = open(Streptomyces_clavuligerus_db_path, "w+")
+            #f.write(u.prettify_xml(MolData.Streptomyces_clavuligerus_db))
+            f.write(minidom.parseString(MolData.Streptomyces_clavuligerus_db).toprettyxml(indent="\t"))
+            f.close()
+
+            trypanocyc_path = os.path.join(directory, "trypanocyc.xml")
+            database_list.append(trypanocyc_path)
+            f = open(trypanocyc_path, "w+")
+            #f.write(u.prettify_xml(MolData.trypanocyc))
+            f.write(minidom.parseString(MolData.trypanocyc).toprettyxml(indent="\t"))
+            f.close()
+
+            kegg009_path = os.path.join(directory, "kegg009.xml")
+            database_list.append(kegg009_path)
+            f = open(kegg009_path, "w+")
+            #f.write(u.prettify_xml(MolData.kegg009))
+            f.write(minidom.parseString(MolData.kegg009).toprettyxml(indent="\t"))
+            f.close()
+
+            return database_list
+
+        except Exception as err:
+            lg.log_error(f'An error when building molecule databases: {err}')      
 
     # Import Peakml object data
     def import_peakml_data(self):

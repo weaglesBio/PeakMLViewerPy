@@ -7,4 +7,5 @@
 
 ```
 pyinstaller --onefile -w -F -i "favicon.ico" PeakMLViewerPy.py
+pyinstaller PeakMLViewerPy.spec
 ```

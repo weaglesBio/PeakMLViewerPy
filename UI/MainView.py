@@ -535,14 +535,14 @@ class MainView():
 
 
             def adjust_mlf(self, vf1, mf0):
+                print("not implemented")
 
-
-                return mlf0
+                #return mlf0
 
             def adjust_mrf(self, vf1, mf0):
+                print("not implemented")
 
-
-                return mrf0, mrf1
+                #return mrf0, mrf1
 
             #get_adjusted mlf0 from widget heigh method.
 

@@ -315,11 +315,6 @@ def import_element_tree_from_peakml_file(tree_data):
 
 #region Write methods
 
-def prettify(etree):
-    et_string = ET.tostring(etree)
-    md_string = minidom.parseString(et_string)
-    return md_string.toprettyxml(indent="\t")
-
 def finalise_xml_formatting(input_string: str):
 
     updated_top_string = input_string.replace('<?xml version="1.0" ?>','<?xml version="1.0" encoding="UTF-8"?>\n\n\n<?xml-stylesheet type="text/xml" href=""?>\n')
@@ -501,7 +496,7 @@ def create_xml_from_peakml(data_header, data_peaks_list):
     # Settings as parameters the peakml xml object and a list of peak data objects
     add_peak_nodes(peakml, data_peaks_list)
 
-    prettified_xml = prettify(peakml)
+    prettified_xml = u.prettify_xml(peakml)
     finalised_xml = finalise_xml_formatting(prettified_xml)
 
     u.trace(f"Finish writing XML")

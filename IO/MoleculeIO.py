@@ -5,6 +5,7 @@ import Logger as lg
 def load_molecule_databases():
 
     molecules = {}
+    settings_tree_data = None
 
     try:
             # If errors while attempt to read, requires conversion.
@@ -14,60 +15,61 @@ def load_molecule_databases():
     except Exception as err:
         lg.log_error(f'Unable to read molecule library paths from settings xml: {err}')
 
-    settings_root = ET.fromstring(settings_tree_data)
+    if settings_tree_data:
+        settings_root = ET.fromstring(settings_tree_data)
 
-    for databases in settings_root.findall("./settings/databases/database"):
+        for databases in settings_root.findall("./settings/databases/database"):
 
-        try:
-            # If errors while attempt to read, requires conversion.
-            with open(databases.text) as f:
-                tree_data = f.read()
+            try:
+                # If errors while attempt to read, requires conversion.
+                with open(databases.text) as f:
+                    tree_data = f.read()
 
-            compound_root = ET.fromstring(tree_data)
+                compound_root = ET.fromstring(tree_data)
 
-            for compound_node in compound_root.findall("./compound"):
+                for compound_node in compound_root.findall("./compound"):
 
-                id = compound_node.find("./id")
-                name = compound_node.find("./name")
-                formula = compound_node.find("./formula")
-                inchi = compound_node.find("./inchi")
-                smiles = compound_node.find("./smiles")
-                synonyms = compound_node.find("./synonyms")
-                retention_time = compound_node.find("./retentiontime")
-                description = compound_node.find("./description")
-                class_desc = compound_node.find("./class")
-                mass = compound_node.find("./monoisotopicmass")
-                polarity = compound_node.find("./polarity")
+                    id = compound_node.find("./id")
+                    name = compound_node.find("./name")
+                    formula = compound_node.find("./formula")
+                    inchi = compound_node.find("./inchi")
+                    smiles = compound_node.find("./smiles")
+                    synonyms = compound_node.find("./synonyms")
+                    retention_time = compound_node.find("./retentiontime")
+                    description = compound_node.find("./description")
+                    class_desc = compound_node.find("./class")
+                    mass = compound_node.find("./monoisotopicmass")
+                    polarity = compound_node.find("./polarity")
 
-                molecule = Molecule(id.text, name.text, formula.text)
-                if inchi is not None:
-                    molecule.inchi = inchi.text
+                    molecule = Molecule(id.text, name.text, formula.text)
+                    if inchi is not None:
+                        molecule.inchi = inchi.text
 
-                if smiles is not None:
-                    molecule.smiles = smiles.text
+                    if smiles is not None:
+                        molecule.smiles = smiles.text
 
-                if synonyms is not None:    
-                    molecule.synonyms = synonyms.text
+                    if synonyms is not None:    
+                        molecule.synonyms = synonyms.text
 
-                if description is not None:
-                    molecule.description = description.text
+                    if description is not None:
+                        molecule.description = description.text
 
-                if class_desc is not None:
-                    molecule.class_description = class_desc.text
+                    if class_desc is not None:
+                        molecule.class_description = class_desc.text
 
-                if retention_time is not None:
-                    molecule.retention_time = float(retention_time.text) * 60.0
+                    if retention_time is not None:
+                        molecule.retention_time = float(retention_time.text) * 60.0
 
-                if mass is not None and mass.text is not None and len(mass.text) > 0:
-                    molecule.mass = mass.text
-                        
-                if polarity is not None:
-                    molecule.polarity = polarity.text
+                    if mass is not None and mass.text is not None and len(mass.text) > 0:
+                        molecule.mass = mass.text
+                            
+                    if polarity is not None:
+                        molecule.polarity = polarity.text
 
-                molecules[id.text] = molecule
+                    molecules[id.text] = molecule
 
-        except Exception as err:
-            lg.log_error(f'Unable to import details from molecule library: {err}')
+            except Exception as err:
+                lg.log_error(f'Unable to import details from molecule library: {err}')
 
     return molecules
             

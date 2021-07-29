@@ -2,6 +2,8 @@ from datetime import datetime
 import uuid
 import seaborn as sns
 import IO.SettingsIO as SettingsIO
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 # Collection of static helper methods
 
@@ -22,12 +24,6 @@ def format_time_min_int(time):
 def get_current_time():
     return datetime.now().strftime("%H:%M:%S.%f")
     #return datetime.now().strftime("%H:%M:%S")
-
-def get_datetime_string():
-    return datetime.now().strftime("%Y%m%d_%H%M%S")
-
-def get_datetime_full_string():
-    return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def get_new_uuid():
     return str(uuid.uuid4())
@@ -60,8 +56,17 @@ def is_integer(value: str) -> bool:
     except ValueError:
         return False
 
-def convert_float_to_sf(value, sfnum: int = SettingsIO.load_preference_decdp()):
+def convert_float_to_sf(value, sfnum: int = None):
     
+
+    if not sfnum:
+        # On initialisation settings file may not exist so default to 3 until it is.
+        try:
+            sfnum = SettingsIO.load_preference_decdp()
+        except:
+            sfnum = 3
+
+
     if value != '':
         decimal_val = float(value)
 
@@ -72,7 +77,10 @@ def convert_float_to_sf(value, sfnum: int = SettingsIO.load_preference_decdp()):
     else:
         return ''
 
-
+def prettify_xml(etree):
+    et_string = ET.tostring(etree)
+    md_string = minidom.parseString(et_string)
+    return md_string.toprettyxml(indent="\t")
 
 
 ## Debugging methods

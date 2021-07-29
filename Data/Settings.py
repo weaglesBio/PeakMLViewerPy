@@ -1,21 +1,21 @@
 import IO.SettingsIO as SetIO
 
 class Settings():
-    def __init__(self):
-        preferences = []
-        preferences = SetIO.load_preferences()
+    def __init__(self, preferences: list[str] = [], databases: list[str] = []):
+        self.preferences = preferences
+        #preferences = SetIO.load_preferences()
 
         self.appearance_smooth = None
         self.appearance_decdp = None
 
-        for preference in preferences:
+        for preference in self.preferences:
             if preference[0] == "smooth":
                 self.appearance_smooth = preference[1]
             elif preference[0] == "decdp":
                 self.appearance_decdp = preference[1]
 
-        self.databases = []
-        self.databases = SetIO.load_database_paths()
+        self.databases = databases
+        #self.databases = SetIO.load_database_paths()
 
     def get_preference_by_name(self, name):   
         if name == "smooth":
