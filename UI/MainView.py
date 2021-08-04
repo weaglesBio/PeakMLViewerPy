@@ -29,6 +29,7 @@ from UI.FilterAnnotationsDialog import FilterAnnotationsDialog
 from UI.SortDialog import SortDialog
 from UI.SortTimeSeriesDialog import SortTimeSeriesDialog
 from UI.PreferencesDialog import PreferencesDialog
+from UI.PeakSplitDialog import PeakSplitDialog
 import Icon as i
 import Enums as e
 import Utilities as u
@@ -191,6 +192,7 @@ class MainView():
 
         self.editmenu = tk.Menu(self.menubar, tearoff=0)
         self.editmenu.add_command(label="Preferences", command=self.open_preferences_dialog)
+        self.editmenu.add_command(label="Split peak", command=self.open_peak_split_dialog)
         self.editmenu.add_command(label="Import IPA RData", command=self.import_ipa_file)
 
         #TODO: Remove from deployment version
@@ -743,7 +745,34 @@ class MainView():
 
     def open_log_dialog(self):
         LogDialog(self.root)
+
+    def open_peak_split_dialog(self):
+        rt_mean = self.data.selected_retention_time
+        dlg = PeakSplitDialog(self.root, "Set Retention Time for Peak Split", rt_mean)
+        if dlg.submit:
+            #print("Not implemented.")
+            self.data.peak_split_retention_time = f"{dlg.retention_time_min}:{dlg.retention_time_sec}"
+
+            self.run_process_with_progress(self.split_peak_on_retention_time)
+            #self.data.update_settings(dlg.decdp, dlg.databases)
+            #self.run_process_with_progress(self.refresh_entry_selected)
         
+    def split_peak_on_retention_time(self):
+        p.update_progress("Splitting peak", 0)
+
+        try:
+            # Load data objects
+            self.data.split_selected_peak_on_retention_time()
+
+            # Update UI widgets
+            self.load_data_from_views()
+
+        except Exception as err:
+            self.handle_error("Unable to split peak.", err)
+            p.update_progress("Completed", 100)
+
+        p.update_progress("Peak split.", 100)
+
 #endregion
 
 #region Info/Entry View Methods

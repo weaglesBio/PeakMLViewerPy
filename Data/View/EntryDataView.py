@@ -1,6 +1,7 @@
 import Utilities as u
 import Logger as lg
 import math as m
+import statistics as stats
 
 from Data.View.BaseDataView import BaseDataView
 from Data.View.EntryItem import EntryItem
@@ -13,6 +14,7 @@ class EntryDataView(BaseDataView):
         self._intensity_min = None
         self._intensity_max = None
         self._retention_time_min = None
+        self._retention_time_mean = None
         self._retention_time_max = None
         self._sample_count_min = None
         self._sample_count_max = None
@@ -56,6 +58,10 @@ class EntryDataView(BaseDataView):
         return self._retention_time_min
 
     @property
+    def retention_time_mean(self) -> float:
+        return self._retention_time_mean
+
+    @property
     def retention_time_max(self) -> float:
         return self._retention_time_max
 
@@ -76,6 +82,8 @@ class EntryDataView(BaseDataView):
             self._intensity_min = None
             self._intensity_max = None
 
+            retention_times = []
+
             # Loop through peakml peak dictionary
             for peak_uid in peak_dic.keys():
                 
@@ -91,6 +99,8 @@ class EntryDataView(BaseDataView):
             
                 mass = float(mass)
                 intensity = float(intensity)
+
+                retention_times.append(float(peak.retention_time))
 
                 if self.mass_min is None and self.mass_max is None:
                     self._mass_min = m.floor(mass)
@@ -123,6 +133,8 @@ class EntryDataView(BaseDataView):
                     self._sample_count_min = nr_peaks
                 elif self.sample_count_max < nr_peaks:
                     self._sample_count_max = nr_peaks
+
+            self._retention_time_mean = u.format_time_string(stats.mean(retention_times))
 
             self.refresh_dataframe()
         except Exception as err:

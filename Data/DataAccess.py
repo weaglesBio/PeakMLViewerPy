@@ -20,6 +20,8 @@ from Data.Filter.SortFilter import SortFilter
 from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
 
 from typing import Type
+import copy
+import statistics as stats
 
 import IO.MoleculeIO as MolIO
 import IO.SettingsIO as SetIO
@@ -56,10 +58,6 @@ class DataAccess:
     @property
     def plot_int_view_dataframe(self) -> pd.DataFrame:
         return self._plot_int_view.dataframe
-    
-    # @property
-    # def plot_int_log_view_dataframe(self) -> pd.DataFrame:
-    #     return self._plot_int_log_view.dataframe
     
     @property
     def set_view_dataframe(self) -> pd.DataFrame:
@@ -117,6 +115,16 @@ class DataAccess:
         self._entry_view.update_selected(uid)
 
     @property
+    def selected_retention_time(self) -> str:
+
+        peak = self._peakml.peaks[self.selected_entry_uid]
+
+        if u.is_float(peak.retention_time):
+            return u.format_time_string(float(peak.retention_time))
+        else:
+            return None
+
+    @property
     def selected_filter_uid(self) -> str:
         # Get first row with selected is true from entry
         df = self.filter_view_dataframe
@@ -153,6 +161,14 @@ class DataAccess:
     @property 
     def measurement_colours(self) -> dict[str, str]:
         return self._measurement_colours
+
+    @property 
+    def peak_split_retention_time(self) -> str:
+        return self._peak_split_retention_time
+
+    @peak_split_retention_time.setter
+    def peak_split_retention_time(self, peak_split_retention_time: str):
+        self._peak_split_retention_time = peak_split_retention_time
 
     def __init__(self):
 
@@ -348,6 +364,104 @@ class DataAccess:
 
     def get_set_checked_status(self, label: str) -> bool:
         return self._set_view.get_checked_status_from_label(label)
+
+
+    def split_selected_peak_on_retention_time(self):
+        
+        original_peak = self._peakml.peaks[self.selected_entry_uid]
+
+        try: 
+            # Duplicate peak
+            peak_lower = self._peakml.peaks[self.selected_entry_uid]
+            peak_higher = copy.deepcopy(peak_lower)
+
+            # Remove lower values from peak.
+            peak_lower = self.remove_peak_values_by_retention_time(peak_lower, True)
+
+            # Remove higher values from peak.
+            peak_higher = self.remove_peak_values_by_retention_time(peak_higher, False)
+
+            self._peakml.peaks[self.selected_entry_uid] = peak_lower
+            self._peakml.peaks[u.get_new_uuid()] = peak_higher
+
+            # Reload data from peakml file
+            self.load_view_data_from_peakml()
+
+        except Exception as err:
+            lg.log_error(f'An error when splitting peak: {err}')
+            #restore modified peak
+            self._peakml.peaks[self.selected_entry_uid] = original_peak
+        
+    def remove_peak_values_by_retention_time(self, peak: Peak, keep_lower: bool) -> Peak: 
+        
+        rt_split = u.format_time_float(self.peak_split_retention_time)
+
+        intensity_values = []
+        mass_values = []
+        rt_values = []
+
+        updated_peaks = []
+
+        for i in range(len(peak.peaks)):
+            child_peak = peak.peaks[i]
+            # Filter retention times 
+            remaining_retention_times = []
+            
+            original_count = len(child_peak.peak_data.retention_times)
+
+            for j in range(len(child_peak.peak_data.retention_times)):
+                rt_value = child_peak.peak_data.retention_times[j]
+                # If less than peak split point and keeping higher
+                if rt_value <= rt_split and not keep_lower:
+                    continue
+                # If more than peak split point and keeping lower
+                elif rt_value > rt_split and keep_lower:
+                    continue
+                else:
+                    remaining_retention_times.append(rt_value)
+
+            # Find how many values left, 
+            remaining_count = len(remaining_retention_times)
+
+            if remaining_count:
+
+            # Update retention times
+                child_peak.peak_data.retention_times = remaining_retention_times
+
+                # Drop all from each in that direction from peakdata
+                if keep_lower:
+                    child_peak.peak_data.scan_ids = child_peak.peak_data.scan_ids[:remaining_count]
+                    child_peak.peak_data.masses = child_peak.peak_data.masses[:remaining_count]
+                    child_peak.peak_data.intensities = child_peak.peak_data.intensities[:remaining_count]
+                    child_peak.peak_data.relative_intensities = child_peak.peak_data.relative_intensities[:remaining_count]
+                    child_peak.peak_data.pattern_ids = child_peak.peak_data.pattern_ids[:remaining_count]
+                    child_peak.peak_data.measurement_ids = child_peak.peak_data.measurement_ids[:remaining_count]
+                else:
+                    child_peak.peak_data.scan_ids = child_peak.peak_data.scan_ids[original_count-remaining_count:]
+                    child_peak.peak_data.masses = child_peak.peak_data.masses[original_count-remaining_count:]
+                    child_peak.peak_data.intensities = child_peak.peak_data.intensities[original_count-remaining_count:]
+                    child_peak.peak_data.relative_intensities = child_peak.peak_data.relative_intensities[original_count-remaining_count:]
+                    child_peak.peak_data.pattern_ids = child_peak.peak_data.pattern_ids[original_count-remaining_count:]
+                    child_peak.peak_data.measurement_ids = child_peak.peak_data.measurement_ids[original_count-remaining_count:]
+
+                child_peak.retention_time = stats.mean(child_peak.peak_data.retention_times)
+                child_peak.mass = stats.mean(child_peak.peak_data.masses)
+                child_peak.intensity = max(child_peak.peak_data.intensities)
+
+                rt_values.append(child_peak.retention_time)
+                mass_values.append(child_peak.mass)
+                intensity_values.append(child_peak.intensity)
+
+                updated_peaks.append(child_peak)
+
+        peak.retention_time = stats.mean(rt_values)
+        peak.mass = stats.mean(mass_values)
+        peak.intensity = max(intensity_values)
+
+        # Peak is not included if no retention values within the window.
+        peak.peaks = updated_peaks
+                    
+        return peak
 
 #region Filters
 

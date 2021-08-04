@@ -10,6 +10,13 @@ from xml.dom import minidom
 def format_time_string(time):
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
 
+def format_time_float(time_string):
+    time_split = time_string.split(":")
+    min = int(time_split[0])
+    sec = int(time_split[1])
+    return (min*60) + sec
+    #return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
+
 def format_time_datetime(time):
     return datetime.fromtimestamp(float(time))
 
