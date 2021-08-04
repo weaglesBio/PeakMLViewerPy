@@ -1,3 +1,4 @@
+from Data.Filter.BaseFilter import BaseFilter
 from Data.PeakML.Peak import Peak
 from Data.PeakML.PeakML import PeakML
 from Data.Settings import Settings
@@ -5,14 +6,11 @@ from Data.View.EntryDataView import EntryDataView
 from Data.View.FilterDataView import FilterDataView
 from Data.View.PlotPeakDataView import PlotPeakDataView
 from Data.View.PlotDerivativesDataView import PlotDerivativesDataView
-from Data.View.PlotIntensityAllDataView import PlotIntensityAllDataView
-from Data.View.PlotIntensityLogDataView import PlotIntensityLogDataView
+from Data.View.PlotIntensityDataView import PlotIntensityDataView
+#from Data.View.PlotIntensityLogDataView import PlotIntensityLogDataView
 from Data.View.SetDataView import SetDataView
 from Data.View.AnnotationDataView import AnnotationDataView
 from Data.View.IdentificationDataView import IdentificationDataView
-
-import Data.Molecules.MoleculeDatabaseData as MolData
-
 from Data.Filter.MassFilter import MassFilter
 from Data.Filter.IntensityFilter import IntensityFilter
 from Data.Filter.RetentionTimeFilter import RetentionTimeFilter
@@ -21,8 +19,7 @@ from Data.Filter.AnnotationFilter import AnnotationFilter
 from Data.Filter.SortFilter import SortFilter
 from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
 
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
+from typing import Type
 
 import IO.MoleculeIO as MolIO
 import IO.SettingsIO as SetIO
@@ -57,12 +54,12 @@ class DataAccess:
         return self._plot_der_view.dataframe
     
     @property
-    def plot_int_all_view_dataframe(self) -> pd.DataFrame:
-        return self._plot_int_all_view.dataframe
+    def plot_int_view_dataframe(self) -> pd.DataFrame:
+        return self._plot_int_view.dataframe
     
-    @property
-    def plot_int_log_view_dataframe(self) -> pd.DataFrame:
-        return self._plot_int_log_view.dataframe
+    # @property
+    # def plot_int_log_view_dataframe(self) -> pd.DataFrame:
+    #     return self._plot_int_log_view.dataframe
     
     @property
     def set_view_dataframe(self) -> pd.DataFrame:
@@ -77,11 +74,11 @@ class DataAccess:
         return self._identification_view.dataframe
 
     @property
-    def import_peakml_path(self):
+    def import_peakml_path(self) -> str:
         return os.path.split(self.import_peakml_filepath)[0]
 
     @property
-    def import_peakml_filename(self):
+    def import_peakml_filename(self) -> str:
         return os.path.split(self.import_peakml_filepath)[1]
 
     @property
@@ -150,10 +147,6 @@ class DataAccess:
         return self._ipa_imported
 
     @property
-    def ipa_imported(self) -> bool:
-        return self._ipa_imported
-
-    @property
     def prior_probabilities_modified(self) -> bool:
         return self._prior_probabilities_modified
 
@@ -161,25 +154,11 @@ class DataAccess:
     def measurement_colours(self) -> dict[str, str]:
         return self._measurement_colours
 
-
     def __init__(self):
 
         self._peakml = PeakML()
         
-        # Check directory exists
-        # if not os.path.isdir('MoleculeDatabases'):
-        #     molecule_databases = self.prepare_molecule_databases()
-
         self._molecule_database = MolIO.load_molecule_databases()
-
-        # Check file exists
-        # if not os.path.isfile('settings.xml'):
-        #     self._settings = Settings()
-
-        #     self.settings.set_preference_by_name("decdp", 3)
-        #     self.settings.set_database_paths(molecule_databases)
-        #     SetIO.write_settings(self.settings)
-        # else:
         self._settings = Settings(SetIO.load_preferences(), SetIO.load_database_paths())
         
         self._filters = []
@@ -191,150 +170,26 @@ class DataAccess:
         self._filter_view = FilterDataView()
         self._plot_peak_view = PlotPeakDataView()
         self._plot_der_view = PlotDerivativesDataView()
-        self._plot_int_all_view = PlotIntensityAllDataView()
-        self._plot_int_log_view = PlotIntensityLogDataView()      
+        self._plot_int_view = PlotIntensityDataView()
+        # self._plot_int_log_view = PlotIntensityLogDataView()      
         self._set_view = SetDataView()
         self._annotation_view = AnnotationDataView()
         self._identification_view = IdentificationDataView()
-
-    def prepare_molecule_databases(self):
-
-        try:
-            directory = "MoleculeDatabases"
-            os.mkdir(directory)
-
-            database_list = []
-
-            StdMixOne_path = os.path.join(directory, "01_StdMix.xml")
-            database_list.append(StdMixOne_path)
-            f = open(StdMixOne_path, "w+")
-            #f.write(minidom.parseString(MolData.StdMixOne))
-            f.write(minidom.parseString(MolData.StdMixOne).toprettyxml(indent="\t"))
-            f.close()
-
-            StdMixTwo_path = os.path.join(directory, "02_StdMix.xml")
-            database_list.append(StdMixTwo_path)
-            f = open(StdMixTwo_path, "w+") 
-            #f.write(u.prettify_xml(MolData.StdMixTwo))
-            f.write(minidom.parseString(MolData.StdMixTwo).toprettyxml(indent="\t"))
-            f.close()
-
-            StdMixThree_path = os.path.join(directory, "03_StdMix.xml")
-            database_list.append(StdMixThree_path)
-            f = open(StdMixThree_path, "w+")
-            #f.write(u.prettify_xml(MolData.StdMixThree))
-            f.write(minidom.parseString(MolData.StdMixThree).toprettyxml(indent="\t"))
-            f.close()
-
-            ESIContaminantsFour_path = os.path.join(directory, "04_ESI-contaminants.xml")
-            database_list.append(ESIContaminantsFour_path)
-            f = open(ESIContaminantsFour_path, "w+")
-            #f.write(u.prettify_xml(MolData.ESIContaminantsFour))
-            f.write(minidom.parseString(MolData.ESIContaminantsFour).toprettyxml(indent="\t"))
-            f.close()
-
-            LDonovaniFive_path = os.path.join(directory, "05_LDonovani.xml")
-            database_list.append(LDonovaniFive_path)
-            f = open(LDonovaniFive_path, "w+")
-            #f.write(u.prettify_xml(MolData.LDonovaniFive))
-            f.write(minidom.parseString(MolData.LDonovaniFive).toprettyxml(indent="\t"))
-            f.close()
-
-            ecocyc_path = os.path.join(directory, "ecocyc.xml")
-            database_list.append(ecocyc_path)
-            f = open(ecocyc_path, "w+")
-            #f.write(u.prettify_xml(MolData.ecocyc))
-            f.write(minidom.parseString(MolData.ecocyc).toprettyxml(indent="\t"))
-            f.close()
-
-            hmdb_path = os.path.join(directory, "hmdb.xml")
-            database_list.append(hmdb_path)
-            f = open(hmdb_path, "w+")
-            #f.write(u.prettify_xml(MolData.hmdb))
-            f.write(minidom.parseString(MolData.hmdb).toprettyxml(indent="\t"))
-            f.close()
-
-            kegg_path = os.path.join(directory, "kegg.xml")
-            database_list.append(kegg_path)
-            f = open(kegg_path, "w+")
-            #f.write(u.prettify_xml(MolData.kegg))
-            f.write(minidom.parseString(MolData.kegg).toprettyxml(indent="\t"))
-            f.close()
-
-            MetaCyc_path = os.path.join(directory, "MetaCyc.xml")
-            database_list.append(MetaCyc_path)
-            f = open(MetaCyc_path, "w+")
-            #f.write(u.prettify_xml(MolData.MetaCyc))
-            f.write(minidom.parseString(MolData.MetaCyc).toprettyxml(indent="\t"))
-            f.close()
-
-            Mycoplasma_hyopneumoniae_path = os.path.join(directory, "Mycoplasma_hyopneumoniae.xml")
-            database_list.append(Mycoplasma_hyopneumoniae_path)
-            f = open(Mycoplasma_hyopneumoniae_path, "w+")
-            #f.write(u.prettify_xml(MolData.Mycoplasma_hyopneumoniae))
-            f.write(minidom.parseString(MolData.Mycoplasma_hyopneumoniae).toprettyxml(indent="\t"))
-            f.close()
-
-            peptides_path = os.path.join(directory, "peptides.xml")
-            database_list.append(peptides_path)
-            f = open(peptides_path, "w+")
-            #f.write(u.prettify_xml(MolData.peptides))
-            f.write(minidom.parseString(MolData.peptides).toprettyxml(indent="\t"))
-            f.close()
-
-            scocyc_path = os.path.join(directory, "scocyc.xml")
-            database_list.append(scocyc_path)
-            f = open(scocyc_path, "w+")
-            #f.write(u.prettify_xml(MolData.scocyc))
-            f.write(minidom.parseString(MolData.scocyc).toprettyxml(indent="\t"))
-            f.close()
-
-            standard_path = os.path.join(directory, "standard.xml")
-            database_list.append(standard_path)
-            f = open(standard_path, "w+")
-            #f.write(u.prettify_xml(MolData.standard))
-            f.write(minidom.parseString(MolData.standard).toprettyxml(indent="\t"))
-            f.close()
-
-            Streptomyces_clavuligerus_db_path = os.path.join(directory, "Streptomyces_clavuligerus_db.xml")
-            database_list.append(Streptomyces_clavuligerus_db_path)
-            f = open(Streptomyces_clavuligerus_db_path, "w+")
-            #f.write(u.prettify_xml(MolData.Streptomyces_clavuligerus_db))
-            f.write(minidom.parseString(MolData.Streptomyces_clavuligerus_db).toprettyxml(indent="\t"))
-            f.close()
-
-            trypanocyc_path = os.path.join(directory, "trypanocyc.xml")
-            database_list.append(trypanocyc_path)
-            f = open(trypanocyc_path, "w+")
-            #f.write(u.prettify_xml(MolData.trypanocyc))
-            f.write(minidom.parseString(MolData.trypanocyc).toprettyxml(indent="\t"))
-            f.close()
-
-            kegg009_path = os.path.join(directory, "kegg009.xml")
-            database_list.append(kegg009_path)
-            f = open(kegg009_path, "w+")
-            #f.write(u.prettify_xml(MolData.kegg009))
-            f.write(minidom.parseString(MolData.kegg009).toprettyxml(indent="\t"))
-            f.close()
-
-            return database_list
-
-        except Exception as err:
-            lg.log_error(f'An error when building molecule databases: {err}')      
 
     # Import Peakml object data
     def import_peakml_data(self):
         try:
             p.update_progress("Importing PeakML file.", 5)
-            self._peakml.import_from_file(self.import_peakml_filepath)
+            import_succeded = self._peakml.import_from_file(self.import_peakml_filepath)
 
-            self.assign_measurement_colours()
+            if import_succeded:
+                self.assign_measurement_colours()
 
-            p.update_progress("Loading view data.", 20)
-            self.load_view_data_from_peakml()
+                p.update_progress("Loading view data.", 20)
+                self.load_view_data_from_peakml()
 
-            self._ipa_imported = False
-            self._prior_probabilities_modified = False
+                self._ipa_imported = False
+                self._prior_probabilities_modified = False
 
         except Exception as err:
             lg.log_error(f'An error when importing peakML data: {err}')
@@ -408,12 +263,12 @@ class DataAccess:
             lg.log_progress("Derivatives plot data loaded.")
 
             p.update_progress("Loading intensity plot data", 37)
-            self._plot_int_all_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            self._plot_int_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
             lg.log_progress("Intensity plot data loaded.")
 
-            p.update_progress("Loading intensity log plot data", 40)
-            self._plot_int_log_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
-            lg.log_progress("Intensity log plot data loaded.")
+            # p.update_progress("Loading intensity log plot data", 40)
+            # self._plot_int_log_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
+            # lg.log_progress("Intensity log plot data loaded.")
             
             p.update_progress("Loading annotation view data", 42)
             self._annotation_view.load_data_for_selected_peak(selected_peak)
@@ -439,7 +294,7 @@ class DataAccess:
     def update_identification_checked_status(self, uid: str, checked: bool):
         self._identification_view.update_checked_status(uid, checked)
 
-    def check_if_any_checked_entries(self):
+    def check_if_any_checked_entries(self) -> bool:
         return self._entry_view.check_if_any_checked()
 
     def remove_checked_entries(self):
@@ -450,11 +305,11 @@ class DataAccess:
 
         self.load_view_data_from_peakml()
 
-    def get_selected_identification_details(self):
+    def get_selected_identification_details(self) -> tuple[str, str, str, str]:
         uid, id, prior, notes = self._identification_view.get_details(self.selected_identification_uid)
         return uid, id, prior, notes
 
-    def check_if_any_checked_identifications(self):
+    def check_if_any_checked_identifications(self) -> bool:
         return self._identification_view.check_if_any_checked()
 
     def remove_checked_identifications(self):
@@ -466,7 +321,7 @@ class DataAccess:
         #Save updated identification dataframe to selected peak. 
         self.update_peak_identifications()
 
-    def update_identification_details(self, uid, prior, notes):
+    def update_identification_details(self, uid: str, prior: str, notes: str):
         prior_updated = self._identification_view.update_details(uid, prior, notes)
 
         if prior_updated:
@@ -491,37 +346,37 @@ class DataAccess:
         peak.update_specific_annotation('notes',ann_notes)
         self._peakml.peaks[self.selected_entry_uid] = peak
 
-    def get_set_checked_status(self, label: str):
+    def get_set_checked_status(self, label: str) -> bool:
         return self._set_view.get_checked_status_from_label(label)
 
 #region Filters
 
-    def add_filter(self, filter):
+    def add_filter(self, filter: Type[BaseFilter]):
         self._filters.append(filter)
         self.load_view_data_from_peakml()
 
-    def add_filter_mass(self, mass_min, mass_max): #, formula, formula_ppm, mass_charge, filter_option
+    def add_filter_mass(self, mass_min: float, mass_max: float): #, formula, formula_ppm, mass_charge, filter_option
         self.add_filter(MassFilter(mass_min, mass_max)) #, formula, formula_ppm, mass_charge, filter_option
 
-    def add_filter_intensity(self, intensity_min):
+    def add_filter_intensity(self, intensity_min: float):
         self.add_filter(IntensityFilter(intensity_min))
 
-    def add_filter_retention_time(self, retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu):
+    def add_filter_retention_time(self, retention_time_min_hr: int, retention_time_max_hr: int, retention_time_min_minu: int, retention_time_max_minu: int):
         self.add_filter(RetentionTimeFilter(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
 
-    def add_filter_number_detections(self, detection_number):
+    def add_filter_number_detections(self, detection_number: int):
         self.add_filter(NumberDetectionsFilter(detection_number))
 
-    def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
-        self.add_filter(AnnotationFilter(annotation_name, annotation_relation, annotation_value))
+    # def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
+    #     self.add_filter(AnnotationFilter(annotation_name, annotation_relation, annotation_value))
 
-    def add_filter_sort(self):
-        print("Not implemented")
+    # def add_filter_sort(self):
+    #     print("Not implemented")
 
-    def add_filter_sort_times_series(self):
-        print("Not implemented")
+    # def add_filter_sort_times_series(self):
+    #     print("Not implemented")
 
-    def remove_filter_by_id(self, id):
+    def remove_filter_by_id(self, id: str):
         updated_filter_list = []
         for filter in self._filters:
             if filter.uid != id:
@@ -530,16 +385,16 @@ class DataAccess:
         self._filters = updated_filter_list
         self.load_view_data_from_peakml()
 
-    def get_min_max_mass(self):
+    def get_min_max_mass(self) -> tuple[int, int]:
         return self._entry_view.mass_min, self._entry_view.mass_max
 
-    def get_min_max_intensity(self):
+    def get_min_max_intensity(self) -> tuple[int, int]:
         return self._entry_view.intensity_min, self._entry_view.intensity_max
 
-    def get_min_max_retention_time(self):
+    def get_min_max_retention_time(self) -> tuple[str, str]:
         return self._entry_view.retention_time_min, self._entry_view.retention_time_max
 
-    def get_min_max_samples_count(self):
+    def get_min_max_samples_count(self) -> tuple[int, int]:
         return self._entry_view.sample_count_min, self._entry_view.sample_count_max
 
     def filter_peaks(self, peaks_dic: dict[str, Peak]):
@@ -552,10 +407,10 @@ class DataAccess:
 #endregion
 
 #region Settings
-    def get_settings_preference_by_name(self, name):
+    def get_settings_preference_by_name(self, name: str):
         return self.settings.get_preference_by_name(name)
 
-    def get_settings_database_paths(self):
+    def get_settings_database_paths(self) -> str:
         database_paths = self.settings.get_database_paths()
         df = pd.DataFrame()
         for path in database_paths:
@@ -564,7 +419,7 @@ class DataAccess:
 
         return df
 
-    def update_settings(self, decdp, databases):
+    def update_settings(self, decdp: int, databases: list[str]):
 
         self.settings.set_preference_by_name("decdp", decdp)
         self.settings.set_database_paths(databases["Path"].tolist())

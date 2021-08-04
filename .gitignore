@@ -23,3 +23,5 @@ Data\__pycache__\*.cpython-39.pyc
 
 #Ignore demo projects
 DemoProj
+
+.vscode

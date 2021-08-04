@@ -87,68 +87,68 @@ class PeakData():
     def measurement_ids(self, measurement_ids: list[int]):
         self._measurement_ids = measurement_ids
 
-    def get_encoded_scan_ids(self):
+    def get_encoded_scan_ids(self) -> str:
         encoded = base64.b64encode(self.scan_ids)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def get_encoded_retention_times(self):
+    def get_encoded_retention_times(self) -> str:
         encoded = base64.b64encode(self.retention_times)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def get_encoded_masses(self):
+    def get_encoded_masses(self) -> str:
         encoded = base64.b64encode(self.masses)
         return encoded.decode("UTF-8")  #Converts from bytes to string
          
-    def get_encoded_intensities(self):
+    def get_encoded_intensities(self) -> str:
         encoded = base64.b64encode(self.intensities)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def get_encoded_relative_intensities(self):
+    def get_encoded_relative_intensities(self) -> str:
         encoded = base64.b64encode(self.relative_intensities)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def get_encoded_pattern_ids(self):
+    def get_encoded_pattern_ids(self) -> str:
         encoded = base64.b64encode(self.pattern_ids)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def get_encoded_measurement_ids(self):
+    def get_encoded_measurement_ids(self) -> str:
         encoded = base64.b64encode(self.measurement_ids)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 
-    def add_scan_id(self, scan_id):
+    def add_scan_id(self, scan_id: str):
         self.scan_ids.append(scan_id)
 
-    def add_retention_time(self, retention_time):
+    def add_retention_time(self, retention_time: str):
         self.retention_times.append(retention_time)
 
-    def add_mass(self, mass):
+    def add_mass(self, mass: str):
         self.masses.append(mass)
 
-    def add_intensity(self, intensity):
+    def add_intensity(self, intensity: str):
         self.intensities.append(intensity)
 
-    def add_relative_intensity(self, relative_intensity):
+    def add_relative_intensity(self, relative_intensity: str):
         self.relative_intensities.append(relative_intensity)
     
-    def add_pattern_id(self, patternid):
+    def add_pattern_id(self, patternid: str):
         self.pattern_ids.append(patternid)
 
-    def add_measurement_id(self, measurement_id):
+    def add_measurement_id(self, measurement_id: str):
         self.measurement_ids.append(measurement_id)
 
-    def get_retention_times_formatted_string(self):
+    def get_retention_times_formatted_string(self) -> list[str]:
         rts = list(map(u.format_time_string,self.retention_times))
         return rts
 
-    def get_retention_times_formatted_datetime(self):
+    def get_retention_times_formatted_datetime(self) -> list[str]:
         rts = list(map(u.format_time_datetime,self.retention_times))
         return rts
 
-    def get_intensities(self):
+    def get_intensities(self) -> list[str]:
         intensities = list(map(float,self.intensities))
         return intensities  #Converts from bytes to string
 
-    def get_measurement_ids(self):
+    def get_measurement_ids(self) -> list[str]:
         measurement_ids = list(map(float,self.measurement_ids))
         return measurement_ids  #Converts from bytes to string
     

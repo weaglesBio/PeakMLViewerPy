@@ -4,7 +4,7 @@ from Data.PeakML.Peak import Peak
 import Utilities as u
 
 class RetentionTimeFilter(BaseFilter):
-    def __init__(self, min_minu, max_minu, min_sec, max_sec):
+    def __init__(self, min_minu: int, max_minu: int, min_sec: int, max_sec: int):
         super().__init__(Enums.FilterType.FilterRetentionTime)
 
         self.min_minu = min_minu
@@ -12,13 +12,13 @@ class RetentionTimeFilter(BaseFilter):
         self.min_sec = min_sec
         self.max_sec = max_sec
 
-    def get_type_value(self):
+    def get_type_value(self) -> str:
         return "Retention Time"
 
-    def get_settings_value(self):
+    def get_settings_value(self) -> str:
         return self.min_sec + ":" + self.min_minu + "-" + self.max_sec + ":" + self.max_minu
     
-    def apply_to_peak_list(self, peak_dic):
+    def apply_to_peak_list(self, peak_dic: dict[str, Peak]) -> dict[str, Peak]:
         filtered_peak_dic = {}
         for peak_uid in peak_dic.keys():   
             peak = peak_dic[peak_uid]

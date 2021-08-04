@@ -7,7 +7,7 @@ import ttkwidgets as ttkw
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.dates import DateFormatter
-import statistics as stats
+
 from PIL import ImageTk, Image
 from rdkit import Chem
 from rdkit.Chem import Draw
@@ -16,6 +16,7 @@ import time
 import threading
 import os
 import base64
+import numpy as np
 
 from UI.ProgressDialog import ProgressDialog
 from UI.LogDialog import LogDialog
@@ -534,13 +535,13 @@ class MainView():
             #self.get_current_layout("UPDATED")
 
 
-            def adjust_mlf(self, vf1, mf0):
-                print("not implemented")
+    def adjust_mlf(self, vf1, mf0):
+        print("not implemented")
 
-                #return mlf0
+        #return mlf0
 
-            def adjust_mrf(self, vf1, mf0):
-                print("not implemented")
+    def adjust_mrf(self, vf1, mf0):
+        print("not implemented")
 
                 #return mrf0, mrf1
 
@@ -554,7 +555,7 @@ class MainView():
 #region Control initialise methods
 
     def initialize_plot(self, tab):
-        figure = plt.Figure(figsize=(10,10))#figsize=(7,7)
+        figure = plt.Figure(figsize=(12,12))#figsize=(7,7)figsize=(10,10)
         axes = figure.add_subplot(111)
         canvas = FigureCanvasTkAgg(figure, tab)
         toolbar_frame = tk.Frame(tab)
@@ -1106,30 +1107,24 @@ class MainView():
         #self.axes_peak.xaxis.set_major_locator(mdates.SecondLocator(interval=2))
 
         self.figure_peak.canvas.draw()
-        self.figure_peak.tight_layout()
+        #self.figure_peak.tight_layout()
 
     def generate_plot_derivatives(self):
         df = self.data.plot_der_view_dataframe
-
         self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
         self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
         
     def generate_plot_der(self, data, type, figure_der, axes_der):
         axes_der.clear()
 
-        mass_values = data['Mass']
-        intensity_values = data['Intensity']
-        label_values = data['Description']
-
-        intensity_values_float = []
-
-        for j in range(len(intensity_values)):
-            intensity_values_float.append(float(intensity_values[j]))
+        mass_values = np.array(data['Mass'])
+        intensity_values = np.array(data['Intensity'])
+        label_values = np.array(data['Description'])
 
         axes_der.stem(mass_values, intensity_values, markerfmt=" ")
 
         for i in range(len(data)):
-            axes_der.annotate(label_values[i],(mass_values[i],intensity_values[i]))
+            axes_der.annotate(label_values[i], (mass_values[i], intensity_values[i]), horizontalalignment='left', verticalalignment='top')
 
         axes_der.set_xscale('linear')
 
@@ -1140,75 +1135,51 @@ class MainView():
 
         axes_der.set_xlabel("Mass")
         axes_der.set_ylabel("Intensity")
+
         figure_der.canvas.draw()
-        figure_der.tight_layout()
+
+        #figure_der.tight_layout()
 
     def generate_plots_int(self):
-        df = self.data.plot_int_all_view_dataframe
+        df = self.data.plot_int_view_dataframe
         self.generate_plot_int_all(df)
         self.generate_plot_int_log(df)
 
     def generate_plot_int_all(self, data):
         self.axes_int_all.clear()
-        set_id_arr = []
-        ints_arr = []
-        
-        for i in range(len(data)):
 
-            set_id = data.iloc[i]['SetID']
-            ints = data.iloc[i]['Intensities']
-        
-            for j in range(len(ints)):
+        set_id_label_values = data['SetID_Label']
+        intensity_values = data['Intensity']
 
-                set_id_val = str(set_id) + "-" + str(j + 1)
-                set_id_arr.append(set_id_val)
-                ints_arr.append(float(ints[j]))
-
-        self.axes_int_all.plot(set_id_arr, ints_arr, marker='', linewidth=0.5)
+        self.axes_int_all.plot(set_id_label_values, intensity_values, marker='', linewidth=0.5)
 
         self.axes_int_all.set_xlabel("Set")
         self.axes_int_all.set_ylabel("Intensity")
 
-        self.axes_int_all.set_xticklabels(set_id_arr, rotation = 90)
+        self.axes_int_all.set_xticklabels(set_id_label_values, rotation = 90)
 
         self.figure_int_all.canvas.draw()
-        self.figure_int_all.tight_layout()
+        #self.figure_int_all.tight_layout()
 
     def generate_plot_int_log(self, data):
         self.axes_int_log.clear()
-        ints_float = []
-        set_id_arr = []
-        ints_mean_arr = []
-        ints_neg_arr = []
-        ints_pos_arr = []
-    
-        for i in range(len(data)):
 
-            set_id = data.iloc[i]['SetID']
-            ints = data.iloc[i]['Intensities']
+        data = data.drop_duplicates(subset=["SetID"])
 
-            for i in range(len(ints)):
-                ints_float.append(float(ints[i]))
+        set_id_values = data['SetID']
+        intensities_mean_values = data['Intensities_Mean']
+        intensities_neg_conf_values = data['Intensities_Neg_Conf']
+        intensities_pos_conf_values = data['Intensities_Pos_Conf']
 
-            if len(ints_float):
-                ints_mean = stats.mean(ints_float)
-                ints_max = max(ints_float)
-                ints_min = min(ints_float)
-
-                set_id_arr.append(set_id)
-                ints_mean_arr.append(ints_mean)
-                ints_neg_arr.append(ints_mean - ints_min)
-                ints_pos_arr.append(ints_max - ints_mean)
-
-        self.axes_int_log.errorbar(set_id_arr, ints_mean_arr, yerr=[ints_neg_arr, ints_pos_arr])
+        self.axes_int_log.errorbar(set_id_values, intensities_mean_values, yerr=[intensities_neg_conf_values, intensities_pos_conf_values])
 
         self.axes_int_log.set_xlabel("Set")
         self.axes_int_log.set_ylabel("Intensity")
 
-        self.axes_int_log.set_xticklabels(set_id_arr, rotation = 90)
+        self.axes_int_log.set_xticklabels(set_id_values, rotation = 90)
 
         self.figure_int_log.canvas.draw()
-        self.figure_int_log.tight_layout()
+        #self.figure_int_log.tight_layout()
 
 #endregion
 

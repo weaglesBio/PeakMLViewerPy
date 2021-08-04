@@ -17,22 +17,22 @@ class Settings():
         self.databases = databases
         #self.databases = SetIO.load_database_paths()
 
-    def get_preference_by_name(self, name):   
+    def get_preference_by_name(self, name: str) -> str:
         if name == "smooth":
             return self.appearance_smooth
         elif name == "decdp":
             return self.appearance_decdp
 
-    def set_preference_by_name(self, name, value):   
+    def set_preference_by_name(self, name: str, value: str):   
         if name == "smooth":
             self.appearance_smooth = value
         elif name == "decdp":
             self.appearance_decdp = value
 
-    def get_database_paths(self):
+    def get_database_paths(self) -> list[str]:
         return self.databases
 
-    def set_database_paths(self, databases):
+    def set_database_paths(self, databases: list[str]):
         self.databases = databases
 
 

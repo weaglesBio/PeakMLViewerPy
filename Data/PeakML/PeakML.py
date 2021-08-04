@@ -28,13 +28,14 @@ class PeakML():
     def peaks(self, peaks: dict[str, Peak]):
         self._peaks = peaks
 
-    def get_peak_by_uid(self, uid) -> Peak:
+    def get_peak_by_uid(self, uid: str) -> Peak:
         return self.peaks[uid]
 
-    def remove_peak_by_uid(self, uid):
+    def remove_peak_by_uid(self, uid: str):
         del self.peaks[uid]
 
-    def import_from_file(self, filepath):
+    def import_from_file(self, filepath: str) -> bool:
+        success = False
         tree_data = None
 
         # Files can be gzipped, so if unable to read file directly, a second attempt is made with decompression.
@@ -74,11 +75,24 @@ class PeakML():
                 self.header = header
                 self.peaks = peaks
 
+                success = True
+
             except Exception as err:
                 lg.log_error(f'Unable to convert file to PeakML class stucture: {err}')
 
-    def import_ipa_from_file(self, filepath):
-        IPAIO.import_ipa_rdata_from_filepath(filepath=filepath, peakml_peaks=self.peaks)
+        return success
+
+    def import_ipa_from_file(self, filepath: str):
+
+        success = False
+
+        try:
+            IPAIO.import_ipa_rdata_from_filepath(filepath=filepath, peakml_peaks=self.peaks)
+            return True
+        except Exception as err:
+            lg.log_error(f'Unable to convert file to PeakML class stucture: {err}')
+        
+        return success
     
     def export(self, filepath):
 

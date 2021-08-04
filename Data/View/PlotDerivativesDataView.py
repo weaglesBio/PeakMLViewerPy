@@ -1,5 +1,5 @@
 import Logger as lg
-
+import Utilities as u
 from Data.View.BaseDataView import BaseDataView
 from Data.View.PlotDerivativesItem import PlotDerivativesItem
 
@@ -25,8 +25,15 @@ class PlotDerivativesDataView(BaseDataView):
                 
             for rel_peak in related_peaks:
 
-                mass = rel_peak.mass
-                intensity = rel_peak.intensity
+                if u.is_float(rel_peak.mass):
+                    mass = float(rel_peak.mass)
+                else:
+                    mass = 0
+
+                if u.is_float(rel_peak.intensity):
+                    intensity = float(rel_peak.intensity)
+                else:
+                    intensity = 0
 
                 ann_relation = rel_peak.get_specific_annotation('relation.ship')
                 ann_reaction = rel_peak.get_specific_annotation('reaction')
