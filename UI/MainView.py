@@ -130,6 +130,16 @@ class MainView():
 
     def __init__(self, data):
 
+        self._set_width = None
+        self._set_height = None
+        self._set_vf0 = None
+        self._set_vf1 = None
+        self._set_mf0 = None
+        self._set_mf1 = None
+        self._set_mlf0 = None
+        self._set_mrf0 = None
+        self._set_mrf1 = None
+
         self.root = tk.Tk()
 
         self.root.title('PeakMLViewerPy')
