@@ -177,7 +177,7 @@ class MainView():
         self._filter_options[e.Filter.Intensity] = "Filter minimum intensity"
         self._filter_options[e.Filter.RetentionTime] = "Filter retention time range"
         self._filter_options[e.Filter.NumberDetections] = "Filter to sample count"
-        self._filter_options[e.Filter.Annotations] = "Filter to annotation"
+        self._filter_options[e.Filter.Annotations] = "Filter by annotation"
         self._filter_options[e.Filter.Sort] = "Sort"
         self._filter_options[e.Filter.SortTimeSeries] = "Sort time-series"
 
@@ -290,7 +290,9 @@ class MainView():
             self.filter_options[e.Filter.Mass], 
             self.filter_options[e.Filter.Intensity], 
             self.filter_options[e.Filter.RetentionTime], 
-            self.filter_options[e.Filter.NumberDetections]
+            self.filter_options[e.Filter.NumberDetections]#,
+            #self.filter_options[e.Filter.Annotations],
+            #self.filter_options[e.Filter.Sort]
             ]
         filter_control_frame = tk.Frame(self.mid_left_bot_frame)
         filter_control_frame.pack(side=tk.BOTTOM)

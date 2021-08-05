@@ -47,3 +47,34 @@ class FilterAnnotationsDialog(ViewerDialog):
 
     def cancel_btn_clicked(self):
         self.destroy()
+
+    def confirm_valid_annotation(self, input):
+
+ 
+        # Like is not valid option for a number
+        # 
+        # Use 'like' for non-numbers
+
+
+        try:
+            float(input)     
+        except ValueError:
+            self.validate_intensity_min_details.set("Must be a decimal")
+            return False
+
+        is_valid = True
+
+        try:
+            float(input)     
+        except ValueError:
+            is_valid = False
+
+        if is_valid:
+            self.validate_intensity_min_details.set("")
+            self.btn_ok["state"] = "normal"
+        else:
+            self.validate_intensity_min_details.set("Intensity must be a decimal")
+            self.btn_ok["state"] = "disabled"
+
+        # Required to update value in entry.
+        return True

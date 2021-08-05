@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-import seaborn as sns
+#import seaborn as sns
 import IO.SettingsIO as SettingsIO
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
@@ -36,8 +36,35 @@ def get_new_uuid():
     return str(uuid.uuid4())
 
 def get_colours(number):
-    palette = sns.color_palette(None, number)
-    return palette.as_hex()
+    #palette = sns.color_palette(None, number)
+    #return palette.as_hex()
+
+    return ['#e6194b', # 1. Red 
+            '#3cb44b', # 2. Green
+            '#ffe119', # 3. Yellow
+            '#4363d8', # 4. Blue
+            '#f58231', # 5. Orange
+            '#911eb4', # 6. Purple
+            '#42d4f4', # 7. Cyan
+            '#f032e6', # 8. Magenta
+            '#bfef45', # 9. Lime
+            '#fabebe', # 10. Pink
+            '#469990', # 11. Teal
+            '#dcbeff', # 12. Lavender
+            '#9a6324', # 13. Brown
+            #'#fffac8', # 14. Beige
+            '#800000', # 15. Maroon
+            '#aaffc3', # 16. Mint
+            '#808000', # 17. Olive
+            '#ffd8b1', # 18. Apricot
+            '#000075', # 19. Navy
+            '#a9a9a9', # 20. Grey
+            '#167E4A', # 21. Forest Green
+            '#470387', # 22. Dark Purple
+            '#FF91F7', # 23. Bright Pink
+            '#1EFA46', # 24. Bright Green
+            '#000000', # 25. Black
+            ]
 
 def to_float(value: str) -> float:
     try:

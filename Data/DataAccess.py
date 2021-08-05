@@ -7,7 +7,6 @@ from Data.View.FilterDataView import FilterDataView
 from Data.View.PlotPeakDataView import PlotPeakDataView
 from Data.View.PlotDerivativesDataView import PlotDerivativesDataView
 from Data.View.PlotIntensityDataView import PlotIntensityDataView
-#from Data.View.PlotIntensityLogDataView import PlotIntensityLogDataView
 from Data.View.SetDataView import SetDataView
 from Data.View.AnnotationDataView import AnnotationDataView
 from Data.View.IdentificationDataView import IdentificationDataView
@@ -281,10 +280,6 @@ class DataAccess:
             p.update_progress("Loading intensity plot data", 37)
             self._plot_int_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
             lg.log_progress("Intensity plot data loaded.")
-
-            # p.update_progress("Loading intensity log plot data", 40)
-            # self._plot_int_log_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header)
-            # lg.log_progress("Intensity log plot data loaded.")
             
             p.update_progress("Loading annotation view data", 42)
             self._annotation_view.load_data_for_selected_peak(selected_peak)

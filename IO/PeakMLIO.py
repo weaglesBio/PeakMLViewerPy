@@ -285,11 +285,15 @@ def import_element_tree_from_peakml_file(tree_data):
     # Add 'Peak' records to peakset list
     add_peaks(root, peakset, None)
 
+
+    
     # Finding the peaks linked into sets by measurement id
-    for peak in peakset:
+    for i in range(len(peakset)):
+
+        p.update_progress(f"Finding linked peaks for peak {i+1} of {len(peakset)}")
 
         # does the peak data contain the id.
-        for subpeak in peak.peaks:
+        for subpeak in peakset[i].peaks:
 
             for set in header_obj.sets:
 
