@@ -130,15 +130,16 @@ class MainView():
 
     def __init__(self, data):
 
-        self._set_width = None
-        self._set_height = None
-        self._set_vf0 = None
-        self._set_vf1 = None
-        self._set_mf0 = None
-        self._set_mf1 = None
-        self._set_mlf0 = None
-        self._set_mrf0 = None
-        self._set_mrf1 = None
+        # Set initial widget layout values
+        self._set_width = 720
+        self._set_height = 1280
+        self._set_vf0 = 43
+        self._set_vf1 = 551
+        self._set_mf0 = 303
+        self._set_mf1 = 1011
+        self._set_mlf0 = 303
+        self._set_mrf0 = 153
+        self._set_mrf1 = 261
 
         self.root = tk.Tk()
 
@@ -161,8 +162,8 @@ class MainView():
 
         self.root.resizable(None, None)
 
-        self.set_height = 720
-        self.set_width = 1280
+        # self.set_height = 720
+        # self.set_width = 1280
         self.first_resize_occurred = False
 
         self.root.geometry(f"{self.set_width}x{self.set_height}")
@@ -402,7 +403,8 @@ class MainView():
         self.iden_tree.tag_configure("is_focus", foreground="white", background="blue")
         
         # Set initial widget layout vf_0, vf_1, mf_0, mf_1, mlf_0, mrf_0, mrf_1
-        self.update_layout(43, 551, 303, 1011, 303, 153, 261)
+        #self.update_layout(43, 551, 303, 1011, 303, 153, 261)
+        self.update_layout(self._set_vf0, self._set_vf1, self._set_mf0, self._set_mf1, self._set_mlf0, self._set_mrf0, self._set_mrf1)
 
         self.root.config(menu=self.menubar)
 
