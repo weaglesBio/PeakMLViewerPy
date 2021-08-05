@@ -17,6 +17,7 @@ import threading
 import os
 import base64
 import numpy as np
+import sys
 
 from UI.ProgressDialog import ProgressDialog
 from UI.LogDialog import LogDialog
@@ -133,14 +134,20 @@ class MainView():
 
         self.root.title('PeakMLViewerPy')
 
-        #Read icon details and set
-        icon_data = base64.b64decode(i.img)
-        temp_file = "temp.ico"
-        icon_file = open(temp_file, "wb")
-        icon_file.write(icon_data)
-        icon_file.close()
-        self.root.wm_iconbitmap(True, temp_file)
-        os.remove(temp_file)
+        if (sys.platform.startswith('win')):
+
+            #Read icon details and set
+            icon_data = base64.b64decode(i.img)
+            temp_file = "temp.ico"
+            icon_file = open(temp_file, "wb")
+            icon_file.write(icon_data)
+            icon_file.close()
+            self.root.wm_iconbitmap(True, temp_file)
+            os.remove(temp_file)
+
+        else:
+            logo = tk.PhotoImage(file="favicon.png")
+            self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
 
         self.root.resizable(None, None)
 
