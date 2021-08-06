@@ -18,7 +18,7 @@ from Data.Filter.AnnotationFilter import AnnotationFilter
 from Data.Filter.SortFilter import SortFilter
 from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
 
-from typing import Type
+from typing import Type, List, Dict, Tuple
 import copy
 import statistics as stats
 
@@ -158,7 +158,7 @@ class DataAccess:
         return self._prior_probabilities_modified
 
     @property 
-    def measurement_colours(self) -> dict[str, str]:
+    def measurement_colours(self) -> Dict[str, str]:
         return self._measurement_colours
 
     @property 
@@ -316,7 +316,7 @@ class DataAccess:
 
         self.load_view_data_from_peakml()
 
-    def get_selected_identification_details(self) -> tuple[str, str, str, str]:
+    def get_selected_identification_details(self) -> Tuple[str, str, str, str]:
         uid, id, prior, notes = self._identification_view.get_details(self.selected_identification_uid)
         return uid, id, prior, notes
 
@@ -494,19 +494,19 @@ class DataAccess:
         self._filters = updated_filter_list
         self.load_view_data_from_peakml()
 
-    def get_min_max_mass(self) -> tuple[int, int]:
+    def get_min_max_mass(self) -> Tuple[int, int]:
         return self._entry_view.mass_min, self._entry_view.mass_max
 
-    def get_min_max_intensity(self) -> tuple[int, int]:
+    def get_min_max_intensity(self) -> Tuple[int, int]:
         return self._entry_view.intensity_min, self._entry_view.intensity_max
 
-    def get_min_max_retention_time(self) -> tuple[str, str]:
+    def get_min_max_retention_time(self) -> Tuple[str, str]:
         return self._entry_view.retention_time_min, self._entry_view.retention_time_max
 
-    def get_min_max_samples_count(self) -> tuple[int, int]:
+    def get_min_max_samples_count(self) -> Tuple[int, int]:
         return self._entry_view.sample_count_min, self._entry_view.sample_count_max
 
-    def filter_peaks(self, peaks_dic: dict[str, Peak]):
+    def filter_peaks(self, peaks_dic: Dict[str, Peak]):
     
         for filter in self._filters:
             peaks_dic = filter.apply_to_peak_list(peaks_dic)
@@ -528,7 +528,7 @@ class DataAccess:
 
         return df
 
-    def update_settings(self, decdp: int, databases: list[str]):
+    def update_settings(self, decdp: int, databases: List[str]):
 
         self.settings.set_preference_by_name("decdp", decdp)
         self.settings.set_database_paths(databases["Path"].tolist())

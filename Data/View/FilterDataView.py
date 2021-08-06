@@ -4,11 +4,12 @@ from Data.View.BaseDataView import BaseDataView
 from Data.View.FilterItem import FilterItem
 from Data.Filter.BaseFilter import BaseFilter
 
+from typing import List
 class FilterDataView(BaseDataView):
     def __init__(self):
         super().__init__(['ID','Type','Settings'])
 
-    def load_data(self, filters: list[BaseFilter]):    
+    def load_data(self, filters: List[BaseFilter]):    
         try: 
             self.clear_datalist()
             

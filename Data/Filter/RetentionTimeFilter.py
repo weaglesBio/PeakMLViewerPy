@@ -3,6 +3,8 @@ import Data.Enums as Enums
 from Data.PeakML.Peak import Peak
 import Utilities as u
 
+from typing import Dict
+
 class RetentionTimeFilter(BaseFilter):
     def __init__(self, min_minu: int, max_minu: int, min_sec: int, max_sec: int):
         super().__init__(Enums.FilterType.FilterRetentionTime)
@@ -18,7 +20,7 @@ class RetentionTimeFilter(BaseFilter):
     def get_settings_value(self) -> str:
         return self.min_sec + ":" + self.min_minu + "-" + self.max_sec + ":" + self.max_minu
     
-    def apply_to_peak_list(self, peak_dic: dict[str, Peak]) -> dict[str, Peak]:
+    def apply_to_peak_list(self, peak_dic: Dict[str, Peak]) -> Dict[str, Peak]:
         filtered_peak_dic = {}
         for peak_uid in peak_dic.keys():   
             peak = peak_dic[peak_uid]

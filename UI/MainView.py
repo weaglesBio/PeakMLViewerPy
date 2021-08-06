@@ -53,7 +53,7 @@ class MainView():
 # Target for the day: 9 hours
 
     @property
-    def filter_options(self) -> dict[e.Filter, str]:
+    def filter_options(self) -> "dict[e.Filter, str]":
         return self._filter_options
 
     @property
@@ -131,8 +131,8 @@ class MainView():
     def __init__(self, data):
 
         # Set initial widget layout values
-        self._set_width = 720
-        self._set_height = 1280
+        self._set_width = 1280
+        self._set_height = 720
         self._set_vf0 = 43
         self._set_vf1 = 551
         self._set_mf0 = 303

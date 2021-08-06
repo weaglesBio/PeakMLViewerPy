@@ -2,8 +2,10 @@ import pandas as pd
 
 from Data.View.BaseItem import BaseItem
 
+from typing import List
+
 class BaseDataView():
-    def __init__(self, dataframe_columns: list[str]):
+    def __init__(self, dataframe_columns: List[str]):
             self.datalist = []
             dataframe_columns.insert(0, 'UID')
             dataframe_columns.append('Selected')
@@ -12,11 +14,11 @@ class BaseDataView():
             self.dataframe.set_index('UID') 
 
     @property
-    def datalist(self) -> list[BaseItem]:
+    def datalist(self) -> List[BaseItem]:
         return self._datalist
     
     @datalist.setter
-    def datalist(self, datalist: list[BaseItem]):
+    def datalist(self, datalist: List[BaseItem]):
         self._datalist = datalist
 
     @property

@@ -1,6 +1,6 @@
 from Data.PeakML.FileInfo import FileInfo
 from Data.PeakML.ScanInfo import ScanInfo
-
+from typing import List
 class MeasurementInfo():
     def __init__(self, id: int, label: str, sample_id: int):
 
@@ -37,14 +37,14 @@ class MeasurementInfo():
         self._sample_id = sample_id
 
     @property
-    def scans(self) -> list[ScanInfo]:
+    def scans(self) -> List[ScanInfo]:
         return self._scans
 
     def add_scan(self, scan: ScanInfo):
         self.scans.append(scan)
 
     @property
-    def files(self) -> list[FileInfo]:
+    def files(self) -> List[FileInfo]:
         return self._files
 
     def add_file(self, file: FileInfo):

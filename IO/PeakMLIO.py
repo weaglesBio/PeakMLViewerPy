@@ -3,6 +3,8 @@ from xml.dom import minidom
 import base64
 import numpy as np
 
+from typing import List
+
 from Data.PeakML.Header import Header
 from Data.PeakML.Annotation import Annotation
 from Data.PeakML.Peak import Peak
@@ -349,7 +351,7 @@ def add_annotation_nodes(parent_element, parent_object):
             value_type = ET.SubElement(annotation, 'valuetype')
             value_type.text = annotation_obj.value_type
 
-def add_peak_nodes(parent_element, peak_list: list[Peak]):
+def add_peak_nodes(parent_element, peak_list: List[Peak]):
 
     peaks = ET.SubElement(parent_element, 'peaks')
 

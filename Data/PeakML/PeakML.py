@@ -6,6 +6,8 @@ import IO.IPAIO as IPAIO
 import Logger as lg
 import gzip
 
+from typing import Dict
+
 class PeakML():
     def __init__(self):
         self.selected_peak = None
@@ -21,11 +23,11 @@ class PeakML():
         self._header = header
 
     @property
-    def peaks(self) -> dict[str, Peak]:
+    def peaks(self) -> Dict[str, Peak]:
         return self._peaks
 
     @peaks.setter
-    def peaks(self, peaks: dict[str, Peak]):
+    def peaks(self, peaks: Dict[str, Peak]):
         self._peaks = peaks
 
     def get_peak_by_uid(self, uid: str) -> Peak:

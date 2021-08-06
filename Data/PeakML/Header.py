@@ -4,6 +4,8 @@ from Data.PeakML.MeasurementInfo import MeasurementInfo
 from Data.PeakML.SetInfo import SetInfo
 from Data.PeakML.AnnotatableEntity import AnnotatableEntity
 
+from typing import List
+
 class Header(AnnotatableEntity):
     def __init__(self, nr_peaks: str = "", date: str = "", owner: str = "", description: str = ""):
         AnnotatableEntity.__init__(self)
@@ -54,15 +56,15 @@ class Header(AnnotatableEntity):
         self._description = description
 
     @property
-    def samples(self) -> list[SampleInfo]:
+    def samples(self) -> List[SampleInfo]:
         return self._samples
     
     @property
-    def applications(self) -> list[ApplicationInfo]:
+    def applications(self) -> List[ApplicationInfo]:
         return self._applications
 
     @property
-    def sets(self) -> list[SetInfo]:
+    def sets(self) -> List[SetInfo]:
         return self._sets
 
     # @property
@@ -70,7 +72,7 @@ class Header(AnnotatableEntity):
     #     return self._profiles
 
     @property
-    def measurements(self) -> list[str]:
+    def measurements(self) -> List[str]:
         return self._measurements
 
     def add_sample(self, sample: SampleInfo):

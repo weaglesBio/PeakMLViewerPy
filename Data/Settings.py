@@ -1,7 +1,8 @@
 import IO.SettingsIO as SetIO
+from typing import List
 
 class Settings():
-    def __init__(self, preferences: list[str] = [], databases: list[str] = []):
+    def __init__(self, preferences: List[str] = [], databases: List[str] = []):
         self.preferences = preferences
         #preferences = SetIO.load_preferences()
 
@@ -29,10 +30,10 @@ class Settings():
         elif name == "decdp":
             self.appearance_decdp = value
 
-    def get_database_paths(self) -> list[str]:
+    def get_database_paths(self) -> List[str]:
         return self.databases
 
-    def set_database_paths(self, databases: list[str]):
+    def set_database_paths(self, databases: List[str]):
         self.databases = databases
 
 

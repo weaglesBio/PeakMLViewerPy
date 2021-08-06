@@ -1,15 +1,15 @@
 from Data.PeakML.Annotation import Annotation
-
+from typing import List
 class AnnotatableEntity():
     def __init__(self):
         self._annotations = []
 
     @property
-    def annotations(self) -> list[Annotation]:
+    def annotations(self) -> List[Annotation]:
         return self._annotations
     
     @annotations.setter
-    def annotations(self, annotations: list[Annotation]):
+    def annotations(self, annotations: List[Annotation]):
         self._annotations = annotations
 
     def add_annotation(self, annotation: Annotation):

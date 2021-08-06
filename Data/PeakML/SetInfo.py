@@ -1,5 +1,6 @@
 import base64
 
+from typing import List
 class SetInfo():
     def __init__(self, id: int, type: str, measurement_ids_byte_array: bytearray):
 
@@ -36,11 +37,11 @@ class SetInfo():
         self._measurement_ids_byte_array = measurement_ids_byte_array
 
     @property
-    def measurement_ids(self) -> list[str]:
+    def measurement_ids(self) -> List[str]:
         return self._measurement_ids
     
     @measurement_ids.setter
-    def measurement_ids(self, measurement_ids: list[str]):
+    def measurement_ids(self, measurement_ids: List[str]):
         self._measurement_ids = measurement_ids
 
     @property
@@ -48,7 +49,7 @@ class SetInfo():
         return self._linked_peak_measurement_ids
 
     @linked_peak_measurement_ids.setter
-    def linked_peak_measurement_ids(self, linked_peak_measurement_ids: list[str]):
+    def linked_peak_measurement_ids(self, linked_peak_measurement_ids: List[str]):
         self._linked_peak_measurement_ids = linked_peak_measurement_ids
 
     def add_linked_peak_measurement_ids(self, peak_measurement_id):

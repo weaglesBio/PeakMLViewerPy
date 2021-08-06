@@ -2,6 +2,8 @@ from Data.Filter.BaseFilter import BaseFilter
 import Data.Enums as Enums
 from Data.PeakML.Peak import Peak
 
+from typing import Dict
+
 class MassFilter(BaseFilter):
     def __init__(self, mass_min, mass_max): #, formula, formula_ppm, mass_charge, filter_option
         super().__init__(Enums.FilterType.FilterMass)
@@ -21,7 +23,7 @@ class MassFilter(BaseFilter):
         #elif self.filter_option == "formula":
         #    return str(self.formula) + " - " + str(self.formula_ppm)+ " - " + str(self.mass_charge)
 
-    def apply_to_peak_list(self, peak_dic) -> dict[str, Peak]:
+    def apply_to_peak_list(self, peak_dic) -> Dict[str, Peak]:
         filtered_peak_dic = {}
         for peak_uid in peak_dic.keys():   
             peak = peak_dic[peak_uid]

@@ -1,5 +1,6 @@
 import base64
 import Utilities as u
+from typing import List
 
 class PeakData():
     def __init__(self, type: str, size: int):
@@ -32,59 +33,59 @@ class PeakData():
         self._size = size
 
     @property
-    def scan_ids(self) -> list[int]:
+    def scan_ids(self) -> List[int]:
         return self._scan_ids
 
     @scan_ids.setter
-    def scan_ids(self, scan_ids: list[int]):
+    def scan_ids(self, scan_ids: List[int]):
         self._scan_ids = scan_ids
 
     @property
-    def retention_times(self) -> list[float]:
+    def retention_times(self) -> List[float]:
         return self._retention_times
 
     @retention_times.setter
-    def retention_times(self, retention_times: list[float]):
+    def retention_times(self, retention_times: List[float]):
         self._retention_times = retention_times
 
     @property
-    def masses(self) -> list[float]:
+    def masses(self) -> List[float]:
         return self._masses
 
     @masses.setter
-    def masses(self, masses: list[float]):
+    def masses(self, masses: List[float]):
         self._masses = masses
 
     @property
-    def intensities(self) -> list[float]:
+    def intensities(self) -> List[float]:
         return self._intensities
 
     @intensities.setter
-    def intensities(self, intensities: list[float]):
+    def intensities(self, intensities: List[float]):
         self._intensities = intensities
 
     @property
-    def relative_intensities(self) -> list[float]:
+    def relative_intensities(self) -> List[float]:
         return self._relative_intensities
 
     @relative_intensities.setter
-    def relative_intensities(self, relative_intensities: list[float]):
+    def relative_intensities(self, relative_intensities: List[float]):
         self._relative_intensities = relative_intensities
 
     @property
-    def pattern_ids(self) -> list[int]:
+    def pattern_ids(self) -> List[int]:
         return self._pattern_ids
     
     @pattern_ids.setter
-    def pattern_ids(self, pattern_ids: list[int]):
+    def pattern_ids(self, pattern_ids: List[int]):
         self._pattern_ids = pattern_ids
 
     @property
-    def measurement_ids(self) -> list[int]:
+    def measurement_ids(self) -> List[int]:
         return self._measurement_ids
 
     @measurement_ids.setter
-    def measurement_ids(self, measurement_ids: list[int]):
+    def measurement_ids(self, measurement_ids: List[int]):
         self._measurement_ids = measurement_ids
 
     def get_encoded_scan_ids(self) -> str:
@@ -136,19 +137,19 @@ class PeakData():
     def add_measurement_id(self, measurement_id: str):
         self.measurement_ids.append(measurement_id)
 
-    def get_retention_times_formatted_string(self) -> list[str]:
+    def get_retention_times_formatted_string(self) -> List[str]:
         rts = list(map(u.format_time_string,self.retention_times))
         return rts
 
-    def get_retention_times_formatted_datetime(self) -> list[str]:
+    def get_retention_times_formatted_datetime(self) -> List[str]:
         rts = list(map(u.format_time_datetime,self.retention_times))
         return rts
 
-    def get_intensities(self) -> list[str]:
+    def get_intensities(self) -> List[str]:
         intensities = list(map(float,self.intensities))
         return intensities  #Converts from bytes to string
 
-    def get_measurement_ids(self) -> list[str]:
+    def get_measurement_ids(self) -> List[str]:
         measurement_ids = list(map(float,self.measurement_ids))
         return measurement_ids  #Converts from bytes to string
     
