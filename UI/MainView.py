@@ -161,7 +161,7 @@ class MainView():
             icon_png_file.write(icon_png_data)
             icon_png_file.close()
 
-        logo = tk.PhotoImage(file="favicon.png")
+        logo = tk.PhotoImage(file=temp_png_file)
         self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
 
         os.remove(temp_png_file)
