@@ -146,24 +146,28 @@ class MainView():
         self.root.title('PeakMLViewerPy')
 
         if (sys.platform.startswith('win')):
-
             #Read icon details and set
-            icon_data = base64.b64decode(i.img)
-            temp_file = "temp.ico"
-            icon_file = open(temp_file, "wb")
-            icon_file.write(icon_data)
-            icon_file.close()
-            self.root.wm_iconbitmap(True, temp_file)
-            os.remove(temp_file)
-
+            icon_ico_data = base64.b64decode(i.img_ico)
+            temp_ico_file = "temp.ico"
+            icon_ico_file = open(temp_ico_file, "wb")
+            icon_ico_file.write(icon_ico_data)
+            icon_ico_file.close()
+            self.root.wm_iconbitmap(True, temp_ico_file)
+            os.remove(temp_ico_file)
         else:
-            logo = tk.PhotoImage(file="favicon.png")
-            self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
+            icon_png_data = base64.b64decode(i.img_png)
+            temp_png_file = "temp.png"
+            icon_png_file = open(temp_png_file, "wb")
+            icon_png_file.write(icon_png_data)
+            icon_png_file.close()
+
+        logo = tk.PhotoImage(file="favicon.png")
+        self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
+
+        os.remove(temp_png_file)
 
         self.root.resizable(None, None)
 
-        # self.set_height = 720
-        # self.set_width = 1280
         self.first_resize_occurred = False
 
         self.root.geometry(f"{self.set_width}x{self.set_height}")
@@ -483,13 +487,13 @@ class MainView():
 
     def update_layout_if_resize(self):
 
-        u.trace("Resize check.")
+        #u.trace("Resize check.")
 
         current_height = self.root_frame.winfo_height()
         current_width = self.root_frame.winfo_width()
 
-        u.trace(f"height {current_height}")
-        u.trace(f"width {current_width}")
+        #u.trace(f"height {current_height}")
+        #u.trace(f"width {current_width}")
 
         # Update layout, if overall window size has changed.
         if (current_height != self.set_height or current_width != self.set_width):
