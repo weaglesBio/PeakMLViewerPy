@@ -131,8 +131,8 @@ class MainView():
     def __init__(self, data):
 
         # Set initial widget layout values
-        self._set_width = 720
-        self._set_height = 1280
+        self._set_width = 1280
+        self._set_height = 720
         self._set_vf0 = 43
         self._set_vf1 = 551
         self._set_mf0 = 303
@@ -483,10 +483,13 @@ class MainView():
 
     def update_layout_if_resize(self):
 
-        #print("Resize check.")
+        u.trace("Resize check.")
 
         current_height = self.root_frame.winfo_height()
         current_width = self.root_frame.winfo_width()
+
+        u.trace(f"height {current_height}")
+        u.trace(f"width {current_width}")
 
         # Update layout, if overall window size has changed.
         if (current_height != self.set_height or current_width != self.set_width):
