@@ -483,10 +483,13 @@ class MainView():
 
     def update_layout_if_resize(self):
 
-        #print("Resize check.")
+        u.trace("Resize check.")
 
         current_height = self.root_frame.winfo_height()
         current_width = self.root_frame.winfo_width()
+
+        u.trace(f"height {current_height}")
+        u.trace(f"width {current_width}")
 
         # Update layout, if overall window size has changed.
         if (current_height != self.set_height or current_width != self.set_width):

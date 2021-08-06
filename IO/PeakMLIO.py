@@ -133,7 +133,7 @@ def add_peaks(parent_element, peakset, parent_peak_num):
 
             if scanids_element is not None:   
                 scanids_decoded_bytes = base64.b64decode(scanids_element.text) 
-                peak_data.scan_ids = np.frombuffer(scanids_decoded_bytes, dtype = int)
+                peak_data.scan_ids = np.frombuffer(scanids_decoded_bytes, dtype = "int32")
                 
             if retention_times_element is not None:      
                 retention_times_decoded_bytes = base64.b64decode(retention_times_element.text)
@@ -153,11 +153,11 @@ def add_peaks(parent_element, peakset, parent_peak_num):
             
             if pattern_ids_element is not None: 
                 pattern_ids_decoded_bytes = base64.b64decode(pattern_ids_element.text) 
-                peak_data.pattern_ids = np.frombuffer(pattern_ids_decoded_bytes, dtype = int)
+                peak_data.pattern_ids = np.frombuffer(pattern_ids_decoded_bytes, dtype = "int32")
             
             if measurement_ids_element is not None: 
                 measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
-                peak_data.measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = int)
+                peak_data.measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = "int32")
 
             #print(f"Subpeak {(peak_iter+1)} of {peak_elements_len}")
             #print(peak_data.measurement_ids)
@@ -209,7 +209,7 @@ def import_element_tree_from_peakml_file(tree_data):
 
         if measurement_ids_element is not None: 
             measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
-            measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = int)
+            measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = "int32")
 
         set = SetInfo(id.text, type.text, measurement_ids)
         header_obj.add_set(set)
