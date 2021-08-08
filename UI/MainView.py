@@ -128,8 +128,92 @@ class MainView():
     def set_mrf1(self, mrf1: int):
         self._set_mrf1 = mrf1
 
+    @property
+    def selected_tab_plot(self) -> str:
+        return self._selected_tab_plot
+
+    @selected_tab_plot.setter
+    def selected_tab_plot(self, selected_tab_plot: str):
+        self._selected_tab_plot = selected_tab_plot
+
+    @property
+    def selected_tab_der(self) -> str:
+        return self._selected_tab_der
+
+    @selected_tab_der.setter
+    def selected_tab_der(self, selected_tab_der: str):
+        self._selected_tab_der = selected_tab_der
+
+    @property
+    def selected_tab_int(self) -> str:
+        return self._selected_tab_int
+
+    @selected_tab_int.setter
+    def selected_tab_int(self, selected_tab_int: str):
+        self._selected_tab_int = selected_tab_int
+
+    @property
+    def visible_plot(self) -> str:
+        if self.selected_tab_plot == "Peak":
+            return "Peak"
+
+        elif self.selected_tab_plot == "Derivatives":
+            if self.selected_tab_der == "All":
+                return "Der_All"
+            
+            elif self.selected_tab_der == "Log":
+                return "Der_Log"
+
+        elif self.selected_tab_plot == "Intensity Pattern":
+            if self.selected_tab_int == "All":
+                return "Int_All"
+            
+            elif self.selected_tab_int == "Log":
+                return "Int_Log"
+
+    @property
+    def plot_peak_loaded(self) -> bool:
+        return self._plot_peak_loaded
+
+    @plot_peak_loaded.setter
+    def plot_peak_loaded(self, plot_peak_loaded: bool):
+        self._plot_peak_loaded = plot_peak_loaded
+
+    @property
+    def plot_der_all_loaded(self) -> bool:
+        return self._plot_der_all_loaded
+
+    @plot_der_all_loaded.setter
+    def plot_der_all_loaded(self, plot_der_all_loaded: bool):
+        self._plot_der_all_loaded = plot_der_all_loaded
+
+    @property
+    def plot_der_log_loaded(self) -> bool:
+        return self._plot_der_log_loaded
+
+    @plot_der_log_loaded.setter
+    def plot_der_log_loaded(self, plot_der_log_loaded: bool):
+        self._plot_der_log_loaded = plot_der_log_loaded
+
+    @property
+    def plot_int_all_loaded(self) -> bool:
+        return self._plot_int_all_loaded
+
+    @plot_int_all_loaded.setter
+    def plot_int_all_loaded(self, plot_int_all_loaded: bool):
+        self._plot_int_all_loaded = plot_int_all_loaded
+
+    @property
+    def plot_int_log_loaded(self) -> bool:
+        return self._plot_int_log_loaded
+
+    @plot_int_log_loaded.setter
+    def plot_int_log_loaded(self, plot_int_log_loaded: bool):
+        self._plot_int_log_loaded = plot_int_log_loaded
+
     def __init__(self, data):
 
+        ## 
         # Set initial widget layout values
         self._set_width = 1280
         self._set_height = 720
@@ -140,6 +224,17 @@ class MainView():
         self._set_mlf0 = 303
         self._set_mrf0 = 153
         self._set_mrf1 = 261
+
+        # Select initial selected plot
+        self._selected_tab_plot = "Peak"
+        self._selected_tab_der = "All"
+        self._selected_tab_int = "All"
+
+        self._plot_peak_loaded = False
+        self._plot_der_all_loaded = False
+        self._plot_der_log_loaded = False
+        self._plot_int_all_loaded = False
+        self._plot_int_log_loaded = False
 
         self.root = tk.Tk()
 
@@ -161,10 +256,10 @@ class MainView():
             icon_png_file.write(icon_png_data)
             icon_png_file.close()
 
-        logo = tk.PhotoImage(file=temp_png_file)
-        self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
+            logo = tk.PhotoImage(file=temp_png_file)
+            self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
 
-        os.remove(temp_png_file)
+            os.remove(temp_png_file)
 
         self.root.resizable(None, None)
 
@@ -341,6 +436,9 @@ class MainView():
         self.tabs_plot.add(self.tab_peak, text = "Peak")
         self.tabs_plot.add(self.tab_derivatives, text = "Derivatives")
         self.tabs_plot.add(self.tab_intensity_pattern, text = "Intensity Pattern")
+
+        self.tabs_plot.bind("<<NotebookTabChanged>>", self.change_plot_tab)
+
         self.tabs_plot.pack(expand = 1, fill = "both")
 
         self.tabs_der = ttk.Notebook(self.tab_derivatives)
@@ -349,6 +447,9 @@ class MainView():
 
         self.tabs_der.add(self.tab_der_all, text = "All")
         self.tabs_der.add(self.tab_der_log, text = "Log")
+
+        self.tabs_der.bind("<<NotebookTabChanged>>", self.change_der_tab)
+
         self.tabs_der.pack(expand = 1, fill = "both")
 
         self.tabs_int = ttk.Notebook(self.tab_intensity_pattern)
@@ -357,6 +458,9 @@ class MainView():
 
         self.tabs_int.add(self.tab_int_all, text = "All")
         self.tabs_int.add(self.tab_int_log, text = "Log")
+
+        self.tabs_int.bind("<<NotebookTabChanged>>", self.change_int_tab)
+
         self.tabs_int.pack(expand = 1, fill = "both")
 
         self.figure_peak, self.axes_peak = self.initialize_plot(self.tab_peak)
@@ -386,7 +490,6 @@ class MainView():
         self.molecule_canvas.pack(side=tk.TOP,fill=tk.BOTH, expand=tk.TRUE)
         molecule_canvas_vsb.config(command=self.molecule_canvas.yview)
         molecule_canvas_hsb.config(command=self.molecule_canvas.xview)
-        #self.molecule_canvas.grid(row=0, column=0, sticky="")
 
         # Identification View
         iden_control_frame = tk.Frame(self.bot_frame)
@@ -483,7 +586,6 @@ class MainView():
         mrf1 = self.mid_right_frame.sash_coord(1)[1]
 
         print(f"{label}: height: {height}, width: {width}, VF0: {vf0}, VF1: {vf1}, MF0: {mf0}, MF1: {mf1}, MLF0: {mlf0}, MRF0: {mrf0}, MRF1: {mrf1}")
-
 
     def update_layout_if_resize(self):
 
@@ -833,9 +935,16 @@ class MainView():
         self.refresh_identification_grid()
         lg.log_progress("Identification grid loaded.")
 
-        p.update_progress("Loading plots", 75)
-        self.refresh_plots()
-        lg.log_progress("Plots loaded.")
+        p.update_progress("Loading plot", 75)
+
+        self.plot_peak_loaded = False
+        self.plot_der_all_loaded = False
+        self.plot_der_log_loaded = False
+        self.plot_int_all_loaded = False
+        self.plot_int_log_loaded = False
+        self.load_plot()
+
+        lg.log_progress("Plot loaded.")
 
     def refresh_info_values(self):
         self.filename_text.set(self.data.import_peakml_filename)
@@ -1124,6 +1233,39 @@ class MainView():
 
 #region Plots Methods
 
+    def change_plot_tab(self, event):
+        self.selected_tab_plot = self.tabs_plot.tab(self.tabs_plot.select(), "text")
+        self.load_plot()
+
+    def change_der_tab(self, event):
+        self.selected_tab_der = self.tabs_der.tab(self.tabs_der.select(), "text")
+        self.load_plot()
+
+    def change_int_tab(self, event):
+        self.selected_tab_int = self.tabs_int.tab(self.tabs_int.select(), "text")
+        self.load_plot()
+
+    def load_plot(self):
+        if self.visible_plot == "Peak":
+            if not self.plot_peak_loaded:
+                self.generate_plot_peak()
+
+        elif self.visible_plot == "Der_All":
+            if not self.plot_der_all_loaded:
+                self.generate_plot_der_all()
+
+        elif self.visible_plot == "Der_Log":
+            if not self.plot_der_log_loaded:
+                self.generate_plot_der_log()
+
+        elif self.visible_plot == "Int_All":
+            if not self.plot_int_all_loaded:
+                self.generate_plot_int_all()
+
+        elif self.visible_plot == "Int_Log":
+            if not self.plot_int_log_loaded:
+                self.generate_plot_int_log()
+
     def refresh_plots(self):
         lg.log_progress("Begin loading plots.")
 
@@ -1166,9 +1308,12 @@ class MainView():
         self.figure_peak.canvas.draw()
         #self.figure_peak.tight_layout()
 
-    def generate_plot_derivatives(self):
+    def generate_plot_der_all(self):
         df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
+
+    def generate_plot_der_log(self):
+        df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
         
     def generate_plot_der(self, data, type, figure_der, axes_der):
@@ -1197,12 +1342,8 @@ class MainView():
 
         #figure_der.tight_layout()
 
-    def generate_plots_int(self):
-        df = self.data.plot_int_view_dataframe
-        self.generate_plot_int_all(df)
-        self.generate_plot_int_log(df)
-
-    def generate_plot_int_all(self, data):
+    def generate_plot_int_all(self):
+        data = self.data.plot_int_view_dataframe
         self.axes_int_all.clear()
 
         set_id_label_values = data['SetID_Label']
@@ -1213,12 +1354,15 @@ class MainView():
         self.axes_int_all.set_xlabel("Set")
         self.axes_int_all.set_ylabel("Intensity")
 
-        self.axes_int_all.set_xticklabels(set_id_label_values, rotation = 90)
+        # Rotate labels so do overlap
+        for tick in self.axes_int_all.get_xticklabels():
+            tick.set_rotation(305)
 
         self.figure_int_all.canvas.draw()
         #self.figure_int_all.tight_layout()
 
-    def generate_plot_int_log(self, data):
+    def generate_plot_int_log(self):
+        data = self.data.plot_int_view_dataframe
         self.axes_int_log.clear()
 
         data = data.drop_duplicates(subset=["SetID"])
@@ -1233,7 +1377,9 @@ class MainView():
         self.axes_int_log.set_xlabel("Set")
         self.axes_int_log.set_ylabel("Intensity")
 
-        self.axes_int_log.set_xticklabels(set_id_values, rotation = 90)
+        # Rotate labels so do overlap
+        for tick in self.axes_int_log.get_xticklabels():
+            tick.set_rotation(305)
 
         self.figure_int_log.canvas.draw()
         #self.figure_int_log.tight_layout()

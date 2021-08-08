@@ -28,7 +28,7 @@ class PeakSplitDialog(ViewerDialog):
         self.val_min = tk.StringVar(frame, value=self.rt_min)
 
         self.spbx_sec = ttk.Spinbox(frame, width=5, from_=0, to=59, state='readonly', textvariable=self.val_sec)
-        self.spbx_min = ttk.Spinbox(frame, width=5, from_=0, state='readonly',  textvariable=self.val_min)
+        self.spbx_min = ttk.Spinbox(frame, width=5, from_=0, to_=100, state='readonly',  textvariable=self.val_min)
 
         self.lbl_min.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.lbl_sec.grid(row=0, column=2, padx=(2,2), pady=(5,5), sticky="NEWS")
