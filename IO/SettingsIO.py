@@ -2,13 +2,14 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import Logger as lg
 import Utilities as u
+import os
 
 def load_preference_decdp():
 
     settings_tree_data = None
     try:
             # If errors while attempt to read, requires conversion.
-        with open("settings.xml") as f:
+        with open(os.path.join(lg.current_directory,"settings.xml"), 'r', encoding='utf-8') as f:
             settings_tree_data = f.read()
 
     except Exception as err:
@@ -31,7 +32,7 @@ def load_preferences():
 
     try:
             # If errors while attempt to read, requires conversion.
-        with open("settings.xml") as f:
+        with open(os.path.join(lg.current_directory,"settings.xml"), 'r', encoding='utf-8') as f:
             settings_tree_data = f.read()
 
     except Exception as err:
@@ -56,7 +57,7 @@ def load_database_paths():
     settings_tree_data = None
     try:
             # If errors while attempt to read, requires conversion.
-        with open("settings.xml") as f:
+        with open(os.path.join(lg.current_directory,"settings.xml"), 'r', encoding='utf-8') as f:
             settings_tree_data = f.read()
 
     except Exception as err:
@@ -86,7 +87,7 @@ def write_settings(settings):
         #tree = ET.ElementTree(peakmlviewer_node)
         settings_str = u.prettify_xml(peakmlviewer_node)
 
-        r = open("settings.xml", "w")
+        r = open(os.path.join(lg.current_directory,"settings.xml"), "w", encoding='utf-8')
         r.write(settings_str)
         r.close()
 

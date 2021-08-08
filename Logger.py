@@ -1,7 +1,9 @@
 from datetime import datetime
+import os
 
 # global variable to store log file name for access from anywhere within application.
 logger_file_name = ""
+current_directory = os.path.split(__file__)[0]
 
 def get_current_time():
     return datetime.now().strftime("%H:%M:%S.%f")
@@ -13,12 +15,16 @@ def get_datetime_full_string():
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def initalise_logging_session():
+
+    global current_directory
+    current_directory = os.path.split(__file__)[0]
+
 #    self._log_records = []
     global logger_file_name
     logger_file_name = f"peakmlviewerpy_log_{get_datetime_string()}.txt"
 
     # Create log file
-    r = open(logger_file_name, "w")
+    r = open(os.path.join(current_directory,logger_file_name), "w", encoding='utf-8')
 
     r.write(f"PeakMLViewerPy Log - for session beginning {get_datetime_full_string()}")
     r.write("\n")
@@ -38,10 +44,9 @@ def log_actions(details):
 def add_log_record_to_file(details, type):
 
     log_entry = f"{get_current_time()}: {type}: {details}"
-    print(log_entry)
 
     #Open file in append mode
-    r = open(logger_file_name, "a")
+    r = open(os.path.join(current_directory,logger_file_name), "a", encoding='utf-8')
 
     # Add newline
     r.write("\n")
@@ -51,7 +56,7 @@ def add_log_record_to_file(details, type):
     r.close()
 
 def get_log():
-    f = open(logger_file_name, "r")
+    f = open(os.path.join(current_directory,logger_file_name), "r", encoding='utf-8')
     return f.read()
 
 

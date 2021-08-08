@@ -1,11 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+spec_root = os.path.abspath(SPECPATH)
 
 block_cipher = None
 
-
 a = Analysis(['PeakMLViewerPy.py'],
-             pathex=['/Users/marianne/Documents/Will_MSC/Source/MetabolomicModellingMSc'],
+             pathex=[spec_root],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -21,28 +22,24 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 
 exe = EXE(pyz,
-          a.scripts, 
+          a.scripts,
+          a.binaries,
+          a.zipfiles,
+          a.datas,  
           [],
-          exclude_binaries=True,
           name='PeakMLViewerPy',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
+          upx_exclude=[],
+          runtime_tmpdir=None,
           console=False,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None , icon='favicon.png')
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas, 
-               strip=False,
-               upx=True,
-               upx_exclude=[],
-               name='PeakMLViewerPy')
-app = BUNDLE(coll,
+app = BUNDLE(exe,
              name='PeakMLViewerPy.app',
              icon='favicon.png',
              bundle_identifier=None)
