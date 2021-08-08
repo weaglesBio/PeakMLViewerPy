@@ -284,11 +284,13 @@ def import_element_tree_from_peakml_file(tree_data):
     # Init empty peaksetUnable to update entry data
     peakset = []
 
+    lg.log_progress(f"Start adding peaks")
+
     # Add 'Peak' records to peakset list
     add_peaks(root, peakset, None)
+ 
+    lg.log_progress(f"Start finding linked peaks")
 
-
-    
     # Finding the peaks linked into sets by measurement id
     for i in range(len(peakset)):
 
@@ -303,6 +305,8 @@ def import_element_tree_from_peakml_file(tree_data):
 
                     if measurement_id in subpeak.peak_data.measurement_ids:
                         set.add_linked_peak_measurement_ids(subpeak.measurement_id)
+
+    lg.log_progress(f"Start setting UUID")
 
     # Convert peakset to dictionary with peak uids.
     peakset_dict = {}
