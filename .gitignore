@@ -30,4 +30,6 @@ DemoProj
 # Linux specific
 temp.ico
 
+# Mac specific
+.DS_Store
 

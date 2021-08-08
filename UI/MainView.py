@@ -18,6 +18,8 @@ import os
 import base64
 import numpy as np
 import sys
+import platform
+import subprocess
 
 from UI.ProgressDialog import ProgressDialog
 from UI.LogDialog import LogDialog
@@ -270,6 +272,12 @@ class MainView():
             self.root.tk.call('wm', 'iconphoto', self.root._w, logo)
 
             os.remove(temp_png_file)
+
+        # Required for accessing menu items in Mac
+        if platform.system() == 'Darwin':
+            subprocess.call(["/usr/bin/osascript", "-e", 'tell app "Finder" to set frontmost of process "Finder" to true'])
+            subprocess.call(["/usr/bin/osascript", "-e", 'tell app "Finder" to set frontmost of process "python" to true'])
+
 
         self.root.resizable(None, None)
 
@@ -639,7 +647,7 @@ class MainView():
             # entry_view_w = mf0
             # entry_view_h = mlf0
             # filter_view_w = mf0
-            # filter_view_h = vf1 - mlf0
+            # filter_view_h = vf1 - subpmlf0
             # plot_view_w = mf1 - mf0
             # plot_view_h = vf1 - vf0
             # set_view_w = width - mf1
