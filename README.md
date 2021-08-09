@@ -1,4 +1,4 @@
-## PeakMLViewerPy - Version 0.1.0
+## PeakMLViewerPy - Version 0.2.0
 
 ## Setting up release
 
