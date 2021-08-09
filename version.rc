@@ -30,7 +30,7 @@ VSVersionInfo(
       StringTable(
         u'040904E4',
         [StringStruct(u'FileDescription', u'PeakML Viewer in Python'),
-        StringStruct(u'FileVersion', u'0.2.0  (2021-07-28)'),
+        StringStruct(u'FileVersion', u'0.2.0  (2021-08-09)'),
         StringStruct(u'LegalCopyright', u'GPL 3.0 License'),
         StringStruct(u'PeakMLViewerPy Version', u'0.2.0  (2021-08-09)'),
         StringStruct(u'Project info', u'https://github.com/weaglesBio/MetabolomicModellingMSc')])
