@@ -215,7 +215,7 @@ class MainView():
 
     def __init__(self, data):
 
-        ## 
+        ## Populate class properties
         # Set initial widget layout values
         self._set_width = 1280
         self._set_height = 720
@@ -238,6 +238,16 @@ class MainView():
         self._plot_int_all_loaded = False
         self._plot_int_log_loaded = False
 
+        self._filter_options = {}
+        self._filter_options[e.Filter.Mass] = "Filter mass range"
+        self._filter_options[e.Filter.Intensity] = "Filter minimum intensity"
+        self._filter_options[e.Filter.RetentionTime] = "Filter retention time range"
+        self._filter_options[e.Filter.NumberDetections] = "Filter to sample count"
+        self._filter_options[e.Filter.Annotations] = "Filter by annotation"
+        self._filter_options[e.Filter.Sort] = "Sort"
+        self._filter_options[e.Filter.SortTimeSeries] = "Sort time-series"
+
+        # Initialize Application window
         self.root = tk.Tk()
 
         self.root.title('PeakMLViewerPy')
@@ -297,16 +307,8 @@ class MainView():
         self.current_layout = ""
         self.last_resize_initiated = time.time()
 
-        self._filter_options = {}
-        self._filter_options[e.Filter.Mass] = "Filter mass range"
-        self._filter_options[e.Filter.Intensity] = "Filter minimum intensity"
-        self._filter_options[e.Filter.RetentionTime] = "Filter retention time range"
-        self._filter_options[e.Filter.NumberDetections] = "Filter to sample count"
-        self._filter_options[e.Filter.Annotations] = "Filter by annotation"
-        self._filter_options[e.Filter.Sort] = "Sort"
-        self._filter_options[e.Filter.SortTimeSeries] = "Sort time-series"
-
-        #Add 'File' category
+        ## Setup Menu
+        #Add 'File' menu item
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Open", command=self.file_open)
         self.filemenu.add_command(label="Save", command=self.file_save)
@@ -315,6 +317,7 @@ class MainView():
         self.filemenu.add_command(label="Exit", command=self.root.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
+        # Add 'Edit' menu item
         self.editmenu = tk.Menu(self.menubar, tearoff=0)
         self.editmenu.add_command(label="Preferences", command=self.open_preferences_dialog)
         self.editmenu.add_command(label="Split peak", command=self.open_peak_split_dialog)
@@ -325,10 +328,24 @@ class MainView():
 
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         
-        self.editmenu = tk.Menu(self.menubar, tearoff=0)
-        self.editmenu.add_command(label="View Log", command=self.open_log_dialog)
-        self.menubar.add_cascade(label="Log", menu=self.editmenu)
+        # Add 'Log' menu item
+        self.logmenu = tk.Menu(self.menubar, tearoff=0)
+        self.logmenu.add_command(label="View Log", command=self.open_log_dialog)
+        self.menubar.add_cascade(label="Log", menu=self.logmenu)
 
+        # Disable 'Save'
+        self.filemenu.entryconfig(1, state=tk.DISABLED)
+
+        # Disable 'Save as...'
+        self.filemenu.entryconfig(2, state=tk.DISABLED)
+
+        # Disable 'Split peak'
+        self.editmenu.entryconfig(1, state=tk.DISABLED)
+
+        # Disable 'Import IPA RData'
+        self.editmenu.entryconfig(2, state=tk.DISABLED)
+
+        # Initialise Layout
         self.root_frame = tk.Frame(self.root, padx=0, pady=0)
         self.root_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
 
@@ -789,6 +806,18 @@ class MainView():
         try:
             # Load data objects
             self.data.import_peakml_data()
+
+            # Disable 'Save'
+            self.filemenu.entryconfig(1, state=tk.NORMAL)
+
+            # Disable 'Save as...'
+            self.filemenu.entryconfig(2, state=tk.NORMAL)
+
+            # Disable 'Split peak'
+            self.editmenu.entryconfig(1, state=tk.NORMAL)
+
+            # Disable 'Import IPA RData'
+            self.editmenu.entryconfig(2, state=tk.NORMAL)
 
             # Update UI widgets
             self.load_data_from_views()
