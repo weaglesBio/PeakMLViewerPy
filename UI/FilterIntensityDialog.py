@@ -10,7 +10,7 @@ class FilterIntensityDialog(ViewerDialog):
 
         self.validate_intensity_min_details = tk.StringVar()
         
-        super().__init__(parent, title, width=200, height=150)
+        super().__init__(parent, title, width=300, height=150)
     
     def body(self, frame):
         
@@ -21,7 +21,7 @@ class FilterIntensityDialog(ViewerDialog):
 
         self.lbl_intensity_min = tk.Label(self.intensity_min_frame, text="Min:")
 
-        self.ent_intensity_min = tk.Entry(self.intensity_min_frame)
+        self.ent_intensity_min = tk.Entry(self.intensity_min_frame, width=10)
         self.ent_intensity_min.insert('end', self.intensity_min)
 
         # %P - on entry based on what change will result in.

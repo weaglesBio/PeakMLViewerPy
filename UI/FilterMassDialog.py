@@ -11,7 +11,7 @@ class FilterMassDialog(ViewerDialog):
         self.validate_mass_min_details = tk.StringVar()
         self.validate_mass_max_details = tk.StringVar()
 
-        super().__init__(parent, title, width=200, height=180)
+        super().__init__(parent, title, width=200, height=200)
 
     def body(self, frame):
 
@@ -22,7 +22,7 @@ class FilterMassDialog(ViewerDialog):
         self.lbl_mass_min = tk.Label(frame, text="Min:")
         self.lbl_mass_min.grid(row=0, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.ent_mass_min = tk.Entry(frame)
+        self.ent_mass_min = tk.Entry(frame, width=10)
         self.ent_mass_min.insert('end', self.mass_min)
         self.ent_mass_min.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 
@@ -35,7 +35,7 @@ class FilterMassDialog(ViewerDialog):
         self.lbl_mass_max = tk.Label(frame, text="Max:")
         self.lbl_mass_max.grid(row=2, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
-        self.ent_mass_max = tk.Entry(frame)
+        self.ent_mass_max = tk.Entry(frame, width=10)
         self.ent_mass_max.insert('end', self.mass_max)
         self.ent_mass_max.grid(row=2, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 

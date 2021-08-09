@@ -9,7 +9,7 @@ class PreferencesDialog(ViewerDialog):
         self.decdp = data.get_settings_preference_by_name('decdp')
         self.databases = data.get_settings_database_paths()
         self.submit = False
-        super().__init__(parent, title, width=420, height=250)
+        super().__init__(parent, title, width=500, height=280)
     
     def body(self, frame):
 
