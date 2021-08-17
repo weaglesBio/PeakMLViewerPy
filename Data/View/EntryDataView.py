@@ -3,8 +3,11 @@ import Logger as lg
 import math as m
 import statistics as stats
 
+from typing import Dict
+
 from Data.View.BaseDataView import BaseDataView
 from Data.View.EntryItem import EntryItem
+from Data.PeakML.Peak import Peak
 
 class EntryDataView(BaseDataView):
     def __init__(self):
@@ -20,14 +23,6 @@ class EntryDataView(BaseDataView):
         self._sample_count_max = None
 
         super().__init__(['Type','RT','Mass','Intensity','Nrpeaks','HasAnnotation'])
-
-    # @property
-    # def selected_peak_uid(self):
-    #     return self._selected_peak_uid
-
-    # @selected_peak_uid.setter
-    # def selected_peak_uid(self, selected_peak_uid: str):
-    #     self._selected_peak_uid = selected_peak_uid
 
     @property
     def nr_peaks(self) -> int:
@@ -73,7 +68,7 @@ class EntryDataView(BaseDataView):
     def sample_count_max(self) -> float:
         return self._sample_count_max
     
-    def load_data(self, peak_dic):
+    def load_data(self, peak_dic: Dict[str, Peak]):
         try: 
             self.clear_datalist()
 
@@ -140,7 +135,7 @@ class EntryDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to load entry data: {err}')
 
-    def add_item(self, uid, type, retention_time, mass, intensity, nr_peaks, has_annotation):
+    def add_item(self, uid: str, type: str, retention_time: str, mass: float, intensity: float, nr_peaks: int, has_annotation: bool):
         self.datalist.append(EntryItem(uid, type, retention_time, mass, intensity, nr_peaks, has_annotation))
 
     def refresh_dataframe(self):
@@ -166,9 +161,8 @@ class EntryDataView(BaseDataView):
     def get_checked_entries_uid(self):
         selected_df = self.dataframe.loc[self.dataframe["Checked"] == True]
         return selected_df["UID"].tolist()
-
     
-    def check_if_any_checked(self):
+    def check_if_any_checked(self) -> bool:
         for item in self.datalist:
             if item.checked == True:
                 return True

@@ -5,13 +5,13 @@ import os
 logger_file_name = ""
 current_directory = os.path.split(__file__)[0]
 
-def get_current_time():
+def get_current_time() -> str:
     return datetime.now().strftime("%H:%M:%S.%f")
 
-def get_datetime_string():
+def get_datetime_string() -> str:
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
-def get_datetime_full_string():
+def get_datetime_full_string() -> str:
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def initalise_logging_session():
@@ -32,16 +32,16 @@ def initalise_logging_session():
 
     r.close()
 
-def log_error(details):
+def log_error(details: str):
     add_log_record_to_file(details, "ERROR")
 
-def log_progress(details):
+def log_progress(details: str):
     add_log_record_to_file(details, "PROGRESS")
 
-def log_actions(details):
+def log_actions(details: str):
     add_log_record_to_file(details, "ACTION")
 
-def add_log_record_to_file(details, type):
+def add_log_record_to_file(details: str, type: str):
 
     log_entry = f"{get_current_time()}: {type}: {details}"
 

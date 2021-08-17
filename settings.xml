@@ -3,6 +3,7 @@
 	<settings>
 		<smooth>true</smooth>
 		<decdp>3</decdp>
+		<defplot>Peak</defplot>
 		<databases>
 			<database>MoleculeDatabases/01_StdMix.xml</database>
 			<database>MoleculeDatabases/02_StdMix.xml</database>

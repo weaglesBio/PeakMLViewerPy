@@ -3,12 +3,27 @@ import tkinter.ttk as ttk
 import tkinter.filedialog as fd
 import os.path
 import Logger as lg
+import Enums as e
 from UI.ViewerDialog import ViewerDialog
 class PreferencesDialog(ViewerDialog):
+
+    @property
+    def plot_options(self) -> "dict[e.Filter, str]":
+        return self._plot_options
+
     def __init__(self, parent, title, data):
         self.decdp = data.get_settings_preference_by_name('decdp')
+        self.defplot = data.get_settings_preference_by_name('defplot')
         self.databases = data.get_settings_database_paths()
         self.submit = False
+
+        self._plot_options = {}
+        self._plot_options[e.Plot.Peak] = "Peak"
+        self._plot_options[e.Plot.DerivativesAll] = "Derivatives:All"
+        self._plot_options[e.Plot.DerivativesLog] = "Derivatives:Log"
+        self._plot_options[e.Plot.IntensityPatternAll] = "Intensity:All"
+        self._plot_options[e.Plot.IntensityPatternTrend] = "Intensity:Log"
+
         super().__init__(parent, title, width=500, height=280)
     
     def body(self, frame):
@@ -26,11 +41,29 @@ class PreferencesDialog(ViewerDialog):
         # Appearance section
         self.val_decdp = tk.StringVar(value=self.decdp)
 
+        self.plot_option_selected = tk.StringVar(value=self.defplot)
+
         self.lbl_decdp = tk.Label(self.tab_appearance, width=15, text="Decimal Points:")
         self.spbx_decdp = tk.Spinbox(self.tab_appearance, width=15, from_=0, to=30, state='readonly', textvariable=self.val_decdp)
 
         self.lbl_decdp.grid(row=0, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
         self.spbx_decdp.grid(row=0, column=1, padx=(2,2), pady=(5,5),sticky="NEWS")
+
+        self.lbl_defplot = tk.Label(self.tab_appearance, width=15, text="Default Plot:")
+        self.lbl_defplot.grid(row=1, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
+
+        option_list = [
+            self.plot_options[e.Plot.Peak], 
+            self.plot_options[e.Plot.DerivativesAll], 
+            self.plot_options[e.Plot.DerivativesLog], 
+            self.plot_options[e.Plot.IntensityPatternAll],
+            self.plot_options[e.Plot.IntensityPatternTrend]
+            ]
+
+        self.plot_opm = tk.OptionMenu(self.tab_appearance, self.plot_option_selected, *option_list)
+        self.plot_opm.grid(row=1, column=1, padx=(2,2), pady=(2,2), sticky="NEWS")
+
+        
 
         # Database section
         self.database_grid_frame = tk.Frame(self.tab_databases)
@@ -81,6 +114,7 @@ class PreferencesDialog(ViewerDialog):
 
     def save_btn_clicked(self):
         self.decdp = self.val_decdp.get()
+        self.defplot = self.plot_option_selected.get()
         self.submit = True
         self.destroy()
 

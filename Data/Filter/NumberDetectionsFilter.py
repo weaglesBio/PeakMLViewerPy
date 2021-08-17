@@ -4,7 +4,7 @@ from Data.PeakML.Peak import Peak
 
 from typing import Dict
 class NumberDetectionsFilter(BaseFilter):
-    def __init__(self, detection_number):
+    def __init__(self, detection_number: int):
         super().__init__(Enums.FilterType.FilterNumberDetections)
         self.detection_number = detection_number
 

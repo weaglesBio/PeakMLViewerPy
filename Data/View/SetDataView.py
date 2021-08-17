@@ -2,17 +2,31 @@ import Logger as lg
 
 from Data.View.BaseDataView import BaseDataView
 from Data.View.SetItem import SetItem
+from Data.PeakML.Header import Header
+
+from typing import List
 
 class SetDataView(BaseDataView):
     def __init__(self):
+
+        self._sets = None
+
         super().__init__(['Name','Color','Parent'])
 
-    def load_data(self, peakml_header, colours):
+    @property
+    def sets(self) -> float:
+        return self._sets
+
+
+    def load_data(self, peakml_header: Header, colours: List[str]):
         try:
             self.clear_datalist()
+            self._sets = []
 
             # Set measurement colours from sets
             for set_info in peakml_header.sets:
+                self._sets.append(set_info.id)
+
                 self.add_item(set_info.id, colours[f"S-{set_info.id}"], None)
                 
                 for set_measurement_id in set_info.linked_peak_measurement_ids:
@@ -26,7 +40,7 @@ class SetDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to update set data: {err}')
 
-    def add_item(self, name, color, parent):
+    def add_item(self, name: str, color: str, parent: int):
         self.datalist.append(SetItem(name, color, parent))
 
     def refresh_dataframe(self):

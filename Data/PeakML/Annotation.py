@@ -54,7 +54,10 @@ class Annotation():
             return self._value
 
         elif u.is_float(self._value):
-            return u.convert_float_to_sf(float(self._value))
+            if self._label == "timeseries.correlation":
+                return self._value
+            else:
+                return u.convert_float_to_sf(float(self._value))
         else:
             return self._value
 

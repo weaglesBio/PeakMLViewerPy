@@ -1,6 +1,8 @@
 from Data.PeakML.PeakData import PeakData
 from Data.PeakML.AnnotatableEntity import AnnotatableEntity
 
+from typing import List
+
 class Peak(AnnotatableEntity):
     def __init__(self, type: str, scan: str, retention_time: str, mass: float, intensity: float, measurement_id: str, pattern_id: str, sha1sum: str, signal: str, peak_data: PeakData):
         AnnotatableEntity.__init__(self)
@@ -92,9 +94,17 @@ class Peak(AnnotatableEntity):
         self._signal = signal
 
     @property
-    def peak_data(self):
+    def peak_data(self) -> PeakData:
         return self._peak_data
 
     @peak_data.setter
     def peak_data(self, peak_data: PeakData):
         self._peak_data = peak_data
+
+    @property
+    def set_intensities(self) -> List[float]:
+        return self._set_intensities
+
+    @set_intensities.setter
+    def set_intensities(self, set_intensities: List[float]):
+        self._set_intensities = set_intensities

@@ -35,8 +35,8 @@ class PlotIntensityDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to update plot intensity data: {err}')
 
-    def add_item(self, set_id, set_id_labels, intensity, intensities_mean, intensities_neg_conf, intensities_pos_conf):
-        self.datalist.append(PlotIntensityItem(set_id, set_id_labels, intensity, intensities_mean, intensities_neg_conf, intensities_pos_conf))
+    def add_item(self, set_id: str, set_id_label: str, intensity: float, intensities_mean: float, intensities_neg_conf: float, intensities_pos_conf: float):
+        self.datalist.append(PlotIntensityItem(set_id, set_id_label, intensity, intensities_mean, intensities_neg_conf, intensities_pos_conf))
 
     def refresh_dataframe(self):
         self.clear_dataframe()

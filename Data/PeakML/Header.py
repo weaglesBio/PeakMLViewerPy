@@ -67,12 +67,8 @@ class Header(AnnotatableEntity):
     def sets(self) -> List[SetInfo]:
         return self._sets
 
-    # @property
-    # def profiles(self) -> list[str]:
-    #     return self._profiles
-
     @property
-    def measurements(self) -> List[str]:
+    def measurements(self) -> List[MeasurementInfo]:
         return self._measurements
 
     def add_sample(self, sample: SampleInfo):
@@ -83,14 +79,11 @@ class Header(AnnotatableEntity):
 
     def add_set(self, set: SetInfo):
         self.sets.append(set)
-
-    # def add_profile(self, profile: str):
-    #     self.profiles.append(profile)
     
     def add_measurement(self, measurement: MeasurementInfo):
         self.measurements.append(measurement)
 
-    def get_measurement_by_id(self, measurement_id: int):
+    def get_measurement_by_id(self, measurement_id: int) -> MeasurementInfo:
         for measurement in self.measurements:
            if measurement.id == str(measurement_id):
                return measurement

@@ -3,11 +3,16 @@ import Logger as lg
 from Data.View.BaseDataView import BaseDataView
 from Data.View.PlotPeakItem import PlotPeakItem
 
+from Data.PeakML.Peak import Peak
+from Data.PeakML.Header import Header
+
+from typing import List
+
 class PlotPeakDataView(BaseDataView):
     def __init__(self):
         super().__init__(['Label','RT_values','Intensity_values','Colour'])
 
-    def load_plot_data_for_selected_peak(self, peak, peakml_header, colours):
+    def load_plot_data_for_selected_peak(self, peak: Peak, peakml_header: Header, colours):
         
         try:
             self.clear_datalist()
@@ -25,7 +30,7 @@ class PlotPeakDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to update plot peak data: {err}')
 
-    def add_item(self, label, retention_times, intensities, color):
+    def add_item(self, label: str, retention_times: List[str], intensities: List[float], color: str):
         self.datalist.append(PlotPeakItem(label, retention_times, intensities, color))
 
     def refresh_dataframe(self):

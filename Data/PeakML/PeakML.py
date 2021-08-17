@@ -1,4 +1,5 @@
 from Data.PeakML.Peak import Peak
+from Data.PeakML.Header import Header
 
 import IO.PeakMLIO as PeakMLIO
 import IO.IPAIO as IPAIO
@@ -6,20 +7,19 @@ import IO.IPAIO as IPAIO
 import Logger as lg
 import gzip
 
-from typing import Dict
+from typing import Dict, List
 
 class PeakML():
     def __init__(self):
-        self.selected_peak = None
         self.header = None
         self.peaks = None
 
     @property
-    def header(self) -> str:
+    def header(self) -> Header:
         return self._header
     
     @header.setter
-    def header(self, header: str):
+    def header(self, header: Header):
         self._header = header
 
     @property
@@ -29,6 +29,22 @@ class PeakML():
     @peaks.setter
     def peaks(self, peaks: Dict[str, Peak]):
         self._peaks = peaks
+
+    @property
+    def peak_order(self) -> List[str]:
+        return self._peak_order
+
+    @peak_order.setter
+    def peak_order(self, peak_order: List[str]):
+        self._peak_order = peak_order
+
+    @property
+    def set_intensities(self) -> List[float]:
+        return self._set_intensities
+
+    @set_intensities.setter
+    def set_intensities(self, set_intensities: List[float]):
+        self._set_intensities = set_intensities
 
     def get_peak_by_uid(self, uid: str) -> Peak:
         return self.peaks[uid]
@@ -73,9 +89,10 @@ class PeakML():
 
         if tree_data is not None:
             try:
-                header, peaks = PeakMLIO.import_element_tree_from_peakml_file(tree_data)
+                header, peaks, peak_order = PeakMLIO.import_element_tree_from_peakml_file(tree_data)
                 self.header = header
                 self.peaks = peaks
+                self.peak_order = peak_order
 
                 success = True
 
@@ -84,7 +101,7 @@ class PeakML():
 
         return success
 
-    def import_ipa_from_file(self, filepath: str):
+    def import_ipa_from_file(self, filepath: str) -> bool:
 
         success = False
 
@@ -96,7 +113,7 @@ class PeakML():
         
         return success
     
-    def export(self, filepath):
+    def export(self, filepath: str):
 
         #Select peaks to include based on checks and filters.
 
@@ -106,4 +123,11 @@ class PeakML():
         r.write(PeakMLIO.create_xml_from_peakml(self.header, list(self.peaks.values())))
         r.close()
 
+    def export_ipa(self, filepath: str):
+
+        IPAIO.export_ipa_input_data(filepath, list(self.peaks.values()))
+
+    def export_ipa_priors(self, filepath: str):
+
+        IPAIO.export_ipa_input_priors_data(filepath, list(self.peaks.values()))
     

@@ -14,9 +14,9 @@ class SampleInfo():
         self._name = name
 
     @property
-    def annotations(self):
+    def annotations(self) -> str:
         return self._annotations
     
     @annotations.setter
-    def annotations(self, annotations):
+    def annotations(self, annotations: str):
         self._annotations = annotations

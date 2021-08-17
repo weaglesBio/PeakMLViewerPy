@@ -15,6 +15,7 @@ from Data.Filter.IntensityFilter import IntensityFilter
 from Data.Filter.RetentionTimeFilter import RetentionTimeFilter
 from Data.Filter.NumberDetectionsFilter import NumberDetectionsFilter
 from Data.Filter.AnnotationFilter import AnnotationFilter
+from Data.Filter.ProbabilityFilter import ProbabilityFilter
 from Data.Filter.SortFilter import SortFilter
 from Data.Filter.SortTimeSeriesFilter import SortTimeSeriesFilter
 
@@ -95,12 +96,12 @@ class DataAccess:
         self._import_ipa_filepath = import_ipa_filepath
 
     @property
-    def export_peakml_filepath(self) -> str:
-        return self._export_peakml_filepath
+    def export_filepath(self) -> str:
+        return self._export_filepath
 
-    @export_peakml_filepath.setter
-    def export_peakml_filepath(self, export_peakml_filepath: str):
-        self._export_peakml_filepath = export_peakml_filepath
+    @export_filepath.setter
+    def export_filepath(self, export_filepath: str):
+        self._export_filepath = export_filepath
 
     @property
     def selected_entry_uid(self) -> str:
@@ -119,7 +120,7 @@ class DataAccess:
         peak = self._peakml.peaks[self.selected_entry_uid]
 
         if u.is_float(peak.retention_time):
-            return u.format_time_string(float(peak.retention_time))
+            return u.format_time_string(peak.retention_time)
         else:
             return None
 
@@ -181,12 +182,13 @@ class DataAccess:
         self._ipa_imported = False
         self._prior_probabilities_modified = False
 
+        self._export_filepath = ""
+
         self._entry_view = EntryDataView()
         self._filter_view = FilterDataView()
         self._plot_peak_view = PlotPeakDataView()
         self._plot_der_view = PlotDerivativesDataView()
-        self._plot_int_view = PlotIntensityDataView()
-        # self._plot_int_log_view = PlotIntensityLogDataView()      
+        self._plot_int_view = PlotIntensityDataView()    
         self._set_view = SetDataView()
         self._annotation_view = AnnotationDataView()
         self._identification_view = IdentificationDataView()
@@ -198,10 +200,10 @@ class DataAccess:
             import_succeded = self._peakml.import_from_file(self.import_peakml_filepath)
 
             if import_succeded:
-                self.assign_measurement_colours()
+                self._assign_measurement_colours()
 
                 p.update_progress("Loading view data.", 20)
-                self.load_view_data_from_peakml()
+                self._load_view_data_from_peakml()
 
                 self._ipa_imported = False
                 self._prior_probabilities_modified = False
@@ -215,7 +217,7 @@ class DataAccess:
             self._peakml.import_ipa_from_file(self.import_ipa_filepath)
 
             p.update_progress("Loading view data.", 20)
-            self.load_view_data_from_peakml()
+            self._load_view_data_from_peakml()
 
             self._ipa_imported = True
             self._prior_probabilities_modified = False
@@ -224,12 +226,12 @@ class DataAccess:
             lg.log_error(f'An error when importing IPA data: {err}')
 
     # Load view data from peakml object
-    def load_view_data_from_peakml(self):
+    def _load_view_data_from_peakml(self):
 
         try:
             lg.log_progress("Begin load view data from PeakML")
 
-            filtered_peaks = self.filter_peaks(self._peakml.peaks)
+            filtered_peaks = self._filter_peaks(self._peakml.peaks)
 
             p.update_progress("Loading entry view data", 20)
             self._entry_view.load_data(filtered_peaks)
@@ -248,7 +250,7 @@ class DataAccess:
         except Exception as err:
             lg.log_error(f'An error when loading view data: {err}')
 
-    def assign_measurement_colours(self):
+    def _assign_measurement_colours(self):
         self._measurement_colours = {}
 
         set_count = len(self._peakml.header.sets)
@@ -266,8 +268,11 @@ class DataAccess:
         try:
             lg.log_progress("Begin load view data for selected entry.")
 
-            filtered_peaks = self.filter_peaks(self._peakml.peaks)
+            # Apply filters
+
+            filtered_peaks = self._filter_peaks(self._peakml.peaks)
             selected_peak = self._peakml.get_peak_by_uid(self.selected_entry_uid)
+            lg.log_progress("Filters applied to peak list.")
 
             p.update_progress("Loading peak plot data", 32)
             self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header, self.measurement_colours)
@@ -294,7 +299,15 @@ class DataAccess:
 
     # Export PeakML object data to file
     def export_peakml(self):
-        self._peakml.export(self.export_peakml_filepath)
+        self._peakml.export(self.export_filepath)
+
+    # Export RData input for IPA
+    def export_ipa(self):
+        self._peakml.export_ipa(self.export_filepath)
+
+    # Export RData input for IPA with priors
+    def export_ipa_priors(self):
+        self._peakml.export_ipa_priors(self.export_filepath)
 
     def update_entry_checked_status(self, uid: str, checked: bool):
         self._entry_view.update_checked_status(uid, checked)
@@ -314,7 +327,7 @@ class DataAccess:
 
         #TODO: Change to remove the rows and only reload if selected has been removed.
 
-        self.load_view_data_from_peakml()
+        self._load_view_data_from_peakml()
 
     def get_selected_identification_details(self) -> Tuple[str, str, str, str]:
         uid, id, prior, notes = self._identification_view.get_details(self.selected_identification_uid)
@@ -330,7 +343,7 @@ class DataAccess:
             self._prior_probabilities_modified = True
 
         #Save updated identification dataframe to selected peak. 
-        self.update_peak_identifications()
+        self._update_peak_identifications()
 
     def update_identification_details(self, uid: str, prior: str, notes: str):
         prior_updated = self._identification_view.update_details(uid, prior, notes)
@@ -339,9 +352,9 @@ class DataAccess:
             self._prior_probabilities_modified = True
         
         #Save updated identification dataframe to selected peak. 
-        self.update_peak_identifications()
+        self._update_peak_identifications()
  
-    def update_peak_identifications(self):
+    def _update_peak_identifications(self):
         #Save updated identification dataframe to selected peak. 
         ann_identification, ann_ppm, ann_adduct, ann_prior, ann_post, ann_notes = self._identification_view.get_identification_annotations()
         
@@ -371,25 +384,25 @@ class DataAccess:
             peak_higher = copy.deepcopy(peak_lower)
 
             # Remove lower values from peak.
-            peak_lower = self.remove_peak_values_by_retention_time(peak_lower, True)
+            peak_lower = self._remove_peak_values_by_retention_time(peak_lower, True)
 
             # Remove higher values from peak.
-            peak_higher = self.remove_peak_values_by_retention_time(peak_higher, False)
+            peak_higher = self._remove_peak_values_by_retention_time(peak_higher, False)
 
             self._peakml.peaks[self.selected_entry_uid] = peak_lower
             self._peakml.peaks[u.get_new_uuid()] = peak_higher
 
             # Reload data from peakml file
-            self.load_view_data_from_peakml()
+            self._load_view_data_from_peakml()
 
         except Exception as err:
             lg.log_error(f'An error when splitting peak: {err}')
             #restore modified peak
             self._peakml.peaks[self.selected_entry_uid] = original_peak
         
-    def remove_peak_values_by_retention_time(self, peak: Peak, keep_lower: bool) -> Peak: 
+    def _remove_peak_values_by_retention_time(self, peak: Peak, keep_lower: bool) -> Peak: 
         
-        rt_split = u.format_time_float(self.peak_split_retention_time)
+        rt_split = u.format_time_int(self.peak_split_retention_time)
 
         intensity_values = []
         mass_values = []
@@ -460,30 +473,41 @@ class DataAccess:
 
 #region Filters
 
-    def add_filter(self, filter: Type[BaseFilter]):
+    def _add_filter(self, filter: Type[BaseFilter]):
         self._filters.append(filter)
-        self.load_view_data_from_peakml()
+        self._load_view_data_from_peakml()
 
     def add_filter_mass(self, mass_min: float, mass_max: float): #, formula, formula_ppm, mass_charge, filter_option
-        self.add_filter(MassFilter(mass_min, mass_max)) #, formula, formula_ppm, mass_charge, filter_option
+        self._add_filter(MassFilter(mass_min, mass_max)) #, formula, formula_ppm, mass_charge, filter_option
 
     def add_filter_intensity(self, intensity_min: float):
-        self.add_filter(IntensityFilter(intensity_min))
+        self._add_filter(IntensityFilter(intensity_min))
 
     def add_filter_retention_time(self, retention_time_min_hr: int, retention_time_max_hr: int, retention_time_min_minu: int, retention_time_max_minu: int):
-        self.add_filter(RetentionTimeFilter(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
+        self._add_filter(RetentionTimeFilter(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
 
     def add_filter_number_detections(self, detection_number: int):
-        self.add_filter(NumberDetectionsFilter(detection_number))
+        self._add_filter(NumberDetectionsFilter(detection_number))
 
-    # def add_filter_annotations(self, annotation_name, annotation_relation, annotation_value):
-    #     self.add_filter(AnnotationFilter(annotation_name, annotation_relation, annotation_value))
+    def add_filter_annotations(self, annotation_name: str, annotation_relation: str, annotation_value: str):
+         self._add_filter(AnnotationFilter(annotation_name, annotation_relation, annotation_value))
 
-    # def add_filter_sort(self):
-    #     print("Not implemented")
+    def add_filter_probability(self, prior_min: str, prior_max: str, post_min: str, post_max: str):
+         self._add_filter(ProbabilityFilter(prior_min, prior_max, post_min, post_max))
 
-    # def add_filter_sort_times_series(self):
-    #     print("Not implemented")
+    def add_filter_sort(self, sort_type: str, sort_direction: str):
+        self._add_filter(SortFilter(sort_type, sort_direction))
+
+    def add_filter_sort_times_series(self, set_values: Dict[str, float]):
+        self._add_filter(SortTimeSeriesFilter(set_values))
+
+    def check_if_existing_time_series_filter(self) -> bool:
+
+        for filter in self._filters:
+            if filter.get_type_value() == "Sort time-series":
+                return True
+
+        return False
 
     def remove_filter_by_id(self, id: str):
         updated_filter_list = []
@@ -492,7 +516,7 @@ class DataAccess:
                 updated_filter_list.append(filter)
 
         self._filters = updated_filter_list
-        self.load_view_data_from_peakml()
+        self._load_view_data_from_peakml()
 
     def get_min_max_mass(self) -> Tuple[int, int]:
         return self._entry_view.mass_min, self._entry_view.mass_max
@@ -506,9 +530,16 @@ class DataAccess:
     def get_min_max_samples_count(self) -> Tuple[int, int]:
         return self._entry_view.sample_count_min, self._entry_view.sample_count_max
 
-    def filter_peaks(self, peaks_dic: Dict[str, Peak]):
+    def get_sets_list(self) -> List[str]:
+        return self._set_view.sets
+
+    def _filter_peaks(self, peaks_dic: Dict[str, Peak]):
     
+        # Before applying set filters, restore original ordering defined by peakml file.
+        sorted(peaks_dic.items(), key = lambda pair: self._peakml.peak_order.index(pair[0]))
+
         for filter in self._filters:
+            lg.log_progress(f"Apply {filter.get_type_value()} filter {filter.get_settings_value()}")
             peaks_dic = filter.apply_to_peak_list(peaks_dic)
 
         return peaks_dic
@@ -528,9 +559,10 @@ class DataAccess:
 
         return df
 
-    def update_settings(self, decdp: int, databases: List[str]):
+    def update_settings(self, decdp: int, defplot: int, databases: List[str]):
 
         self.settings.set_preference_by_name("decdp", decdp)
+        self.settings.set_preference_by_name("defplot", defplot)
         self.settings.set_database_paths(databases["Path"].tolist())
         SetIO.write_settings(self.settings)
 

@@ -13,7 +13,7 @@ class EditIdentityDialog(ViewerDialog):
         self.validate_notes_details = tk.StringVar()
         super().__init__(parent, title, width=260, height=260)
     
-    def body(self, frame):
+    def body(self, frame: tk.Frame):
 
         # Register validation methods
         validate_prior = frame.register(self.confirm_prior_valid)

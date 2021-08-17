@@ -8,12 +8,15 @@ class Settings():
 
         self.appearance_smooth = None
         self.appearance_decdp = None
+        self.appearance_defplot = None
 
         for preference in self.preferences:
             if preference[0] == "smooth":
                 self.appearance_smooth = preference[1]
             elif preference[0] == "decdp":
                 self.appearance_decdp = preference[1]
+            elif preference[0] == "defplot":
+                self.appearance_defplot = preference[1]
 
         self.databases = databases
         #self.databases = SetIO.load_database_paths()
@@ -23,12 +26,16 @@ class Settings():
             return self.appearance_smooth
         elif name == "decdp":
             return self.appearance_decdp
+        elif name == "defplot":
+            return self.appearance_defplot
 
     def set_preference_by_name(self, name: str, value: str):   
         if name == "smooth":
             self.appearance_smooth = value
         elif name == "decdp":
             self.appearance_decdp = value
+        elif name == "defplot":
+            self.appearance_defplot = value
 
     def get_database_paths(self) -> List[str]:
         return self.databases

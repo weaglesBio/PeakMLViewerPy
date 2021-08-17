@@ -29,6 +29,7 @@ from UI.FilterIntensityDialog import FilterIntensityDialog
 from UI.FilterRetentionTimeDialog import FilterRetentionTimeDialog
 from UI.FilterNumberDetectionsDialog import FilterNumberDetectionsDialog
 from UI.FilterAnnotationsDialog import FilterAnnotationsDialog
+from UI.FilterProbabilityDialog import FilterProbabilityDialog
 from UI.SortDialog import SortDialog
 from UI.SortTimeSeriesDialog import SortTimeSeriesDialog
 from UI.PreferencesDialog import PreferencesDialog
@@ -213,7 +214,17 @@ class MainView():
     def plot_int_log_loaded(self, plot_int_log_loaded: bool):
         self._plot_int_log_loaded = plot_int_log_loaded
 
+    @property
+    def current_entry(self) -> int:
+        return self._current_entry
+
+    @current_entry.setter
+    def current_entry(self, current_entry: int):
+        self._current_entry = current_entry
+
     def __init__(self, data):
+
+        self.data = data
 
         ## Populate class properties
         # Set initial widget layout values
@@ -227,10 +238,9 @@ class MainView():
         self._set_mrf0 = 153
         self._set_mrf1 = 261
 
-        # Select initial selected plot
         self._selected_tab_plot = "Peak"
         self._selected_tab_der = "All"
-        self._selected_tab_int = "All"
+        self._selected_tab_int = "All" 
 
         self._plot_peak_loaded = False
         self._plot_der_all_loaded = False
@@ -244,8 +254,11 @@ class MainView():
         self._filter_options[e.Filter.RetentionTime] = "Filter retention time range"
         self._filter_options[e.Filter.NumberDetections] = "Filter to sample count"
         self._filter_options[e.Filter.Annotations] = "Filter by annotation"
+        self._filter_options[e.Filter.Probability] = "Filter by probability"
         self._filter_options[e.Filter.Sort] = "Sort"
         self._filter_options[e.Filter.SortTimeSeries] = "Sort time-series"
+
+        self._current_entry = 0
 
         # Initialize Application window
         self.root = tk.Tk()
@@ -278,7 +291,6 @@ class MainView():
             subprocess.call(["/usr/bin/osascript", "-e", 'tell app "Finder" to set frontmost of process "Finder" to true'])
             subprocess.call(["/usr/bin/osascript", "-e", 'tell app "Finder" to set frontmost of process "python" to true'])
 
-
         self.root.resizable(None, None)
 
         self.first_resize_occurred = False
@@ -289,7 +301,7 @@ class MainView():
         self.style.map('Treeview', foreground = self.fixed_map('foreground'), background = self.fixed_map('background'))
         self.style.map('Treeview', background=[('selected', 'blue')])
 
-        self.data = data
+        
         self.menubar = tk.Menu(self.root)
 
         self.filename_text = tk.StringVar()
@@ -313,25 +325,53 @@ class MainView():
         self.filemenu.add_command(label="Open", command=self.file_open)
         self.filemenu.add_command(label="Save", command=self.file_save)
         self.filemenu.add_command(label="Save as...", command=self.file_save_as)
+        #self.filemenu.add_separator()
+        #self.filemenu.add_command(label="Export CSV...", command=self.file_open)
+        #self.filemenu.add_command(label="Export checked...", command=self.file_save)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.root.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
         # Add 'Edit' menu item
         self.editmenu = tk.Menu(self.menubar, tearoff=0)
-        self.editmenu.add_command(label="Preferences", command=self.open_preferences_dialog)
+        #self.editmenu.add_command(label="Copy", command=self.open_peak_split_dialog)
+        #self.editmenu.add_command(label="Copy all", command=self.open_peak_split_dialog)
+        #self.editmenu.add_command(label="Copy selected", command=self.open_peak_split_dialog)
+        #self.editmenu.add_separator()
+        #self.editmenu.add_command(label="Select all", command=self.open_peak_split_dialog)
+        #self.editmenu.add_command(label="Deselect all", command=self.open_peak_split_dialog)
+        #self.editmenu.add_command(label="Invert selectio ", command=self.open_peak_split_dialog)
+        #self.editmenu.add_separator()
+        #self.editmenu.add_command(label="Merge", command=self.open_peak_split_dialog)
         self.editmenu.add_command(label="Split peak", command=self.open_peak_split_dialog)
-        self.editmenu.add_command(label="Import IPA RData", command=self.import_ipa_file)
 
-        #TODO: Remove from deployment version
-        #self.editmenu.add_command(label="Get Layout", command=self.print_layout)
+
 
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         
-        # Add 'Log' menu item
-        self.logmenu = tk.Menu(self.menubar, tearoff=0)
-        self.logmenu.add_command(label="View Log", command=self.open_log_dialog)
-        self.menubar.add_cascade(label="Log", menu=self.logmenu)
+        # Add 'IPA' menu item
+        self.ipamenu = tk.Menu(self.menubar, tearoff=0)
+        self.ipamenu.add_command(label="Import IPA", command=self.import_ipa_file)
+        self.ipamenu.add_command(label="Export entries", command=self.export_ipa_file)
+        self.ipamenu.add_command(label="Export priors", command=self.export_ipa_priors_file)
+        self.menubar.add_cascade(label="IPA", menu=self.ipamenu)
+
+        # Add 'View' menu item
+        # self.viewmenu = tk.Menu(self.menubar, tearoff=0)
+        # self.viewmenu.add_command(label="Peak information", command=self.open_log_dialog)
+        # self.viewmenu.add_command(label="Peak comparison", command=self.open_preferences_dialog)
+        # self.menubar.add_cascade(label="View", menu=self.viewmenu)
+
+        # Add 'User' menu item
+        self.usermenu = tk.Menu(self.menubar, tearoff=0)
+        self.usermenu.add_command(label="View Log", command=self.open_log_dialog)
+        self.usermenu.add_command(label="Preferences", command=self.open_preferences_dialog)
+        self.menubar.add_cascade(label="User", menu=self.usermenu)
+
+        self.debugmenu = tk.Menu(self.menubar, tearoff=0)
+        self.debugmenu.add_command(label="Get Layout", command=self.get_current_layout)
+        self.menubar.add_cascade(label="Debug", menu=self.debugmenu)
+
 
         # Disable 'Save'
         self.filemenu.entryconfig(1, state=tk.DISABLED)
@@ -344,6 +384,12 @@ class MainView():
 
         # Disable 'Import IPA RData'
         self.editmenu.entryconfig(2, state=tk.DISABLED)
+
+        # Disable 'Export IPA RData'
+        self.editmenu.entryconfig(3, state=tk.DISABLED)
+
+        # Disable 'Export IPA with priors RData'
+        self.editmenu.entryconfig(4, state=tk.DISABLED)
 
         # Initialise Layout
         self.root_frame = tk.Frame(self.root, padx=0, pady=0)
@@ -426,15 +472,17 @@ class MainView():
         self.entry_tree.tag_configure("no_ann_not_focus", foreground="grey")
         self.entry_tree.tag_configure("has_ann_is_focus", foreground="white", background="blue")
         self.entry_tree.tag_configure("no_ann_is_focus", foreground="white", background="blue")
-   
+
         # Filter View
         option_list = [
             self.filter_options[e.Filter.Mass], 
             self.filter_options[e.Filter.Intensity], 
             self.filter_options[e.Filter.RetentionTime], 
-            self.filter_options[e.Filter.NumberDetections]#,
-            #self.filter_options[e.Filter.Annotations],
-            #self.filter_options[e.Filter.Sort]
+            self.filter_options[e.Filter.NumberDetections],
+            self.filter_options[e.Filter.Annotations],
+            self.filter_options[e.Filter.Probability],
+            self.filter_options[e.Filter.Sort],
+            self.filter_options[e.Filter.SortTimeSeries]
             ]
         filter_control_frame = tk.Frame(self.mid_left_bot_frame)
         filter_control_frame.pack(side=tk.BOTTOM)
@@ -494,6 +542,30 @@ class MainView():
         self.figure_int_all, self.axes_int_all = self.initialize_plot(self.tab_int_all)
         self.figure_int_log, self.axes_int_log = self.initialize_plot(self.tab_int_log)
 
+        # Select initial selected plot
+        default_plot = self.data.get_settings_preference_by_name("defplot")
+
+        if default_plot == "Peak":
+            self.tabs_plot.select(0)
+            self.tabs_der.select(0)
+            self.tabs_int.select(0)
+        elif default_plot == "Derivatives:All":
+            self.tabs_plot.select(1)
+            self.tabs_der.select(0)
+            self.tabs_int.select(0)
+        elif default_plot == "Derivatives:Log":
+            self.tabs_plot.select(1)
+            self.tabs_der.select(0)
+            self.tabs_int.select(1)
+        elif default_plot == "Intensity:All":
+            self.tabs_plot.select(2)
+            self.tabs_der.select(0)
+            self.tabs_int.select(0)
+        elif default_plot == "Intensity:Log":
+            self.tabs_plot.select(2)
+            self.tabs_der.select(0)
+            self.tabs_int.select(1)
+
         # Set View
         self.set_tree = self.initialize_grid(self.mid_right_top_frame, True, [("Selected", 60), ("Name", 150)])
         self.set_tree.bind('<ButtonRelease-1>', self.update_sets_view)
@@ -533,9 +605,8 @@ class MainView():
         self.iden_tree.bind('<KeyRelease-Down>', self.select_iden)
         self.iden_tree.tag_configure("not_focus", foreground="black")
         self.iden_tree.tag_configure("is_focus", foreground="white", background="blue")
-        
+
         # Set initial widget layout vf_0, vf_1, mf_0, mf_1, mlf_0, mrf_0, mrf_1
-        #self.update_layout(43, 551, 303, 1011, 303, 153, 261)
         self.update_layout(self._set_vf0, self._set_vf1, self._set_mf0, self._set_mf1, self._set_mlf0, self._set_mrf0, self._set_mrf1)
 
         self.root.config(menu=self.menubar)
@@ -563,7 +634,6 @@ class MainView():
 
         # create new
         configure_timer = self.root.after(200, self.update_layout_if_resize)
-
 
     def update_layout(self, vf_0, vf_1, mf_0, mf_1, mlf_0, mrf_0, mrf_1):
 
@@ -597,7 +667,7 @@ class MainView():
         self.set_mrf0 = mrf_0
         self.set_mrf1 = mrf_1
 
-    def get_current_layout(self, label):
+    def get_current_layout(self):
 
         height = self.root_frame.winfo_height()
         width = self.root_frame.winfo_width()
@@ -636,12 +706,6 @@ class MainView():
             self.set_height = current_height
             self.set_width = current_width
 
-            #print(f"luh {self.set_height} = {current_height}")
-            #print(f"luw {self.set_width} = {current_width}")
-
-            #print(f"hc {height_change}")
-            #print(f"wc {width_change}")
-
             # info_view_w = width
             # info_view_h = vf0
             # entry_view_w = mf0
@@ -670,11 +734,8 @@ class MainView():
             # Increasing the width should be able to increase this an unlimited amount.
             mf1_u = self.set_mf1 + width_change
             #
-        
             #self.adjust_mlf(vf1_u, mf0_u)
             mlf0_u = self.set_mlf0
-
-
             # 
             mrf0_u = self.set_mrf0
             # 
@@ -691,21 +752,11 @@ class MainView():
 
             #self.get_current_layout("UPDATED")
 
-
     def adjust_mlf(self, vf1, mf0):
         print("not implemented")
 
-        #return mlf0
-
     def adjust_mrf(self, vf1, mf0):
         print("not implemented")
-
-                #return mrf0, mrf1
-
-            #get_adjusted mlf0 from widget heigh method.
-
-            #get
-
 
 #endregion
 
@@ -807,17 +858,13 @@ class MainView():
             # Load data objects
             self.data.import_peakml_data()
 
-            # Disable 'Save'
+            # Enable disabled menu items.
             self.filemenu.entryconfig(1, state=tk.NORMAL)
-
-            # Disable 'Save as...'
             self.filemenu.entryconfig(2, state=tk.NORMAL)
-
-            # Disable 'Split peak'
             self.editmenu.entryconfig(1, state=tk.NORMAL)
-
-            # Disable 'Import IPA RData'
             self.editmenu.entryconfig(2, state=tk.NORMAL)
+            self.editmenu.entryconfig(3, state=tk.NORMAL)
+            self.editmenu.entryconfig(4, state=tk.NORMAL)
 
             # Update UI widgets
             self.load_data_from_views()
@@ -856,6 +903,28 @@ class MainView():
         
         p.update_progress("File exported.", 100)
 
+    def export_ipa_rdata_file(self):
+        p.update_progress("Exporting file", 0)
+
+        try:
+            self.data.export_ipa()
+
+        except Exception as err:
+            self.handle_error("Unable to export IPA file.", err)
+        
+        p.update_progress("File exported.", 100)
+
+    def export_ipa_priors_rdata_file(self):
+        p.update_progress("Exporting file", 0)
+
+        try:
+            self.data.export_ipa_priors()
+
+        except Exception as err:
+            self.handle_error("Unable to export IPA file.", err)
+        
+        p.update_progress("File exported.", 100)
+
 #endregion
 
 #region Menu Methods
@@ -875,7 +944,7 @@ class MainView():
         try:
             reply = mb.askokcancel(title="Update Imported File", message=f"Are you sure you want to update the imported file '{self.data.import_peakml_filename}'?")
             if reply == True:
-                self.data.export_peakml_filepath = self.data.import_peakml_filepath
+                self.data.export_filepath = self.data.import_peakml_filepath
                 self.run_process_with_progress(self.export_peakml_file)
         except IOError as ioerr:
             self.handle_error("Unable to save PeakML file.", ioerr)
@@ -886,7 +955,7 @@ class MainView():
         try:
             filepath = fd.asksaveasfilename(defaultextension=".peakml")
             if filepath:
-                self.data.export_peakml_filepath = filepath
+                self.data.export_filepath = filepath
                 self.run_process_with_progress(self.export_peakml_file)
         except IOError as ioerr:
             self.handle_error("Unable to save PeakML file.", ioerr)
@@ -904,10 +973,32 @@ class MainView():
         except Exception as err:
             self.handle_error("Unable to open IPA file.", err)
 
+    def export_ipa_file(self):
+        try:
+            filepath = fd.asksaveasfilename(defaultextension=".Rdata")
+            if filepath:
+                self.data.export_filepath = filepath
+                self.run_process_with_progress(self.export_ipa_rdata_file)
+        except IOError as ioerr:
+            self.handle_error("Unable to open IPA file.", ioerr)
+        except Exception as err:
+            self.handle_error("Unable to open IPA file.", err)
+
+    def export_ipa_priors_file(self):
+        try:
+            filepath = fd.asksaveasfilename(defaultextension=".Rdata")
+            if filepath:
+                self.data.export_filepath = filepath
+                self.run_process_with_progress(self.export_ipa_priors_rdata_file)
+        except IOError as ioerr:
+            self.handle_error("Unable to open IPA file.", ioerr)
+        except Exception as err:
+            self.handle_error("Unable to open IPA file.", err)
+
     def open_preferences_dialog(self):
         dlg = PreferencesDialog(self.root,"Preferences", self.data)
         if dlg.submit:
-            self.data.update_settings(dlg.decdp, dlg.databases)
+            self.data.update_settings(dlg.decdp, dlg.defplot, dlg.databases)
             self.run_process_with_progress(self.refresh_entry_selected)
 
     def open_log_dialog(self):
@@ -917,12 +1008,9 @@ class MainView():
         rt_mean = self.data.selected_retention_time
         dlg = PeakSplitDialog(self.root, "Set Retention Time for Peak Split", rt_mean)
         if dlg.submit:
-            #print("Not implemented.")
             self.data.peak_split_retention_time = f"{dlg.retention_time_min}:{dlg.retention_time_sec}"
 
             self.run_process_with_progress(self.split_peak_on_retention_time)
-            #self.data.update_settings(dlg.decdp, dlg.databases)
-            #self.run_process_with_progress(self.refresh_entry_selected)
         
     def split_peak_on_retention_time(self):
         p.update_progress("Splitting peak", 0)
@@ -1044,6 +1132,7 @@ class MainView():
             else:
                 self.entry_delete_checked_btn["state"] = "disabled"
         else:
+            lg.log_progress("Changing currently selected entry.")
             # Get focused entry
             focused_entry = self.entry_tree.item(self.entry_tree.focus())
             selected_item = self.entry_tree.focus()
@@ -1052,23 +1141,20 @@ class MainView():
 
                 # Short circuit if selecting currently selected
                 if self.data.selected_entry_uid != focused_entry["tags"][0]:
-
-                    #TODO replace with dictionary storing uid with item id. 
-
-                    # Find row that was previously selected, and update tag to remove focus.
-                    for item in self.entry_tree.get_children():
-                        uid = self.entry_tree.item(item)["tags"][0]
-                        if uid == self.data.selected_entry_uid:
-                            prev_item = item
+                    prev_item = self.current_entry
 
                     # Update tags to remove focus from previously selected row and add to row being selected
                     self.update_selected_entry_grid_row(selected_item, prev_item)
 
+                    self.current_entry = selected_item
+
                     self.data.selected_entry_uid = focused_entry["tags"][0]   
 
+                lg.log_progress("Load selected entry details.")
                 #Attempt to load details of record, if unable revert to previously selected record.
                 try:
-                    self.run_process_with_progress(self.refresh_entry_selected)
+                    #self.run_process_with_progress(self.refresh_entry_selected)
+                    self.refresh_entry_selected()
 
                 except Exception as err:
                     #Restore previous selection by updating tags
@@ -1076,6 +1162,7 @@ class MainView():
                     self.handle_error("Unable to load entry", err)
 
             lg.log_progress("Entry selected.")
+
 
     def update_selected_entry_grid_row(self, new_item, prev_item):
 
@@ -1204,11 +1291,11 @@ class MainView():
     def refresh_molecule_canvas(self, inchi_data, smiles_data):
         self.molecule_canvas.delete("all")
 
-        if inchi_data is not None:
+        if inchi_data is not None and inchi_data != '':
             mol = inchi.MolFromInchi(inchi_data)
             mol_image = Draw.MolToImage(mol, size=(300,200))
 
-        elif smiles_data is not None:
+        elif smiles_data is not None and inchi_data != '':
             mol = Chem.MolFromSmiles(smiles_data)
             mol_image = Draw.MolToImage(mol, size=(300,200))       
         else:
@@ -1360,22 +1447,24 @@ class MainView():
         intensity_values = np.array(data['Intensity'])
         label_values = np.array(data['Description'])
 
-        axes_der.stem(mass_values, intensity_values, markerfmt=" ")
+        if len(mass_values) > 0:
 
-        for i in range(len(data)):
-            axes_der.annotate(label_values[i], (mass_values[i], intensity_values[i]), horizontalalignment='left', verticalalignment='top')
+            axes_der.stem(mass_values, intensity_values, markerfmt=" ")
 
-        axes_der.set_xscale('linear')
+            for i in range(len(data)):
+                axes_der.annotate(label_values[i], (mass_values[i], intensity_values[i]), horizontalalignment='left', verticalalignment='top')
 
-        if type == "Log":
-            axes_der.set_yscale('log')
-        else:
-            axes_der.set_yscale('linear')
+            axes_der.set_xscale('linear')
 
-        axes_der.set_xlabel("Mass")
-        axes_der.set_ylabel("Intensity")
+            if type == "Log":
+                axes_der.set_yscale('log')
+            else:
+                axes_der.set_yscale('linear')
 
-        figure_der.canvas.draw()
+            axes_der.set_xlabel("Mass")
+            axes_der.set_ylabel("Intensity")
+
+            figure_der.canvas.draw()
 
         #figure_der.tight_layout()
 
@@ -1468,10 +1557,17 @@ class MainView():
             refresh = self.open_filter_number_detections_dialog()
         elif option == self.filter_options[e.Filter.Annotations]:
             refresh = self.open_filter_annotations_dialog()
+        elif option == self.filter_options[e.Filter.Probability]:
+            refresh = self.open_filter_probability_dialog()
         elif option == self.filter_options[e.Filter.Sort]:
             refresh = self.open_filter_sort_dialog()
         elif option == self.filter_options[e.Filter.SortTimeSeries]:
-            refresh = self.open_filter_sort_time_series_dialog()
+            # Check if time series filter already exists.
+            if self.data.check_if_existing_time_series_filter():
+                mb.showwarning("Warning","Only one Sort time-series filter can be added at the same time.")
+                refresh = False
+            else:
+                refresh = self.open_filter_sort_time_series_dialog()
 
         if refresh:
             self.run_process_with_progress(self.load_data_from_views)
@@ -1494,7 +1590,7 @@ class MainView():
         else:
             return False
 
-    def open_filter_intensity_dialog(self):
+    def open_filter_intensity_dialog(self) -> bool:
         title = self.filter_options[e.Filter.Intensity]
         intensity_min, intensity_max = self.data.get_min_max_intensity()
         dlg = FilterIntensityDialog(self.root, title, intensity_min)
@@ -1504,7 +1600,7 @@ class MainView():
         else:
             return False
 
-    def open_filter_retention_time_dialog(self):
+    def open_filter_retention_time_dialog(self) -> bool:
         title = self.filter_options[e.Filter.RetentionTime]
         rt_min, rt_max = self.data.get_min_max_retention_time()
         dlg = FilterRetentionTimeDialog(self.root, title, rt_min, rt_max)
@@ -1514,7 +1610,7 @@ class MainView():
         else:
             return False
 
-    def open_filter_number_detections_dialog(self):
+    def open_filter_number_detections_dialog(self) -> bool:
         title = self.filter_options[e.Filter.NumberDetections]
         sample_count_min, sample_count_max = self.data.get_min_max_samples_count()
         dlg = FilterNumberDetectionsDialog(self.root, title, sample_count_min, sample_count_max)
@@ -1524,7 +1620,7 @@ class MainView():
         else:
             return False
 
-    def open_filter_annotations_dialog(self):
+    def open_filter_annotations_dialog(self) -> bool:
         title = self.filter_options[e.Filter.Annotations]
         dlg = FilterAnnotationsDialog(self.root, title)
         if dlg.submit:
@@ -1533,20 +1629,30 @@ class MainView():
         else:
             return False
 
-    def open_filter_sort_dialog(self):
-        title = self.filter_options[e.Filter.Sort]
-        dlg = SortDialog(self.root, title)
+    def open_filter_probability_dialog(self) -> bool:
+        title = self.filter_options[e.Filter.Probability]
+        dlg = FilterProbabilityDialog(self.root, title)
         if dlg.submit:
-            self.data.add_filter_sort()
+            self.data.add_filter_probability(dlg.prior_min, dlg.prior_max, dlg.post_min, dlg.post_max)
             return True
         else:
             return False
 
-    def open_filter_sort_time_series_dialog(self):
-        title = self.filter_options[e.Filter.SortTimeSeries]
-        dlg = SortTimeSeriesDialog(self.root, title)
+    def open_filter_sort_dialog(self) -> bool:
+        title = self.filter_options[e.Filter.Sort]
+        dlg = SortDialog(self.root, title)
         if dlg.submit:
-            self.data.add_filter_sort_times_series()
+            self.data.add_filter_sort(dlg.sort_type, dlg.sort_direction)
+            return True
+        else:
+            return False
+
+    def open_filter_sort_time_series_dialog(self) -> bool:
+        title = self.filter_options[e.Filter.SortTimeSeries]
+        sets = self.data.get_sets_list()
+        dlg = SortTimeSeriesDialog(self.root, title, sets)
+        if dlg.submit:
+            self.data.add_filter_sort_times_series(dlg.set_values)
             return True
         else:
             return False

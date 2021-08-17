@@ -5,7 +5,7 @@ from Data.PeakML.Peak import Peak
 from typing import Dict
 
 class IntensityFilter(BaseFilter):
-    def __init__(self, intensity_min):
+    def __init__(self, intensity_min: float):
         super().__init__(Enums.FilterType.FilterIntensity)
         self.intensity_min = intensity_min
 

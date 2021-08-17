@@ -4,12 +4,13 @@ import Logger as lg
 
 from Data.View.BaseDataView import BaseDataView
 from Data.View.AnnotationItem import AnnotationItem
+from Data.PeakML.Peak import Peak
 
 class AnnotationDataView(BaseDataView):
     def __init__(self):
         super().__init__(['Label','Value'])
 
-    def load_data_for_selected_peak(self, peak):
+    def load_data_for_selected_peak(self, peak: Peak):
         self.clear_datalist()
         
         try:
@@ -19,7 +20,7 @@ class AnnotationDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to load annotation data: {err}')
 
-    def add_item(self, label, value):
+    def add_item(self, label: str, value: str):
         self.datalist.append(AnnotationItem(label, value))
 
     def refresh_dataframe(self):

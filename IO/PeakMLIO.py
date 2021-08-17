@@ -1,9 +1,9 @@
+from Data.PeakML.AnnotatableEntity import AnnotatableEntity
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 import base64
 import numpy as np
 
-from typing import List
+from typing import List, Dict, Tuple, Type
 
 from Data.PeakML.Header import Header
 from Data.PeakML.Annotation import Annotation
@@ -22,7 +22,7 @@ import Logger as lg
 
 #region Reader methods
 
-def showElementValue(tag_name, tag_value):
+def showElementValue(tag_name: str, tag_value: str):
     if tag_value is not None and tag_value.text is not None: 
         print(tag_name + ": " + tag_value.text)
     else:
@@ -30,7 +30,7 @@ def showElementValue(tag_name, tag_value):
 
 # TODO: Add logic for checking it is valid peakml file based on extension and structure.
 
-def add_annotations(parent_element, parent_object):
+def add_annotations(parent_element: ET.Element, parent_object: Type[AnnotatableEntity]):
     for annotation_element in parent_element.findall("./annotations/annotation"):
 
         if 'unit' in annotation_element.attrib:
@@ -43,7 +43,6 @@ def add_annotations(parent_element, parent_object):
         else:
             ontologyref_attribute = None
 
-
         label = annotation_element.find("./label")
         value = annotation_element.find("./value")
         value_type = annotation_element.find("./valuetype")
@@ -53,7 +52,7 @@ def add_annotations(parent_element, parent_object):
         annotation = Annotation(unit_attribute, ontologyref_attribute, label.text if label.text else "", value.text if value.text else "", value_type.text if value_type.text else "STRING")
         parent_object.add_annotation(annotation)
 
-def add_peaks(parent_element, peakset, parent_peak_num):
+def add_peaks(parent_element: ET.Element, header_obj: Header, peakset: List[Peak], set_sizes: List[int], set_intensities: List[float], parent_peak_num: str):
 
     peak_elements = parent_element.findall("./peaks/peak")
     peak_elements_len = len(peak_elements)
@@ -61,9 +60,9 @@ def add_peaks(parent_element, peakset, parent_peak_num):
     for peak_element in peak_elements:
 
         if parent_peak_num is None:
-            p.update_progress(f"Importing subpeak {(peak_iter+1)} of {peak_elements_len}")
-        else:
-            p.update_progress(f"Importing subpeak {peak_iter+1} of {peak_elements_len}, of peak {parent_peak_num}")
+            p.update_progress(f"Importing peak {(peak_iter+1)} of {peak_elements_len}")
+        #else:
+        #    p.update_progress(f"Importing subpeak {peak_iter+1} of {peak_elements_len}, of peak {parent_peak_num}")
 
         type_attribute = peak_element.attrib["type"]
         scan_element = peak_element.find("./scan")
@@ -168,14 +167,53 @@ def add_peaks(parent_element, peakset, parent_peak_num):
 
         peak = Peak(type_attribute, scan, retention_time, mass, intensity, measurement_id, pattern_id, sha1sum, signal, peak_data)
 
-        add_peaks(peak_element, peak.peaks, f"{(peak_iter+1)} of {peak_elements_len}")
+        if parent_peak_num is not None:
+
+            # Loop through each sets
+            for set_i in range(len(header_obj.sets)):
+
+                # Loop through set measurement ids (the values that match peakdata measurementids)
+                for measurement_id in header_obj.sets[set_i].measurement_ids:
+                    # If set measurementid in peak data list.
+                    if measurement_id in peak.peak_data.measurement_ids:
+                        header_obj.sets[set_i].add_linked_peak_measurement_ids(peak.measurement_id)
+
+                        if u.is_float(peak.intensity):
+                            set_sizes[set_i] += 1
+                            set_intensities[set_i] += float(peak.intensity)
+        else:
+            # Initial set intensities list on peakset
+            set_sizes = [0] * len(header_obj.sets)
+            set_intensities = [0.0] * len(header_obj.sets)
+
+        add_peaks(peak_element, header_obj, peak.peaks, set_sizes, set_intensities, f"{(peak_iter+1)} of {peak_elements_len}")
         add_annotations(peak_element, peak)
+
+        # Is peakset
+        if parent_peak_num is None:
+            # update the myseries value to its value divided by mysize value - so the average value of all component intensities.
+            for i in range(len(set_sizes)):
+
+                if set_sizes[i]:
+                    set_intensities[i] = set_intensities[i]/set_sizes[i]
+
+            # Find the max intensity across all the myseries values.
+            max_intensity = max(set_intensities)
+
+            if max_intensity:
+
+                # for each value in the series divide by the max intensity - normalises it.
+                for i in range(len(set_sizes)):
+                    set_intensities[i] = set_intensities[i]/max_intensity
+
+            # Save results onto peak.
+            peak.set_intensities = set_intensities
 
         peakset.append(peak)
 
         peak_iter += 1
 
-def import_element_tree_from_peakml_file(tree_data):
+def import_element_tree_from_peakml_file(tree_data) -> Tuple[Header, Dict[str, Peak], List[str]]:
 
     lg.log_progress(f"Start reading XML")
     p.update_progress(f"Importing header")
@@ -287,37 +325,22 @@ def import_element_tree_from_peakml_file(tree_data):
     lg.log_progress(f"Start adding peaks")
 
     # Add 'Peak' records to peakset list
-    add_peaks(root, peakset, None)
+    add_peaks(root, header_obj, peakset, None, None, None)
  
-    lg.log_progress(f"Start finding linked peaks")
-
-    # Finding the peaks linked into sets by measurement id
-    for i in range(len(peakset)):
-
-        p.update_progress(f"Finding linked peaks for peak {i+1} of {len(peakset)}")
-
-        # does the peak data contain the id.
-        for subpeak in peakset[i].peaks:
-
-            for set in header_obj.sets:
-
-                for measurement_id in set.measurement_ids:
-
-                    if measurement_id in subpeak.peak_data.measurement_ids:
-                        set.add_linked_peak_measurement_ids(subpeak.measurement_id)
-
     lg.log_progress(f"Start setting UUID")
 
     # Convert peakset to dictionary with peak uids.
     peakset_dict = {}
+    peak_order = []
 
     for peak in peakset:
         uid = u.get_new_uuid()
         peakset_dict[uid] = peak
+        peak_order.append(uid)
 
     lg.log_progress(f"Finish reading XML")
 
-    return header_obj, peakset_dict
+    return header_obj, peakset_dict, peak_order
         
 # Need to create test file to see that conversion process is correct, checking every node.
 
@@ -333,7 +356,7 @@ def finalise_xml_formatting(input_string: str):
 
     return updated_empty_nodes
 
-def add_annotation_nodes(parent_element, parent_object):
+def add_annotation_nodes(parent_element: ET.Element, parent_object: Type[AnnotatableEntity]):
     if parent_object.annotations:
         annotations = ET.SubElement(parent_element, 'annotations')
 
@@ -355,7 +378,7 @@ def add_annotation_nodes(parent_element, parent_object):
             value_type = ET.SubElement(annotation, 'valuetype')
             value_type.text = annotation_obj.value_type
 
-def add_peak_nodes(parent_element, peak_list: List[Peak]):
+def add_peak_nodes(parent_element: ET.Element, peak_list: List[Peak]):
 
     peaks = ET.SubElement(parent_element, 'peaks')
 
@@ -434,7 +457,7 @@ def add_peak_nodes(parent_element, peak_list: List[Peak]):
                 measurement_ids = ET.SubElement(peak_data, 'measurementids')
                 measurement_ids.text = peak_obj.peak_data.get_encoded_measurement_ids()             
 
-def create_xml_from_peakml(data_header, data_peaks_list):
+def create_xml_from_peakml(data_header: Header, data_peaks_list: List[Peak]):
     
     u.trace(f"Start writing XML")
 

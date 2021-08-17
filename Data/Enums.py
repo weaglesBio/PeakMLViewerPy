@@ -6,8 +6,9 @@ class FilterType(Enum):
     FilterRetentionTime = 3
     FilterNumberDetections = 4
     FilterAnnotations = 5
-    FilterSort = 6
-    FilterSortTimeSeries = 7
+    FilterProbability = 6
+    FilterSort = 7
+    FilterSortTimeSeries = 8
 
 class SortType(Enum):
     MassAsc = 1

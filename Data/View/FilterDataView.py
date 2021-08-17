@@ -20,7 +20,7 @@ class FilterDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to load filter data: {err}')
 
-    def add_item(self, filter_id, type, settings):
+    def add_item(self, filter_id: str, type: str, settings: str):
         self.datalist.append(FilterItem(filter_id, type, settings))
 
     def refresh_dataframe(self):

@@ -5,7 +5,7 @@ from Data.PeakML.Peak import Peak
 from typing import Dict
 
 class MassFilter(BaseFilter):
-    def __init__(self, mass_min, mass_max): #, formula, formula_ppm, mass_charge, filter_option
+    def __init__(self, mass_min: float, mass_max: float): #, formula, formula_ppm, mass_charge, filter_option
         super().__init__(Enums.FilterType.FilterMass)
         self.mass_min = mass_min
         self.mass_max = mass_max

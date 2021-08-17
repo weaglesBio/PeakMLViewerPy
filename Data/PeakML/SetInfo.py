@@ -45,14 +45,14 @@ class SetInfo():
         self._measurement_ids = measurement_ids
 
     @property
-    def linked_peak_measurement_ids(self):
+    def linked_peak_measurement_ids(self) -> List[str]:
         return self._linked_peak_measurement_ids
 
     @linked_peak_measurement_ids.setter
     def linked_peak_measurement_ids(self, linked_peak_measurement_ids: List[str]):
         self._linked_peak_measurement_ids = linked_peak_measurement_ids
 
-    def add_linked_peak_measurement_ids(self, peak_measurement_id):
+    def add_linked_peak_measurement_ids(self, peak_measurement_id: str):
 
         if peak_measurement_id not in self.linked_peak_measurement_ids:
             self._linked_peak_measurement_ids.append(peak_measurement_id)
@@ -62,7 +62,7 @@ class SetInfo():
     #     return ", ".join(self.measurement_ids)
 
     # Returns measurementids as raw encoded string
-    def get_encoded_measurement_ids(self):
+    def get_encoded_measurement_ids(self) -> str:
         encoded = base64.b64encode(self.measurement_ids_byte_array)
         return encoded.decode("UTF-8")  #Converts from bytes to string
 

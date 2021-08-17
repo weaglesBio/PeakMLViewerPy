@@ -66,7 +66,11 @@ class IdentificationDataView(BaseDataView):
                     notes = ""
 
                     id = iden_ids[i]
-                    molecule = molecule_database[id]
+
+                    if molecule_database.get(id,False):
+                        molecule = molecule_database[id]
+                    else:
+                        molecule = None
 
                     # Populate details from molecule database.
                     if molecule is not None:
@@ -76,6 +80,13 @@ class IdentificationDataView(BaseDataView):
                         description = molecule.description if molecule.description is not None else ""
                         smiles = molecule.smiles
                         inchi = molecule.inchi
+                    else:
+                        formula = ""
+                        name = ""
+                        class_desc = ""
+                        description = ""
+                        smiles = ""
+                        inchi = ""
 
                     if iden_ppms and len(iden_ppms) > 0:
                         if len(iden_ppms) == 1:
@@ -112,7 +123,7 @@ class IdentificationDataView(BaseDataView):
         except Exception as err:
             lg.log_error(f'Unable to load identification data from peakML object: {err}')
 
-    def add_item(self, id, formula, ppm, adduct, name, class_desc, description, prior, post, smiles, inchi, notes):
+    def add_item(self, id: int, formula: str, ppm: float, adduct: str, name: str, class_desc: str, description: str, prior: float, post: float, smiles: str, inchi: str, notes: str):
         self.datalist.append(IdentificationItem(id, formula, ppm, adduct, name, class_desc, description, prior, post, smiles, inchi, notes))
 
     def refresh_dataframe(self):
@@ -143,11 +154,11 @@ class IdentificationDataView(BaseDataView):
                 # set the first one as selected.
                 self.dataframe.at[0, 'Selected'] = True
 
-    def get_details(self, uid):
+    def get_details(self, uid: str):
         row = self.dataframe.loc[self.dataframe["UID"] == uid]
         return uid, row["ID"].values[0], row["Prior"].values[0], row["Notes"].values[0]
 
-    def update_details(self, uid, prior, notes):
+    def update_details(self, uid: str, prior: str, notes: str):
 
         if u.is_float(prior):
             prior_val = float(prior)
@@ -173,7 +184,7 @@ class IdentificationDataView(BaseDataView):
 
         return prior_changed
 
-    def remove_checked(self, ipa_imported):
+    def remove_checked(self, ipa_imported: bool):
         current_list = self.datalist
         amended_list = []
         for item in current_list:
@@ -217,7 +228,7 @@ class IdentificationDataView(BaseDataView):
         return ann_identification, ann_ppm, ann_adduct, ann_prior, ann_post, ann_notes
 
 
-    def recalculate_priors(self, updated_identification_uid):
+    def recalculate_priors(self, updated_identification_uid: str):
 
         # Need to be able to handle the total being 0.
         updated_item_list = []

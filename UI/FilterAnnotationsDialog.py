@@ -14,13 +14,13 @@ class FilterAnnotationsDialog(ViewerDialog):
         self.option_annotation_relation_selected = tk.StringVar(frame)
         self.option_annotation_relation_selected.set("=")
 
-        self.lbl_annotation_name = tk.Label(frame, width=15, text="Name:")
+        self.lbl_annotation_name = tk.Label(frame, width=10, text="Label:")
         self.ent_annotation_name = tk.Entry(frame, width=15)
 
-        self.lbl_annotation_relation = tk.Label(frame, width=15, text="Relation:")
+        self.lbl_annotation_relation = tk.Label(frame, width=10)
         self.option_annotation_relation = tk.OptionMenu(frame, self.option_annotation_relation_selected, *option_annotation_relation_list)
 
-        self.lbl_annotation_value = tk.Label(frame, width=15, text="Value:")
+        self.lbl_annotation_value = tk.Label(frame, width=10, text="Value:")
         self.ent_annotation_value = tk.Entry(frame, width=15)
 
         self.lbl_annotation_name.grid(row=0, column=0)

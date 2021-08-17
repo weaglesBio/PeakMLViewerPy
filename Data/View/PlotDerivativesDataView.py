@@ -2,12 +2,15 @@ import Logger as lg
 import Utilities as u
 from Data.View.BaseDataView import BaseDataView
 from Data.View.PlotDerivativesItem import PlotDerivativesItem
+from Data.PeakML.Peak import Peak
+
+from typing import Dict
 
 class PlotDerivativesDataView(BaseDataView):
     def __init__(self):
         super().__init__(['Mass','Intensity','Description'])
 
-    def load_plot_data_for_selected_peak(self, selected_peak, peak_dic):
+    def load_plot_data_for_selected_peak(self, selected_peak: Peak, peak_dic: Dict[str, Peak]):
         try:
             self.clear_datalist()
 
@@ -53,7 +56,7 @@ class PlotDerivativesDataView(BaseDataView):
             lg.log_error(f'Unable to update plot derivative data: {err}')
 
 
-    def add_item(self, mass, intensity, description):
+    def add_item(self, mass: float, intensity: float, description: str):
         self.datalist.append(PlotDerivativesItem(mass, intensity, description))
 
     def refresh_dataframe(self):
