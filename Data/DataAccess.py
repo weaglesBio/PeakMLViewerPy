@@ -159,10 +159,6 @@ class DataAccess:
         return self._prior_probabilities_modified
 
     @property 
-    def measurement_colours(self) -> Dict[str, str]:
-        return self._measurement_colours
-
-    @property 
     def peak_split_retention_time(self) -> str:
         return self._peak_split_retention_time
 
@@ -242,7 +238,7 @@ class DataAccess:
             lg.log_progress("Filter view data loaded.")
 
             p.update_progress("Loading set view data", 30)
-            self._set_view.load_data(self._peakml.header, self.measurement_colours)
+            self._set_view.load_data(self._peakml.header, self._measurement_colours)
             lg.log_progress("Set view data loaded.")
             
             self.update_selected_entry()
@@ -275,7 +271,7 @@ class DataAccess:
             lg.log_progress("Filters applied to peak list.")
 
             p.update_progress("Loading peak plot data", 32)
-            self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header, self.measurement_colours)
+            self._plot_peak_view.load_plot_data_for_selected_peak(selected_peak, self._peakml.header, self._measurement_colours)
             lg.log_progress("Peak plot data loaded.")
 
             p.update_progress("Loading derivatives plot data", 35)

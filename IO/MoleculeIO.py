@@ -2,7 +2,9 @@ import xml.etree.ElementTree as ET
 from Data.Molecule import Molecule
 import Logger as lg
 
-def load_molecule_databases():
+from typing import Dict
+
+def load_molecule_databases() -> Dict[str, Molecule]:
 
     molecules = {}
     settings_tree_data = None

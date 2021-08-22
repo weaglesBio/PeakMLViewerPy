@@ -368,9 +368,9 @@ class MainView():
         self.usermenu.add_command(label="Preferences", command=self.open_preferences_dialog)
         self.menubar.add_cascade(label="User", menu=self.usermenu)
 
-        self.debugmenu = tk.Menu(self.menubar, tearoff=0)
-        self.debugmenu.add_command(label="Get Layout", command=self.get_current_layout)
-        self.menubar.add_cascade(label="Debug", menu=self.debugmenu)
+        # self.debugmenu = tk.Menu(self.menubar, tearoff=0)
+        # self.debugmenu.add_command(label="Get Layout", command=self.get_current_layout)
+        # self.menubar.add_cascade(label="Debug", menu=self.debugmenu)
 
 
         # Disable 'Save'
@@ -680,7 +680,7 @@ class MainView():
         mrf0 = self.mid_right_frame.sash_coord(0)[1]
         mrf1 = self.mid_right_frame.sash_coord(1)[1]
 
-        print(f"{label}: height: {height}, width: {width}, VF0: {vf0}, VF1: {vf1}, MF0: {mf0}, MF1: {mf1}, MLF0: {mlf0}, MRF0: {mrf0}, MRF1: {mrf1}")
+        print(f"Layout: height: {height}, width: {width}, VF0: {vf0}, VF1: {vf1}, MF0: {mf0}, MF1: {mf1}, MLF0: {mlf0}, MRF0: {mrf0}, MRF1: {mrf1}")
 
     def update_layout_if_resize(self):
 
@@ -748,7 +748,17 @@ class MainView():
             #print(f"mrf0_u {mrf0_u}")
             #print(f"mrf1_u {mrf1_u}")
 
-            self.update_layout(vf0_u, vf1_u, mf0_u, mf1_u, mlf0_u, mrf0_u, mrf1_u)
+            #height: 1117, width: 1920, VF0: 43, VF1: 852, MF0: 400, MF1: 1565, MLF0: 576, MRF0: 379, MRF1: 565
+
+
+            if 1117 == current_height and 1920 == current_width:
+                self.update_layout(43, 852, 400, 1565, 576, 379, 565)
+
+            elif 720 == current_height and 1280 == current_width:
+                self.update_layout(43, 551, 303, 1011, 303, 153, 261)
+
+            else:
+                self.update_layout(vf0_u, vf1_u, mf0_u, mf1_u, mlf0_u, mrf0_u, mrf1_u)
 
             #self.get_current_layout("UPDATED")
 

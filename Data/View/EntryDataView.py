@@ -3,11 +3,12 @@ import Logger as lg
 import math as m
 import statistics as stats
 
-from typing import Dict
+from typing import Dict, List
 
 from Data.View.BaseDataView import BaseDataView
 from Data.View.EntryItem import EntryItem
 from Data.PeakML.Peak import Peak
+
 
 class EntryDataView(BaseDataView):
     def __init__(self):
@@ -158,7 +159,7 @@ class EntryDataView(BaseDataView):
             # set the first one as selected.
             self.dataframe.at[0, 'Selected'] = True
 
-    def get_checked_entries_uid(self):
+    def get_checked_entries_uid(self) -> List[str]:
         selected_df = self.dataframe.loc[self.dataframe["Checked"] == True]
         return selected_df["UID"].tolist()
     

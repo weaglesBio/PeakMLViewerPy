@@ -6,15 +6,15 @@ class FilterProbabilityDialog(ViewerDialog):
         self.submit = False
         self.validate_probability_details = tk.StringVar()
 
-        super().__init__(parent, title, width=200, height=200)
+        super().__init__(parent, title, width=250, height=200)
 
     def body(self, frame):
 
         # Register validation methods
         validate_probability = frame.register(self.confirm_probability_valid)
 
-        self.lbl_info_probability = tk.Label(frame, text="Filters to to entries with at least one identification of probability")
-        self.lbl_info_probability.pack(fill=tk.BOTH, expand = tk.TRUE)
+        # self.lbl_info_probability = tk.Label(frame, text="Filters to to entries with at least one identification of probability")
+        # self.lbl_info_probability.pack(fill=tk.BOTH, expand = tk.TRUE)
 
         self._figure_frame = tk.Frame(frame, padx=20, pady=20)
         self._figure_frame.pack(fill=tk.BOTH, expand = tk.TRUE)

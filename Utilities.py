@@ -29,57 +29,57 @@ def get_new_uuid() -> str:
 
 def get_colours(number: int) -> List[str]:
 
-    # return ['#e6194b', # 1. Red 
-    #         '#3cb44b', # 2. Green
-    #         '#ffe119', # 3. Yellow
-    #         '#4363d8', # 4. Blue
-    #         '#f58231', # 5. Orange
-    #         '#911eb4', # 6. Purple
-    #         '#42d4f4', # 7. Cyan
-    #         '#f032e6', # 8. Magenta
-    #         '#bfef45', # 9. Lime
-    #         '#fabebe', # 10. Pink
-    #         '#469990', # 11. Teal
-    #         '#dcbeff', # 12. Lavender
-    #         '#9a6324', # 13. Brown
-    #         #'#fffac8', # 14. Beige
-    #         '#800000', # 15. Maroon
-    #         '#aaffc3', # 16. Mint
-    #         '#808000', # 17. Olive
-    #         '#ffd8b1', # 18. Apricot
-    #         '#000075', # 19. Navy
-    #         '#a9a9a9', # 20. Grey
-    #         '#167E4A', # 21. Forest Green
-    #         '#470387', # 22. Dark Purple
-    #         '#FF91F7', # 23. Bright Pink
-    #         '#1EFA46', # 24. Bright Green
-    #         '#000000', # 25. Black
-    #         ]
-
-    return ['#fabebe', # 1. blank
-            '#3cb44b', # 2. IPA_Beard
-            '#3cb44b', # 3. IPA_Bust
-            '#3cb44b', # 4. IPA_Green
-            '#3cb44b', # 5. IPA_Hob
-            '#3cb44b', # 6. IPA_Old
-            '#3cb44b', # 7. IPA_Punk
-            '#3cb44b', # 8. IPA_Thorn
-            '#e6194b', # 9. Lag_Beck
-            '#e6194b', # 10. Lag_Bud
-            '#e6194b', # 11. Lag_Cob
-            '#e6194b', # 12. Lag_Est
-            '#e6194b', # 13. Lag_Hob
-            '#e6194b', # 14. Lag_Per
-            '#e6194b', # 15. Lag_San
-            '#4363d8', # 16. Port_Brew
-            '#4363d8', # 17. Port_Coffee
-            '#4363d8', # 18. Port_Drag
-            '#4363d8', # 19. Port_Guin
-            '#4363d8', # 20. Port_Lond
-            '#4363d8', # 21. Port_Rob
-            '#4363d8', # 22. Port_White
-            '#fabebe', # 23. QC
+    return ['#e6194b', # 1. Red 
+            '#3cb44b', # 2. Green
+            '#ffe119', # 3. Yellow
+            '#4363d8', # 4. Blue
+            '#f58231', # 5. Orange
+            '#911eb4', # 6. Purple
+            '#42d4f4', # 7. Cyan
+            '#f032e6', # 8. Magenta
+            '#bfef45', # 9. Lime
+            '#fabebe', # 10. Pink
+            '#469990', # 11. Teal
+            '#dcbeff', # 12. Lavender
+            '#9a6324', # 13. Brown
+            #'#fffac8', # 14. Beige
+            '#800000', # 15. Maroon
+            '#aaffc3', # 16. Mint
+            '#808000', # 17. Olive
+            '#ffd8b1', # 18. Apricot
+            '#000075', # 19. Navy
+            '#a9a9a9', # 20. Grey
+            '#167E4A', # 21. Forest Green
+            '#470387', # 22. Dark Purple
+            '#FF91F7', # 23. Bright Pink
+            '#1EFA46', # 24. Bright Green
+            '#000000', # 25. Black
             ]
+
+    # return ['#fabebe', # 1. blank
+    #         '#3cb44b', # 2. IPA_Beard
+    #         '#3cb44b', # 3. IPA_Bust
+    #         '#3cb44b', # 4. IPA_Green
+    #         '#3cb44b', # 5. IPA_Hob
+    #         '#3cb44b', # 6. IPA_Old
+    #         '#3cb44b', # 7. IPA_Punk
+    #         '#3cb44b', # 8. IPA_Thorn
+    #         '#e6194b', # 9. Lag_Beck
+    #         '#e6194b', # 10. Lag_Bud
+    #         '#e6194b', # 11. Lag_Cob
+    #         '#e6194b', # 12. Lag_Est
+    #         '#e6194b', # 13. Lag_Hob
+    #         '#e6194b', # 14. Lag_Per
+    #         '#e6194b', # 15. Lag_San
+    #         '#4363d8', # 16. Port_Brew
+    #         '#4363d8', # 17. Port_Coffee
+    #         '#4363d8', # 18. Port_Drag
+    #         '#4363d8', # 19. Port_Guin
+    #         '#4363d8', # 20. Port_Lond
+    #         '#4363d8', # 21. Port_Rob
+    #         '#4363d8', # 22. Port_White
+    #         '#fabebe', # 23. QC
+    #         ]
 
 def to_float(value: str) -> float:
     try:
