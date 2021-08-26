@@ -61,7 +61,10 @@ conda activate peakml_env
 pip install rdata
 pip install ttkwidgets
 pip install image
+pip install pyreadr
+pip install scipy
 pip install pyinstaller
+
 
 pyinstaller PeakMLViewerPy_osmac.spec
 ```
