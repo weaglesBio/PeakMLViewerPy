@@ -1110,6 +1110,8 @@ class MainView():
                 # Add entries to tree
                 self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], entry_row["Nrpeaks"]), tags=(entry_row["UID"], focus, "checked" if entry_row["Checked"] == True else "unchecked")) 
 
+                p.update_progress(f"Populating peak {(i+1)} of {len(self.df_entry)} to Entry View")
+
         # If any entries, enable button for adding filters.
         if len(self.entry_tree.get_children()) > 0:
             self.filter_add_btn["state"] = "normal"    
@@ -1241,7 +1243,7 @@ class MainView():
 
                     colour_tag = "colour_" + name_parent
                     self.set_tree.tag_configure(colour_tag, foreground=set_parent_row["Color"])
-                    folder = self.set_tree.insert("", i, name_parent, values=(name_parent), tags=("uid",select_parent, colour_tag))
+                    folder = self.set_tree.insert("", i, f"P-{name_parent}", values=(name_parent), tags=("uid",select_parent, colour_tag))
                     
                     df_sets_child = df_sets.loc[df_sets['Parent'] == name_parent]
 
@@ -1251,7 +1253,9 @@ class MainView():
                             set_child_row = df_sets_child.iloc[j]    
                             select_child = "checked" if set_child_row["Checked"] else "unchecked"
 
-                            self.set_tree.insert(folder, "end", set_child_row["Name"], values=(set_child_row["Name"]), tags=(set_child_row["UID"], select_child, colour_tag))
+                            name_child = set_child_row["Name"]
+
+                            self.set_tree.insert(folder, "end", f"C-{name_child}", values=(name_child), tags=(set_child_row["UID"], select_child, colour_tag))
 
 #endregion
 

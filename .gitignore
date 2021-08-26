@@ -33,3 +33,6 @@ temp.ico
 # Mac specific
 .DS_Store
 
+# Versions
+versions
+

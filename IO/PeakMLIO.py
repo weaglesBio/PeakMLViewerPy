@@ -1,5 +1,7 @@
 from Data.PeakML.AnnotatableEntity import AnnotatableEntity
-import xml.etree.ElementTree as ET
+#import xml.etree.cElementTree as ET
+
+from lxml import etree as ET
 import base64
 import numpy as np
 
@@ -19,6 +21,8 @@ from Data.PeakML.FileInfo import FileInfo
 import Utilities as u
 import Progress as p
 import Logger as lg
+
+import traceback
 
 #region Reader methods
 
@@ -215,118 +219,169 @@ def add_peaks(parent_element: ET.Element, header_obj: Header, peakset: List[Peak
 
 def import_element_tree_from_peakml_file(tree_data) -> Tuple[Header, Dict[str, Peak], List[str]]:
 
-    lg.log_progress(f"Start reading XML")
+    lg.log_progress(f"Start reading PeakML")
     p.update_progress(f"Importing header")
 
-    root = ET.fromstring(tree_data)
+    try:
+        root = ET.fromstring(tree_data)
 
-    header_element = root.find("./header")
+    except Exception as err:
+        lg.log_error(f'Unable to read PeakML file: {err} \n {traceback.print_exc()}')
 
-    # Create PeakHeader
-    nr_peaks = header_element.find("./nrpeaks")
-    date = header_element.find("./date")
-    owner = header_element.find("./owner")
-    description = header_element.find("./description")
+    try:
+        header_element = root.find("./header")
 
-    header_obj = Header(nr_peaks.text, date.text, owner.text, description.text)
+        # Create PeakHeader
+        nr_peaks = header_element.find("./nrpeaks")
+        date = header_element.find("./date")
+        owner = header_element.find("./owner")
+        description = header_element.find("./description")
 
-    add_annotations(header_element, header_obj)
+        header_obj = Header(nr_peaks.text, date.text, owner.text, description.text)
 
-    # Add 'Set Info' records to PeakHeader
-    set_elements = header_element.findall("./sets/set")
-    set_iter = 0
-    for set_element in set_elements:
+        lg.log_progress(f"Header imported from PeakML")
 
-        p.update_progress(f"Importing header sample {(set_iter+1)} of {len(set_elements)}")
+    except Exception as err:
+        lg.log_error(f'Unable to import Header: {err} \n {traceback.print_exc()}')
 
-        id = set_element.find("./id")
-        type = set_element.find("./type")
-        
-        measurement_ids_element = set_element.find("./measurementids")
-        measurement_ids = []
+    try:
+        add_annotations(header_element, header_obj)
 
-        if measurement_ids_element is not None: 
-            measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
-            measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = "int32")
+        lg.log_progress(f"Header annotations imported from PeakML")
 
-        set = SetInfo(id.text, type.text, measurement_ids)
-        header_obj.add_set(set)
+    except Exception as err:
+        lg.log_error(f'Unable to import annotations for Header: {err} \n {traceback.print_exc()}')
 
-        set_iter += 1
+    try:
+        # Add 'Set Info' records to PeakHeader
+        set_elements = header_element.findall("./sets/set")
+        set_iter = 0
+        for set_element in set_elements:
 
-    # Add 'Sample Info' records to PeakHeader
-    sample_elements = header_element.findall("./samples/sample")
-    sample_elements_len = len(sample_elements)
-    sample_iter = 0
-    for sample_element in sample_elements:
+            p.update_progress(f"Importing header sample {(set_iter+1)} of {len(set_elements)}")
 
-        p.update_progress(f"Importing header sample {(sample_iter+1)} of {sample_elements_len}")
+            id = set_element.find("./id")
+            type = set_element.find("./type")
+            
+            measurement_ids_element = set_element.find("./measurementids")
+            measurement_ids = []
 
-        id = sample_element.find("./id")
-        annotations = sample_element.find("./annotations")
+            if measurement_ids_element is not None: 
+                measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
+                measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = "int32")
 
-        sample = SampleInfo(id.text, annotations.text)
-        header_obj.add_sample(sample)
+            set = SetInfo(id.text, type.text, measurement_ids)
+            header_obj.add_set(set)
 
-        sample_iter += 1
+            set_iter += 1
 
-    # Add 'Application Info' records to PeakHeader
-    for application_element in header_element.findall("./applications/application"):
+        lg.log_progress(f"{(set_iter)} sets imported from PeakML")
 
-        name = application_element.find("./name")
-        version = application_element.find("./version")
-        date = application_element.find("./date")
-        parameters = application_element.find("./parameters")
+    except Exception as err:
+        lg.log_error(f'Unable to import SetInfo: {err} \n {traceback.print_exc()}')
 
-        application = ApplicationInfo(name.text, version.text, date.text, parameters.text)
-        header_obj.add_application(application)
+    try:
+        # Add 'Sample Info' records to PeakHeader
+        sample_elements = header_element.findall("./samples/sample")
+        sample_elements_len = len(sample_elements)
+        sample_iter = 0
 
-    # Add 'Measurement Info' records to PeakHeader
-    measurement_elements = header_element.findall("./measurements/measurement")
-    measurement_elements_len = len(measurement_elements)
-    measurement_iter = 0
-    for measurement_element in measurement_elements:
+        for sample_element in sample_elements:
 
-        p.update_progress(f"Importing header measurement {(measurement_iter+1)} of {measurement_elements_len}")
+            p.update_progress(f"Importing header sample {(sample_iter+1)} of {sample_elements_len}")
 
-        id = measurement_element.find("./id")
-        label = measurement_element.find("./label")
-        sample_id = measurement_element.find("./sampleid")
+            id = sample_element.find("./id")
+            annotations = sample_element.find("./annotations")
 
-        measurement = MeasurementInfo(id.text, label.text, sample_id.text)
+            sample = SampleInfo(id.text, annotations.text)
+            header_obj.add_sample(sample)
 
-        for scan_element in measurement_element.findall("./scans/scan"):
+            sample_iter += 1
 
-            polarity = scan_element.find("./polarity")
-            retention_time = scan_element.find("./retentiontime")
+        lg.log_progress(f"{(sample_iter)} samples imported from PeakML")
 
-            scan = ScanInfo(polarity.text, retention_time.text)
-            add_annotations(scan_element, scan)
+    except Exception as err:
+        lg.log_error(f'Unable to import SampleInfo: {err} \n {traceback.print_exc()}')
 
-            measurement.add_scan(scan)
+    try:
+        # Add 'Application Info' records to PeakHeader
 
-        for file_element in measurement_element.findall("./files/file"):
+        application_count = 0
 
-            label = file_element.find("./label")
-            name = file_element.find("./name")
-            location = file_element.find("./location")
+        for application_element in header_element.findall("./applications/application"):
 
-            file = FileInfo(label.text, name.text, location.text)
+            name = application_element.find("./name")
+            version = application_element.find("./version")
+            date = application_element.find("./date")
+            parameters = application_element.find("./parameters")
 
-            measurement.add_file(file)
+            application = ApplicationInfo(name.text, version.text, date.text, parameters.text)
+            header_obj.add_application(application)
 
-        header_obj.add_measurement(measurement)
+            application_count += 1
 
-        measurement_iter += 1
+        lg.log_progress(f"{application_count} applications imported from PeakML")
+
+    except Exception as err:
+        lg.log_error(f'Unable to import ApplicationInfo: {err} \n {traceback.print_exc()}')
+
+    try:
+        # Add 'Measurement Info' records to PeakHeader
+        measurement_elements = header_element.findall("./measurements/measurement")
+        measurement_elements_len = len(measurement_elements)
+        measurement_iter = 0
+        for measurement_element in measurement_elements:
+
+            p.update_progress(f"Importing header measurement {(measurement_iter+1)} of {measurement_elements_len}")
+
+            id = measurement_element.find("./id")
+            label = measurement_element.find("./label")
+            sample_id = measurement_element.find("./sampleid")
+
+            measurement = MeasurementInfo(id.text, label.text, sample_id.text)
+
+            for scan_element in measurement_element.findall("./scans/scan"):
+
+                polarity = scan_element.find("./polarity")
+                retention_time = scan_element.find("./retentiontime")
+
+                scan = ScanInfo(polarity.text, retention_time.text)
+                add_annotations(scan_element, scan)
+
+                measurement.add_scan(scan)
+
+            for file_element in measurement_element.findall("./files/file"):
+
+                label = file_element.find("./label")
+                name = file_element.find("./name")
+                location = file_element.find("./location")
+
+                file = FileInfo(label.text, name.text, location.text)
+
+                measurement.add_file(file)
+
+            header_obj.add_measurement(measurement)
+
+            measurement_iter += 1
+
+        lg.log_progress(f"{measurement_iter} measurements imported from PeakML")
+
+    
+    except Exception as err:
+        lg.log_error(f'Unable to import MeasurementInfo: {err} \n {traceback.print_exc()}')
 
     # Init empty peaksetUnable to update entry data
     peakset = []
 
     lg.log_progress(f"Start adding peaks")
 
-    # Add 'Peak' records to peakset list
-    add_peaks(root, header_obj, peakset, None, None, None)
- 
+    try:
+        # Add 'Peak' records to peakset list
+        add_peaks(root, header_obj, peakset, None, None, None)
+
+    except Exception as err:
+        lg.log_error(f'Unable to import peaks: {err} \n {traceback.print_exc()}')
+
     lg.log_progress(f"Start setting UUID")
 
     # Convert peakset to dictionary with peak uids.

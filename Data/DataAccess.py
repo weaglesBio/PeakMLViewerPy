@@ -32,6 +32,7 @@ import Progress as p
 
 import pandas as pd
 import os.path
+import traceback
 
 class DataAccess:
 
@@ -205,7 +206,7 @@ class DataAccess:
                 self._prior_probabilities_modified = False
 
         except Exception as err:
-            lg.log_error(f'An error when importing peakML data: {err}')
+            lg.log_error(f'An error when importing PeakML data: {err} \n {traceback.print_exc()}')
 
     def import_ipa_data(self):
         try:
@@ -385,8 +386,15 @@ class DataAccess:
             # Remove higher values from peak.
             peak_higher = self._remove_peak_values_by_retention_time(peak_higher, False)
 
+            new_higher_uuid = u.get_new_uuid()
+
             self._peakml.peaks[self.selected_entry_uid] = peak_lower
-            self._peakml.peaks[u.get_new_uuid()] = peak_higher
+            self._peakml.peaks[new_higher_uuid] = peak_higher
+
+            # Update peak order
+            peak_lower_index = self._peakml.peak_order.index(self.selected_entry_uid)
+            # Adds to list before set index.
+            self._peakml.peak_order.insert(peak_lower_index+1, new_higher_uuid) 
 
             # Reload data from peakml file
             self._load_view_data_from_peakml()
@@ -532,13 +540,17 @@ class DataAccess:
     def _filter_peaks(self, peaks_dic: Dict[str, Peak]):
     
         # Before applying set filters, restore original ordering defined by peakml file.
-        sorted(peaks_dic.items(), key = lambda pair: self._peakml.peak_order.index(pair[0]))
+
+        sorted_peak_dic = {}
+        #sorted(peaks_dic.items(), key = lambda item: self._peakml.peak_order.index(item[0]))
+        for peak_uid in self._peakml.peak_order:
+            sorted_peak_dic[peak_uid] = peaks_dic[peak_uid]
 
         for filter in self._filters:
             lg.log_progress(f"Apply {filter.get_type_value()} filter {filter.get_settings_value()}")
-            peaks_dic = filter.apply_to_peak_list(peaks_dic)
+            sorted_peak_dic = filter.apply_to_peak_list(sorted_peak_dic)
 
-        return peaks_dic
+        return sorted_peak_dic
 
 #endregion
 

@@ -119,7 +119,7 @@ class PeakML():
 
         r = open(filepath, "w")
         # Pass header and peaks list
-        #TODO Consider how to persist ordering of peaks
+        
         r.write(PeakMLIO.create_xml_from_peakml(self.header, list(self.peaks.values())))
         r.close()
 

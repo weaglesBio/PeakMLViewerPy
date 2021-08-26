@@ -5,6 +5,8 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from typing import List
 
+from faker import Factory
+
 # Collection of static helper methods
 
 def format_time_string(time: str) -> str:
@@ -29,7 +31,7 @@ def get_new_uuid() -> str:
 
 def get_colours(number: int) -> List[str]:
 
-    return ['#e6194b', # 1. Red 
+    default_colours = ['#e6194b', # 1. Red 
             '#3cb44b', # 2. Green
             '#ffe119', # 3. Yellow
             '#4363d8', # 4. Blue
@@ -55,6 +57,24 @@ def get_colours(number: int) -> List[str]:
             '#1EFA46', # 24. Bright Green
             '#000000', # 25. Black
             ]
+
+    colours = []
+
+    fake = Factory.create()
+    for i in range(number):
+
+        if i < len(default_colours):
+            colours.append(default_colours[i])
+        else:
+            colour_added = False
+
+            while not colour_added:
+                new_colour = fake.hex_color()
+                if new_colour not in colours:
+                    colours.append(new_colour)
+                    colour_added = True
+
+    return colours
 
     # return ['#fabebe', # 1. blank
     #         '#3cb44b', # 2. IPA_Beard

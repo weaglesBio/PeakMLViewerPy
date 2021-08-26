@@ -25,6 +25,9 @@ class ProgressDialog(ViewerDialog):
         self.progress_bar_track = ttk.Progressbar(progress_frame, orient=tk.HORIZONTAL, mode='determinate', variable=self.progress_val, takefocus=True, length=300)
         self.progress_bar_track.grid(row=1, column=0)
 
+        #progress_lbl = tk.Label(progress_frame, textvariable = self.progress_text)
+        #progress_lbl.grid(row=0, column=0)
+
     def buttonbox(self):
         pass
 
