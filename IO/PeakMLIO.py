@@ -51,8 +51,6 @@ def add_annotations(parent_element: ET.Element, parent_object: Type[AnnotatableE
         value = annotation_element.find("./value")
         value_type = annotation_element.find("./valuetype")
 
-        #u.trace(f"Import annotation {label.text} {value.text}")
-
         annotation = Annotation(unit_attribute, ontologyref_attribute, label.text if label.text else "", value.text if value.text else "", value_type.text if value_type.text else "STRING")
         parent_object.add_annotation(annotation)
 
@@ -65,8 +63,6 @@ def add_peaks(parent_element: ET.Element, header_obj: Header, peakset: List[Peak
 
         if parent_peak_num is None:
             p.update_progress(f"Importing peak {(peak_iter+1)} of {peak_elements_len}")
-        #else:
-        #    p.update_progress(f"Importing subpeak {peak_iter+1} of {peak_elements_len}, of peak {parent_peak_num}")
 
         type_attribute = peak_element.attrib["type"]
         scan_element = peak_element.find("./scan")
@@ -162,8 +158,6 @@ def add_peaks(parent_element: ET.Element, header_obj: Header, peakset: List[Peak
                 measurement_ids_decoded_bytes = base64.b64decode(measurement_ids_element.text) 
                 peak_data.measurement_ids = np.frombuffer(measurement_ids_decoded_bytes, dtype = "int32")
 
-            #print(f"Subpeak {(peak_iter+1)} of {peak_elements_len}")
-            #print(peak_data.measurement_ids)
         else:
             peak_data = None
 
@@ -305,7 +299,6 @@ def import_element_tree_from_peakml_file(tree_data) -> Tuple[Header, Dict[str, P
 
     try:
         # Add 'Application Info' records to PeakHeader
-
         application_count = 0
 
         for application_element in header_element.findall("./applications/application"):
@@ -366,11 +359,10 @@ def import_element_tree_from_peakml_file(tree_data) -> Tuple[Header, Dict[str, P
 
         lg.log_progress(f"{measurement_iter} measurements imported from PeakML")
 
-    
     except Exception as err:
         lg.log_error(f'Unable to import MeasurementInfo: {err} \n {traceback.print_exc()}')
 
-    # Init empty peaksetUnable to update entry data
+    # Init empty peakset
     peakset = []
 
     lg.log_progress(f"Start adding peaks")
@@ -424,8 +416,6 @@ def add_annotation_nodes(parent_element: ET.Element, parent_object: Type[Annotat
             if annotation_obj.ontology_ref is not None:
                 annotation.set('ontologyref', annotation_obj.ontology_ref)
 
-            #u.trace(f"Export annotation {label.text} {value.text}")
-
             label = ET.SubElement(annotation, 'label')
             label.text = annotation_obj.label
             value = ET.SubElement(annotation, 'value')
@@ -468,8 +458,6 @@ def add_peak_nodes(parent_element: ET.Element, peak_list: List[Peak]):
         if peak_obj.sha1sum is not None:
             sha1sum = ET.SubElement(peak, 'sha1sum')
             sha1sum.text = peak_obj.sha1sum
-
-        #u.trace(f"Export peak {mass.text} {mass.text}")
 
         add_annotation_nodes(peak, peak_obj)
 

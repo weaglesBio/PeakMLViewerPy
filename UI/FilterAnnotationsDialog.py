@@ -6,22 +6,29 @@ class FilterAnnotationsDialog(ViewerDialog):
         self.annotation_relation = None
         self.annotation_value = None
         self.submit = False
-        super().__init__(parent, title, width=200, height=200)
+        self.option_annotation_relation_selected = tk.StringVar()
+        self.validate_annotation_details = tk.StringVar()
+
+        super().__init__(parent, title, width=180, height=150)
     
     def body(self, frame):
+
+        # Register validation methods
+        validate_annotation = frame.register(self.update_to_valid_relation_option)
+
         option_annotation_relation_list = ["=", ">", "<", "like"]
 
-        self.option_annotation_relation_selected = tk.StringVar(frame)
-        self.option_annotation_relation_selected.set("=")
+        self._figure_frame = tk.Frame(frame, padx=5, pady=5)
+        self._figure_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
 
-        self.lbl_annotation_name = tk.Label(frame, width=10, text="Label:")
-        self.ent_annotation_name = tk.Entry(frame, width=15)
+        self.lbl_annotation_name = tk.Label(self._figure_frame, width=7, text="Label:")
+        self.ent_annotation_name = tk.Entry(self._figure_frame, width=15)
 
-        self.lbl_annotation_relation = tk.Label(frame, width=10)
-        self.option_annotation_relation = tk.OptionMenu(frame, self.option_annotation_relation_selected, *option_annotation_relation_list)
+        self.lbl_annotation_relation = tk.Label(self._figure_frame, width=5)
+        self.option_annotation_relation = tk.OptionMenu(self._figure_frame, self.option_annotation_relation_selected, *option_annotation_relation_list)
 
-        self.lbl_annotation_value = tk.Label(frame, width=10, text="Value:")
-        self.ent_annotation_value = tk.Entry(frame, width=15)
+        self.lbl_annotation_value = tk.Label(self._figure_frame, width=7, text="Value:")
+        self.ent_annotation_value = tk.Entry(self._figure_frame, width=15)
 
         self.lbl_annotation_name.grid(row=0, column=0)
         self.ent_annotation_name.grid(row=0, column=1)
@@ -29,6 +36,11 @@ class FilterAnnotationsDialog(ViewerDialog):
         self.option_annotation_relation.grid(row=1, column=1)
         self.lbl_annotation_value.grid(row=2, column=0)
         self.ent_annotation_value.grid(row=2, column=1)
+
+        # %P - on entry based on what change will result in.
+        self.ent_annotation_value.config(validate="key", validatecommand=(validate_annotation,'%P'))
+
+        self.option_annotation_relation_selected.set("=")
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -48,33 +60,15 @@ class FilterAnnotationsDialog(ViewerDialog):
     def cancel_btn_clicked(self):
         self.destroy()
 
-    def confirm_valid_annotation(self, input):
+    def update_to_valid_relation_option(self, input):
 
- 
         # Like is not valid option for a number
-        # 
         # Use 'like' for non-numbers
 
-
         try:
             float(input)     
         except ValueError:
-            self.validate_intensity_min_details.set("Must be a decimal")
-            return False
-
-        is_valid = True
-
-        try:
-            float(input)     
-        except ValueError:
-            is_valid = False
-
-        if is_valid:
-            self.validate_intensity_min_details.set("")
-            self.btn_ok["state"] = "normal"
-        else:
-            self.validate_intensity_min_details.set("Intensity must be a decimal")
-            self.btn_ok["state"] = "disabled"
+            self.option_annotation_relation_selected.set("like")
 
         # Required to update value in entry.
         return True

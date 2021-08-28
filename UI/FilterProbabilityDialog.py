@@ -6,7 +6,7 @@ class FilterProbabilityDialog(ViewerDialog):
         self.submit = False
         self.validate_probability_details = tk.StringVar()
 
-        super().__init__(parent, title, width=250, height=200)
+        super().__init__(parent, title, width=200, height=180)
 
     def body(self, frame):
 
@@ -16,7 +16,7 @@ class FilterProbabilityDialog(ViewerDialog):
         # self.lbl_info_probability = tk.Label(frame, text="Filters to to entries with at least one identification of probability")
         # self.lbl_info_probability.pack(fill=tk.BOTH, expand = tk.TRUE)
 
-        self._figure_frame = tk.Frame(frame, padx=20, pady=20)
+        self._figure_frame = tk.Frame(frame, padx=5, pady=5)
         self._figure_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
 
         self.lbl_validate_probability = tk.Label(frame, fg="#ff0000", textvariable = self.validate_probability_details)
@@ -40,8 +40,8 @@ class FilterProbabilityDialog(ViewerDialog):
 
         self.lbl_mini.grid(row=1, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.lbl_max.grid(row=2, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
-        self.lbl_prior.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
-        self.lbl_post.grid(row=0, column=2, padx=(2,2), pady=(5,5), sticky="NEWS")
+        self.lbl_prior.grid(row=0, column=1, padx=(2,2), pady=(2,2), sticky="NEWS")
+        self.lbl_post.grid(row=0, column=2, padx=(2,2), pady=(2,2), sticky="NEWS")
 
         self.ent_prior_min.grid(row=1, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
         self.ent_prior_max.grid(row=2, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
@@ -56,6 +56,8 @@ class FilterProbabilityDialog(ViewerDialog):
         self.bind("<Return>", lambda event: self.ok_btn_clicked())
         self.bind("<Escape>", lambda event: self.cancel_btn_clicked())
 
+        self.update_validation_status(True, "")
+
     def ok_btn_clicked(self):
         self.prior_min = self.ent_prior_min.get()
         self.prior_max = self.ent_prior_max.get()
@@ -68,36 +70,44 @@ class FilterProbabilityDialog(ViewerDialog):
     def cancel_btn_clicked(self):
         self.destroy()
 
-# Validate prior entry to only two decimal place value between 1 and 0
-    # Can also be blank
-    def confirm_probability_valid(self, input):
+    def confirm_probability_valid(self, input: str):
 
         # Unset is valid entry
         if input == "":
-            self.validate_probability_details.set("")
+            self.update_validation_status(True, "")
             return True
 
         try:
             float(input)
         except ValueError:
-            self.validate_probability_details.set("Must be a decimal")
+            self.update_validation_status(False, "Must be a decimal")
             return False
 
         # Must be greater than or equal to 0
         if float(input) < 0:
-            self.validate_probability_details.set("Must be >= 0")
+            self.update_validation_status(False, "Must be >= 0")
             return False
 
         # Must be less than or equal to 1
         if float(input) > 1:
-            self.validate_probability_details.set("Must be <= 1")
+            self.update_validation_status(False, "Must be <= 1")
             return False
 
         # Must be max 2 decimal places, so four characters long in total.
         if len(input) > 4:
-            self.validate_probability_details.set("Max 2 decimal places")
+            self.update_validation_status(False, "Max 2 decimal places")
             return False
 
         # If passes all criteria
-        self.validate_probability_details.set("")
+        self.update_validation_status(True, "")
         return True
+
+    def update_validation_status(self, valid: bool, message: str):
+        if valid:
+            self.lbl_validate_probability.configure(foreground="#808080")
+            self.validate_probability_details.set("Parameters are valid")
+            self.btn_ok["state"] = "normal"
+        else:
+            self.lbl_validate_probability.configure(foreground="#ff0000")
+            self.validate_probability_details.set(message)
+            self.btn_ok["state"] = "disabled"

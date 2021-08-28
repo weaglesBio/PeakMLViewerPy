@@ -62,7 +62,7 @@ class PeakML():
         try:
             # If errors while attempt to read, requires conversion.
             with open(filepath) as f:
-                tree_data = f.read()
+                tree_data = f.read().encode()
         except:
             attempt_compressed = True
             

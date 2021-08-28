@@ -26,7 +26,7 @@ class FilterRetentionTimeDialog(ViewerDialog):
         self.retention_time_max_minu = None
         self.submit = False
 
-        super().__init__(parent, title, width=300, height=160)
+        super().__init__(parent, title, width=220, height=160)
 
     def body(self, frame):
 

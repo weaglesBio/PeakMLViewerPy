@@ -13,15 +13,18 @@ class FilterNumberDetectionsDialog(ViewerDialog):
 
         self.submit = False
 
-        super().__init__(parent, title, width=200, height=120)
+        super().__init__(parent, title, width=200, height=100)
     
     def body(self, frame):
 
-        self.lbl_sample_count = tk.Label(frame, text="Count:")
-        self.spbx_sample_count = tk.Spinbox(frame, width=5, from_=self.sample_count_min, to=self.sample_count_max, state='readonly', textvariable=self.val_sample_count)
+        self._count_frame = tk.Frame(frame, padx=5, pady=5)
+        self._count_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
+
+        self.lbl_sample_count = tk.Label(self._count_frame, text="Count:")
+        self.spbx_sample_count = tk.Spinbox(self._count_frame, width=5, from_=self.sample_count_min, to=self.sample_count_max, state='readonly', textvariable=self.val_sample_count)
 
         self.lbl_sample_count.grid(row=0, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
-        self.spbx_sample_count.grid(row=1, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
+        self.spbx_sample_count.grid(row=0, column=1, padx=(2,2), pady=(5,5), sticky="NEWS")
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -34,9 +37,7 @@ class FilterNumberDetectionsDialog(ViewerDialog):
     def ok_btn_clicked(self):
         self.sample_count = self.val_sample_count.get()
         self.submit = True
-        self.ok()
-        #self.destroy()
+        self.destroy()
 
     def cancel_btn_clicked(self):
-        self.cancel()
-        #self.destroy()
+        self.destroy()
