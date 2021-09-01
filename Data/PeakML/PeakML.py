@@ -7,12 +7,15 @@ import IO.IPAIO as IPAIO
 import Logger as lg
 import gzip
 
+from xml.dom import minidom
+
 from typing import Dict, List
 
 class PeakML():
-    def __init__(self):
+    def __init__(self, header: Header = None, peaks: List[Peak] = None, peak_order: List[str] = None):
         self.header = None
         self.peaks = None
+        self.peak_order = None
 
     @property
     def header(self) -> Header:
@@ -80,7 +83,6 @@ class PeakML():
                     # decoded_output = md_string.toprettyxml(indent="\t")
                     # decoded_output = decoded_output.replace('<?xml version="1.0" ?>','<?xml version="1.0" encoding="UTF-8"?>\n\n\n<?xml-stylesheet type="text/xml" href=""?>\n')
                     # decoded_output = decoded_output.replace("/>"," />")
-
                     # w = open(self.get_path() + "decoded_" + self.get_filename(), "w")
                     # w.write(decoded_output)
                     # w.close()

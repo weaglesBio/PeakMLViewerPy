@@ -2,7 +2,7 @@ import base64
 
 from typing import List
 class SetInfo():
-    def __init__(self, id: int, type: str, measurement_ids_byte_array: bytearray):
+    def __init__(self, id: str, type: str, measurement_ids_byte_array: bytearray):
 
         self.id = id
         self.type = type
@@ -13,11 +13,11 @@ class SetInfo():
         self._linked_peak_measurement_ids = []
 
     @property
-    def id(self) -> int:
+    def id(self) -> str:
         return self._id
     
     @id.setter
-    def id(self, id: int):
+    def id(self, id: str):
         self._id = id
 
     @property
@@ -65,4 +65,3 @@ class SetInfo():
     def get_encoded_measurement_ids(self) -> str:
         encoded = base64.b64encode(self.measurement_ids_byte_array)
         return encoded.decode("UTF-8")  #Converts from bytes to string
-

@@ -66,7 +66,7 @@ class FilterIntensityDialog(ViewerDialog):
     def update_validation_status(self, valid: bool, message: str):
         if valid:
             self.lbl_validate_intensity_min.configure(foreground="#808080")
-            self.validate_intensity_min_details.set("Parameters are valid")
+            self.validate_intensity_min_details.set("") # Parameters are valid
             self.btn_ok["state"] = "normal"
         else:
             self.lbl_validate_intensity_min.configure(foreground="#ff0000")

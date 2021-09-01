@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?xml-stylesheet type="text/xml" href=""?>
+
+<peakml version="1.0.0">
+	<header>
+		<nrpeaks>959</nrpeaks>
+		<date>November 16, 2018</date>
+		<owner />
+		<description />
+		<sets>
+			<set>
+				<id>Blank</id>
+				<type>0</type>
+				<measurementids>AAAAAAAAAAE=</measurementids>
+			</set>
+			<set>
+				<id>IPA_Beard</id>
+				<type>0</type>
+				<measurementids>AAAAAgAAAAMAAAAE</measurementids>
+			</set>
+			<set>
+				<id>IPA_Bust</id>
+				<type>0</type>
+				<measurementids>AAAABQAAAAYAAAAH</measurementids>
+			</set>
+			<set>
+				<id>IPA_Green</id>
+				<type>0</type>
+				<measurementids>AAAACAAAAAkAAAAK</measurementids>
+			</set>
+			<set>
+				<id>IPA_Hob</id>
+				<type>0</type>
+				<measurementids>AAAACwAAAAwAAAAN</measurementids>
+			</set>
+			<set>
+				<id>IPA_Old</id>
+				<type>0</type>
+				<measurementids>AAAADgAAAA8AAAAQ</measurementids>
+			</set>
+			<set>
+				<id>IPA_Punk</id>
+				<type>0</type>
+				<measurementids>AAAAEQAAABIAAAAT</measurementids>
+			</set>
+			<set>
+				<id>IPA_Thorn</id>
+				<type>0</type>
+				<measurementids>AAAAFAAAABUAAAAW</measurementids>
+			</set>
+			<set>
+				<id>Lag_Beck</id>
+				<type>0</type>
+				<measurementids>AAAAFwAAABgAAAAZ</measurementids>
+			</set>
+			<set>
+				<id>Lag_Bud</id>
+				<type>0</type>
+				<measurementids>AAAAGgAAABsAAAAc</measurementids>
+			</set>
+			<set>
+				<id>Lag_Cob</id>
+				<type>0</type>
+				<measurementids>AAAAHQAAAB4AAAAf</measurementids>
+			</set>
+			<set>
+				<id>Lag_Est</id>
+				<type>0</type>
+				<measurementids>AAAAIAAAACEAAAAi</measurementids>
+			</set>
+			<set>
+				<id>Lag_Hob</id>
+				<type>0</type>
+				<measurementids>AAAAIwAAACQAAAAl</measurementids>
+			</set>
+			<set>
+				<id>Lag_Per</id>
+				<type>0</type>
+				<measurementids>AAAAJgAAACcAAAAo</measurementids>
+			</set>
+			<set>
+				<id>Lag_San</id>
+				<type>0</type>
+				<measurementids>AAAAKQAAACoAAAAr</measurementids>
+			</set>
+			<set>
+				<id>Port_Brew</id>
+				<type>0</type>
+				<measurementids>AAAALAAAAC0AAAAu</measurementids>
+			</set>
+			<set>
+				<id>Port_Coffee</id>
+				<type>0</type>
+				<measurementids>AAAALwAAADAAAAAx</measurementids>
+			</set>
+			<set>
+				<id>Port_Drag</id>
+				<type>0</type>
+				<measurementids>AAAAMgAAADMAAAA0</measurementids>
+			</set>
+			<set>
+				<id>Port_Guin</id>
+				<type>0</type>
+				<measurementids>AAAANQAAADYAAAA3</measurementids>
+			</set>
+			<set>
+				<id>Port_Lond</id>
+				<type>0</type>
+				<measurementids>AAAAOAAAADkAAAA6</measurementids>
+			</set>
+			<set>
+				<id>Port_Rob</id>
+				<type>0</type>
+				<measurementids>AAAAOwAAADwAAAA9</measurementids>
+			</set>
+			<set>
+				<id>Port_White</id>
+				<type>0</type>
+				<measurementids>AAAAPgAAAD8AAABA</measurementids>
+			</set>
+			<set>
+				<id>QC</id>
+				<type>0</type>
+				<measurementids>AAAAQQAAAEIAAABDAAAARAAAAEUAAABGAAAARwAAAEgAAABJAAAASgAAAEsAAABMAAAATQAAAE4AAABPAAAAUAAAAFEAAABSAAAAUwAAAFQAAABV</measurementids>
+			</set>
+		</sets>
+		<measurements>
+			<measurement>
+				<id>0</id>
+				<label>Blank_01b_POS</label>
+				<sampleid>Blank_01b_POS</sampleid>
+				<scans>
+					<scan>
+						<polarity>POSITIVE</polarity>
+						<retentiontime>0.301082772</retentiontime>
+						<annotations>
+							<annotation unit="">
+								<label>RT_raw</label>
+								<value>0.301082772</value>
+								<valuetype>STRING</valuetype>
+							</annotation>
+						</annotations>
+					</scan>
+				</scans>
+				<files>
+					<file>
+						<label>Blank_01b_POS.mzML</label>
+						<name>Blank_01b_POS.mzML</name>
+						<location>/home/mqbpqfd2/.dropbox-alt/Dropbox (The University of Manchester)/IPA_code&amp;manuscript/Beer_dataset/./data/Blank</location>
+					</file>
+				</files>
+			</measurement>
+			<measurement>
+				<id>1</id>
+				<label>Blank_01c_POS</label>
+				<sampleid>Blank_01c_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>2</id>
+				<label>IPA_Beard_POS_1</label>
+				<sampleid>IPA_Beard_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>3</id>
+				<label>IPA_Beard_POS_2</label>
+				<sampleid>IPA_Beard_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>4</id>
+				<label>IPA_Beard_POS_3</label>
+				<sampleid>IPA_Beard_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>5</id>
+				<label>IPA_Bust_POS_1</label>
+				<sampleid>IPA_Bust_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>6</id>
+				<label>IPA_Bust_POS_2</label>
+				<sampleid>IPA_Bust_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>7</id>
+				<label>IPA_Bust_POS_3</label>
+				<sampleid>IPA_Bust_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>8</id>
+				<label>IPA_Green_POS_1</label>
+				<sampleid>IPA_Green_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>9</id>
+				<label>IPA_Green_POS_2</label>
+				<sampleid>IPA_Green_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>10</id>
+				<label>IPA_Green_POS_3</label>
+				<sampleid>IPA_Green_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>11</id>
+				<label>IPA_Hob_POS_1</label>
+				<sampleid>IPA_Hob_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>12</id>
+				<label>IPA_Hob_POS_2</label>
+				<sampleid>IPA_Hob_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>13</id>
+				<label>IPA_Hob_POS_3</label>
+				<sampleid>IPA_Hob_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>14</id>
+				<label>IPA_Old_POS_1</label>
+				<sampleid>IPA_Old_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>15</id>
+				<label>IPA_Old_POS_2</label>
+				<sampleid>IPA_Old_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>16</id>
+				<label>IPA_Old_POS_3</label>
+				<sampleid>IPA_Old_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>17</id>
+				<label>IPA_Punk_POS_1</label>
+				<sampleid>IPA_Punk_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>18</id>
+				<label>IPA_Punk_POS_2</label>
+				<sampleid>IPA_Punk_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>19</id>
+				<label>IPA_Punk_POS_3</label>
+				<sampleid>IPA_Punk_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>20</id>
+				<label>IPA_Thorn_POS_1</label>
+				<sampleid>IPA_Thorn_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>21</id>
+				<label>IPA_Thorn_POS_2</label>
+				<sampleid>IPA_Thorn_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>22</id>
+				<label>IPA_Thorn_POS_3</label>
+				<sampleid>IPA_Thorn_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>23</id>
+				<label>Lag_Beck_POS_1</label>
+				<sampleid>Lag_Beck_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>24</id>
+				<label>Lag_Beck_POS_2</label>
+				<sampleid>Lag_Beck_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>25</id>
+				<label>Lag_Beck_POS_3</label>
+				<sampleid>Lag_Beck_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>26</id>
+				<label>Lag_Bud_POS_1</label>
+				<sampleid>Lag_Bud_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>27</id>
+				<label>Lag_Bud_POS_2</label>
+				<sampleid>Lag_Bud_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>28</id>
+				<label>Lag_Bud_POS_3</label>
+				<sampleid>Lag_Bud_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>29</id>
+				<label>Lag_Cob_POS_1</label>
+				<sampleid>Lag_Cob_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>30</id>
+				<label>Lag_Cob_POS_2</label>
+				<sampleid>Lag_Cob_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>31</id>
+				<label>Lag_Cob_POS_3</label>
+				<sampleid>Lag_Cob_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>32</id>
+				<label>Lag_Est_POS_1</label>
+				<sampleid>Lag_Est_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>33</id>
+				<label>Lag_Est_POS_2</label>
+				<sampleid>Lag_Est_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>34</id>
+				<label>Lag_Est_POS_3</label>
+				<sampleid>Lag_Est_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>35</id>
+				<label>Lag_Hop_POS_1</label>
+				<sampleid>Lag_Hop_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>36</id>
+				<label>Lag_Hop_POS_2</label>
+				<sampleid>Lag_Hop_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>37</id>
+				<label>Lag_Hop_POS_3</label>
+				<sampleid>Lag_Hop_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>38</id>
+				<label>Lag_Per_POS_1</label>
+				<sampleid>Lag_Per_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>39</id>
+				<label>Lag_Per_POS_2</label>
+				<sampleid>Lag_Per_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>40</id>
+				<label>Lag_Per_POS_3</label>
+				<sampleid>Lag_Per_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>41</id>
+				<label>Lag_San_POS_1</label>
+				<sampleid>Lag_San_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>42</id>
+				<label>Lag_San_POS_2</label>
+				<sampleid>Lag_San_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>43</id>
+				<label>Lag_San_POS_3</label>
+				<sampleid>Lag_San_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>44</id>
+				<label>Port_Brew_POS_1</label>
+				<sampleid>Port_Brew_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>45</id>
+				<label>Port_Brew_POS_2</label>
+				<sampleid>Port_Brew_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>46</id>
+				<label>Port_Brew_POS_3</label>
+				<sampleid>Port_Brew_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>47</id>
+				<label>Port_Coffee_POS_1</label>
+				<sampleid>Port_Coffee_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>48</id>
+				<label>Port_Coffee_POS_2</label>
+				<sampleid>Port_Coffee_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>49</id>
+				<label>Port_Coffee_POS_3</label>
+				<sampleid>Port_Coffee_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>50</id>
+				<label>Port_Drag_POS_1</label>
+				<sampleid>Port_Drag_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>51</id>
+				<label>Port_Drag_POS_2</label>
+				<sampleid>Port_Drag_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>52</id>
+				<label>Port_Drag_POS_3</label>
+				<sampleid>Port_Drag_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>53</id>
+				<label>Port_Guin_POS_1</label>
+				<sampleid>Port_Guin_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>54</id>
+				<label>Port_Guin_POS_2</label>
+				<sampleid>Port_Guin_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>55</id>
+				<label>Port_Guin_POS_3</label>
+				<sampleid>Port_Guin_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>56</id>
+				<label>Port_Lond_POS_1</label>
+				<sampleid>Port_Lond_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>57</id>
+				<label>Port_Lond_POS_2</label>
+				<sampleid>Port_Lond_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>58</id>
+				<label>Port_Lond_POS_3</label>
+				<sampleid>Port_Lond_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>59</id>
+				<label>Port_Rob_POS_1</label>
+				<sampleid>Port_Rob_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>60</id>
+				<label>Port_Rob_POS_2</label>
+				<sampleid>Port_Rob_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>61</id>
+				<label>Port_Rob_POS_3</label>
+				<sampleid>Port_Rob_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>62</id>
+				<label>Port_White_POS_1</label>
+				<sampleid>Port_White_POS_1</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>63</id>
+				<label>Port_White_POS_2</label>
+				<sampleid>Port_White_POS_2</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>64</id>
+				<label>Port_White_POS_3</label>
+				<sampleid>Port_White_POS_3</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>65</id>
+				<label>QC01_POS</label>
+				<sampleid>QC01_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>66</id>
+				<label>QC02_POS</label>
+				<sampleid>QC02_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>67</id>
+				<label>QC03_POS</label>
+				<sampleid>QC03_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>68</id>
+				<label>QC04_POS</label>
+				<sampleid>QC04_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>69</id>
+				<label>QC05_POS</label>
+				<sampleid>QC05_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>70</id>
+				<label>QC06_POS</label>
+				<sampleid>QC06_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>71</id>
+				<label>QC07_POS</label>
+				<sampleid>QC07_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>72</id>
+				<label>QC08_POS</label>
+				<sampleid>QC08_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>73</id>
+				<label>QC09_POS</label>
+				<sampleid>QC09_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>74</id>
+				<label>QC10_POS</label>
+				<sampleid>QC10_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>75</id>
+				<label>QC11_POS</label>
+				<sampleid>QC11_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>76</id>
+				<label>QC12_POS</label>
+				<sampleid>QC12_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>77</id>
+				<label>QC13_POS</label>
+				<sampleid>QC13_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>78</id>
+				<label>QC14_POS</label>
+				<sampleid>QC14_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>79</id>
+				<label>QC15_POS</label>
+				<sampleid>QC15_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>80</id>
+				<label>QC16_POS</label>
+				<sampleid>QC16_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>81</id>
+				<label>QC17_POS</label>
+				<sampleid>QC17_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>82</id>
+				<label>QC18_POS</label>
+				<sampleid>QC18_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>83</id>
+				<label>QC19_POS</label>
+				<sampleid>QC19_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>84</id>
+				<label>QC20_POS</label>
+				<sampleid>QC20_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+			<measurement>
+				<id>85</id>
+				<label>QC21_POS</label>
+				<sampleid>QC21_POS</sampleid>
+				<scans />
+				<files />
+			</measurement>
+		</measurements>
+	</header>
+	<peaks>
+		<peak type="peakset">
+			<scan>142</scan>
+			<retentiontime>45.770422824593474</retentiontime>
+			<mass>116.0705470217265</mass>
+			<intensity>2.170016768E9</intensity>
+			<patternid>0</patternid>
+			<sha1sum>nu3EG1Q94I1uB0xidE1CSmv3nKU=</sha1sum>
+			<annotations>
+				<annotation unit="">
+					<label>charge</label>
+					<value>1</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>codadw</label>
+					<value>0.9855825132969098</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>id</label>
+					<value>1</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.ship</label>
+					<value>bp</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.id</label>
+					<value>0</value>
+					<valuetype>INTEGER</valuetype>
+				</annotation>
+			</annotations>
+			<peaks>
+				<peak type="masschromatogram">
+					<scan>133</scan>
+					<retentiontime>45.3645133972168</retentiontime>
+					<mass>116.07057825577071</mass>
+					<intensity>1822454.25</intensity>
+					<measurementid>0</measurementid>
+					<peakdata type="centroid" size="29">
+						<scanids>AAAAegAAAHsAAAB8AAAAfQAAAH4AAAB/AAAAgAAAAIEAAACCAAAAgwAAAIQAAACFAAAAhgAAAIcAAACIAAAAiQAAAIoAAACLAAAAjAAAAI0AAACOAAAAjwAAAJAAAACRAAAAkgAAAJMAAACUAAAAlQAAAJY=</scanids>
+						<retentiontimes>4MImQpccKELhcylCpMkqQqsfLELZci1CGMguQvkcMEIRcjFCa8YyQtQcNEJDdTVC1802Qk0mOEKOfDlCstI6QpAnPEJjgD1CENg+QpouQEJlhkFCOt9CQlI4REJmkUVC8uhGQkhBSEIymUlCHPBKQi5ITEI=</retentiontimes>
+						<masses>FCToQh8k6EIkJOhCMiToQick6EIrJOhCKyToQick6EImJOhCIyToQiIk6EIkJOhCISToQh8k6EIkJOhCICToQiAk6EIiJOhCIiToQiQk6EIjJOhCIiToQiUk6EIpJOhCLCToQikk6EIjJOhCIyToQiAk6EI=</masses>
+						<intensities>loLKRucWHUeYRgpHt+8kR8ArI0fG/R5Hg7mTRyWwUUjqGhhJSnSNSVb7xEmyd95Jlc7PSXpFuEmrwqBJ4CuASQ9vUUmhYBdJyKrqSOR7skj5g2hIbvw9SOd3CUjyGs9HF/22R7lVa0faAYxHVpE8R8HXV0c=</intensities>
+						<relativeintensities>loLKRucWHUeYRgpHt+8kR8ArI0fG/R5Hg7mTRyWwUUjqGhhJSnSNSVb7xEmyd95Jlc7PSXpFuEmrwqBJ4CuASQ9vUUmhYBdJyKrqSOR7skj5g2hIbvw9SOd3CUjyGs9HF/22R7lVa0faAYxHVpE8R8HXV0c=</relativeintensities>
+						<patternids>//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=</patternids>
+						<measurementids>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>132</scan>
+					<retentiontime>45.33076095581055</retentiontime>
+					<mass>116.0705979739929</mass>
+					<intensity>1874645.75</intensity>
+					<measurementid>1</measurementid>
+					<peakdata type="centroid" size="29">
+						<scanids>AAAAeQAAAHoAAAB7AAAAfAAAAH0AAAB+AAAAfwAAAIAAAACBAAAAggAAAIMAAACEAAAAhQAAAIYAAACHAAAAiAAAAIkAAACKAAAAiwAAAIwAAACNAAAAjgAAAI8AAACQAAAAkQAAAJIAAACTAAAAlAAAAJU=</scanids>
+						<retentiontimes>GFcmQsa0J0JwESlCK3AqQvvNK0J/KS1C6IQuQifgL0IaPjFCh5oyQrH2M0KzUjVCk602QjUIOEJwYjlCfr86Qt0ePEJZfj1CBtw+Qq08QEK6mUFC5/ZCQmpXREJyuEVCaRdHQrd0SEL100lCrk1LQhyrTEI=</retentiontimes>
+						<masses>JiToQigk6EIjJOhCKiToQigk6EIrJOhCKiToQiok6EIoJOhCKiToQiYk6EIlJOhCIyToQiQk6EIkJOhCIiToQh8k6EIjJOhCJiToQiMk6EIpJOhCJSToQiwk6EImJOhCJiToQikk6EI0JOhCHiToQikk6EI=</masses>
+						<intensities>xrUQRxsv6kaFB+tGKUAHR32qB0f+hh9HNLGqR4XtekhbuDFJ9s6dSQLu3Emu1uRJR2veSeY6u0loF5xJ3buBSVRJQklZ8RFJUa3hSHQDl0hjJmhIK9sXSCLD3kdd5bhHNYtuRxHwekeaWWpHWn0RR40UMkc=</intensities>
+						<relativeintensities>xrUQRxsv6kaFB+tGKUAHR32qB0f+hh9HNLGqR4XtekhbuDFJ9s6dSQLu3Emu1uRJR2veSeY6u0loF5xJ3buBSVRJQklZ8RFJUa3hSHQDl0hjJmhIK9sXSCLD3kdd5bhHNYtuRxHwekeaWWpHWn0RR40UMkc=</relativeintensities>
+						<patternids>//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=</patternids>
+						<measurementids>AAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE=</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>142</scan>
+					<retentiontime>45.49818801879883</retentiontime>
+					<mass>116.07050034996007</mass>
+					<intensity>8.64462784E8</intensity>
+					<measurementid>2</measurementid>
+					<peakdata type="centroid" size="33">
+						<scanids>AAAAgQAAAIIAAACDAAAAhAAAAIUAAACGAAAAhwAAAIgAAACJAAAAigAAAIsAAACMAAAAjQAAAI4AAACPAAAAkAAAAJEAAACSAAAAkwAAAJQAAACVAAAAlgAAAJcAAACYAAAAmQAAAJoAAACbAAAAnAAAAJ0AAACeAAAAnwAAAKAAAACh</scanids>
+						<retentiontimes>f0EmQkh4J0IPryhCeuUpQnkbK0JhUSxCm4YtQv67LkJ78S9CHycxQr1cMkJhkjNCAMg0QiX+NUInNDdCD2o4Qg6gOUIW1jpCNgw8QgJDPUKmeT5CcrA/Qj3oQELqH0JC+ldDQoePREIUx0VCf/5GQm82SEJebklCrqZKQqPfS0JfGU1C</retentiontimes>
+						<masses>CiToQgwk6EIQJOhCISToQjMk6EIzJOhCLiToQisk6EIqJOhCKCToQiYk6EIiJOhCHCToQhYk6EIYJOhCFyToQhck6EIXJOhCFCToQhEk6EIVJOhCFSToQhck6EITJOhCEiToQhEk6EISJOhCECToQhQk6EIRJOhCESToQhMk6EISJOhC</masses>
+						<intensities>9A1FShfQA0qAQstJjlmTSbcMVEkRoOlJdogBS+Bl+EtfY/dM3I+GTZpN5E03yRJOO4tATp8aTk4rjj1OTsxETvKGQ075MTtOokwfTtJTCk51kONNebPLTUxrnE222oFNLU5HTWrmCU1rWNFMOTaJTMABTUxSgDlMyQ8wTGBwJkxNSiVM</intensities>
+						<relativeintensities>9A1FShfQA0qAQstJjlmTSbcMVEkRoOlJdogBS+Bl+EtfY/dM3I+GTZpN5E03yRJOO4tATp8aTk4rjj1OTsxETvKGQ075MTtOokwfTtJTCk51kONNebPLTUxrnE222oFNLU5HTWrmCU1rWNFMOTaJTMABTUxSgDlMyQ8wTGBwJkxNSiVM</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAAC</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>142</scan>
+					<retentiontime>45.09580612182617</retentiontime>
+					<mass>116.07057947895528</mass>
+					<intensity>9.44465728E8</intensity>
+					<measurementid>3</measurementid>
+					<peakdata type="centroid" size="32">
+						<scanids>AAAAgwAAAIQAAACFAAAAhgAAAIcAAACIAAAAiQAAAIoAAACLAAAAjAAAAI0AAACOAAAAjwAAAJAAAACRAAAAkgAAAJMAAACUAAAAlQAAAJYAAACXAAAAmAAAAJkAAACaAAAAmwAAAJwAAACdAAAAngAAAJ8AAACgAAAAoQAAAKI=</scanids>
+						<retentiontimes>yhMnQhJKKELxfylClLUqQhLrK0J4IC1C9FUuQniLL0I2wTBCuvYxQjYsM0IbYjRC3Jc1QgTONkLkAzhCCDo5QixwOkKSpjtCGd08QgEUPkILSz9CFIJAQj65QUKJ8EJCFihEQkJfRUJLlkZCt81HQkcFSUJ0PUpChnVLQpmuTEI=</retentiontimes>
+						<masses>FSToQhwk6EIvJOhCPyToQkIk6EJBJOhCPSToQjgk6EIyJOhCLSToQigk6EIpJOhCJSToQiMk6EIgJOhCHSToQh8k6EIfJOhCHCToQhsk6EIeJOhCHCToQh4k6EIXJOhCFyToQhQk6EIYJOhCDyToQhck6EIdJOhCQSToQkAk6EI=</masses>
+						<intensities>xuURSr8vzkl+N9dJyfKPSYwCIUqmeTFLuwUzTM25H003np9N5LsFTlKXNk6dLWFOlNFgTv9CYE4JLV5O/HNdTnUeTU5soChO89YVTiTzAE4HL9FNwkayTbs1hU0hOGlNJCUdTebY4kxCe59MdOlZTMrFTUxmvDtMar1JTCtbNkw=</intensities>
+						<relativeintensities>xuURSr8vzkl+N9dJyfKPSYwCIUqmeTFLuwUzTM25H003np9N5LsFTlKXNk6dLWFOlNFgTv9CYE4JLV5O/HNdTnUeTU5soChO89YVTiTzAE4HL9FNwkayTbs1hU0hOGlNJCUdTebY4kxCe59MdOlZTMrFTUxmvDtMar1JTCtbNkw=</relativeintensities>
+						<patternids>//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=</patternids>
+						<measurementids>AAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAM=</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>144</scan>
+					<retentiontime>45.805965423583984</retentiontime>
+					<mass>116.07058390185306</mass>
+					<intensity>1.000107776E9</intensity>
+					<measurementid>4</measurementid>
+					<peakdata type="centroid" size="33">
+						<scanids>AAAAggAAAIMAAACEAAAAhQAAAIYAAACHAAAAiAAAAIkAAACKAAAAiwAAAIwAAACNAAAAjgAAAI8AAACQAAAAkQAAAJIAAACTAAAAlAAAAJUAAACWAAAAlwAAAJgAAACZAAAAmgAAAJsAAACcAAAAnQAAAJ4AAACfAAAAoAAAAKEAAACi</scanids>
+						<retentiontimes>UUgmQrh+J0IdtShCQuspQgMhK0KEVixCBIwtQkLBLkLk9i9CZiwxQidiMkLJlzNCqs00QkwDNkJPOTdC8m44QrWkOUL62jpC/hA8QmNHPUIsfj5C87Q/Qv7rQEImI0JClFpDQt2RREIJyUVCEgBHQoA3SELqbklC2qZKQgrfS0JgGE1C</retentiontimes>
+						<masses>FyToQhYk6EIeJOhCJyToQjQk6EI8JOhCOyToQjkk6EI7JOhCPSToQjQk6EIuJOhCKyToQick6EIkJOhCJSToQiMk6EIdJOhCISToQhsk6EIZJOhCGyToQhsk6EIcJOhCISToQhck6EIZJOhCFyToQhok6EIbJOhCGiToQhck6EIYJOhC</masses>
+						<intensities>Um5RSuR2DEodJ91JiumUSWq9fUl0Iu5J19DTSsZI20vQJ9FM40F8TXHh4U3+gilOkLJITrRqYk68cW5Ort5MTmf+Uk59cEJOfacsTuF7GU7eCAROKr/hTXd1uU3wNo5NP6teTfjXKE3PfutMzsCwTHqnYkzzQFNMqXA8TMXRMExlRyBM</intensities>
+						<relativeintensities>Um5RSuR2DEodJ91JiumUSWq9fUl0Iu5J19DTSsZI20vQJ9FM40F8TXHh4U3+gilOkLJITrRqYk68cW5Ort5MTmf+Uk59cEJOfacsTuF7GU7eCAROKr/hTXd1uU3wNo5NP6teTfjXKE3PfutMzsCwTHqnYkzzQFNMqXA8TMXRMExlRyBM</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE</measurementids>
+					</peakdata>
+				</peak>
+			</peaks>
+		</peak>
+		<peak type="peakset">
+			<scan>142</scan>
+			<retentiontime>45.78758563551792</retentiontime>
+			<mass>117.0736908526656</mass>
+			<intensity>1.2565204E8</intensity>
+			<patternid>80</patternid>
+			<sha1sum>/x6XWUHgs9ZpBrMotF1emKG0hL8=</sha1sum>
+			<annotations>
+				<annotation unit="">
+					<label>codadw</label>
+					<value>0.9848288770510563</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>id</label>
+					<value>88</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.ship</label>
+					<value>bp|C13 isotope #1</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.id</label>
+					<value>0</value>
+					<valuetype>INTEGER</valuetype>
+				</annotation>
+			</annotations>
+			<peaks>
+				<peak type="masschromatogram">
+					<scan>133</scan>
+					<retentiontime>45.3645133972168</retentiontime>
+					<mass>117.07389897416458</mass>
+					<intensity>106359.9609375</intensity>
+					<measurementid>0</measurementid>
+					<peakdata type="centroid" size="21">
+						<scanids>AAAAfQAAAH4AAACBAAAAggAAAIMAAACEAAAAhQAAAIYAAACHAAAAiAAAAIkAAACKAAAAiwAAAIwAAACNAAAAjgAAAI8AAACQAAAAkQAAAJIAAACT</scanids>
+						<retentiontimes>pMkqQqsfLEL5HDBCEXIxQmvGMkLUHDRCQ3U1QtfNNkJNJjhCjnw5QrLSOkKQJzxCY4A9QhDYPkKaLkBCZYZBQjrfQkJSOERCZpFFQvLoRkJIQUhC</retentiontimes>
+						<masses>1iXqQt8l6kLYJepC1yXqQtQl6kLUJepC1iXqQtAl6kLQJepC2yXqQtYl6kLTJepC2SXqQtIl6kLdJepC2iXqQt4l6kLjJepC3yXqQvkl6kLUJepC</masses>
+						<intensities>FrGDRW7TZ0VvZHNGgw4nR0SrgUeNhbtH+7vPR6lbq0eCYLFHIxqOR9b6ZkeJKjhH/MjwRna7rkYR3qRG8kRrRr+4ZEZexnpFrwlCRcLxWEWhGidF</intensities>
+						<relativeintensities>FrGDRW7TZ0VvZHNGgw4nR0SrgUeNhbtH+7vPR6lbq0eCYLFHIxqOR9b6ZkeJKjhH/MjwRna7rkYR3qRG8kRrRr+4ZEZexnpFrwlCRcLxWEWhGidF</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>131</scan>
+					<retentiontime>44.990909576416016</retentiontime>
+					<mass>117.07392725188726</mass>
+					<intensity>98298.9140625</intensity>
+					<measurementid>1</measurementid>
+					<peakdata type="centroid" size="16">
+						<scanids>AAAAgAAAAIEAAACCAAAAgwAAAIQAAACFAAAAhgAAAIcAAACIAAAAiQAAAIoAAACLAAAAjAAAAI0AAACOAAAAjw==</scanids>
+						<retentiontimes>J+AvQho+MUKHmjJCsfYzQrNSNUKTrTZCNQg4QnBiOUJ+vzpC3R48Qll+PUIG3D5CrTxAQrqZQULn9kJCaldEQg==</retentiontimes>
+						<masses>7iXqQtol6kLlJepC3CXqQtkl6kLVJepC1SXqQtkl6kLVJepC2SXqQtkl6kLhJepC1iXqQtMl6kLUJepC3CXqQg==</masses>
+						<intensities>ICg+Rsw1EUfwAYpHdf2/R+ijuUd3ab5HGaehR4DvX0eCpz9H6qgrR9mCDUeG1IdGqcahRokvukVqViFGU4JRRQ==</intensities>
+						<relativeintensities>ICg+Rsw1EUfwAYpHdf2/R+ijuUd3ab5HGaehR4DvX0eCpz9H6qgrR9mCDUeG1IdGqcahRokvukVqViFGU4JRRQ==</relativeintensities>
+						<patternids>/////////////////////////////////////////////////////////////////////////////////////w==</patternids>
+						<measurementids>AAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQ==</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>142</scan>
+					<retentiontime>45.49818801879883</retentiontime>
+					<mass>117.0736635645465</mass>
+					<intensity>4.770624E7</intensity>
+					<measurementid>2</measurementid>
+					<peakdata type="centroid" size="27">
+						<scanids>AAAAggAAAIgAAACJAAAAigAAAIsAAACMAAAAjQAAAI4AAACPAAAAkAAAAJEAAACSAAAAkwAAAJQAAACVAAAAlgAAAJcAAACYAAAAmQAAAJoAAACbAAAAnAAAAJ0AAACeAAAAnwAAAKAAAACh</scanids>
+						<retentiontimes>SHgnQv67LkJ78S9CHycxQr1cMkJhkjNCAMg0QiX+NUInNDdCD2o4Qg6gOUIW1jpCNgw8QgJDPUKmeT5CcrA/Qj3oQELqH0JC+ldDQoePREIUx0VCf/5GQm82SEJebklCrqZKQqPfS0JfGU1C</retentiontimes>
+						<masses>wSXqQt0l6kLbJepC2CXqQs4l6kLHJepCvCXqQrIl6kK0JepCsCXqQq8l6kKwJepCriXqQqkl6kKuJepCsCXqQrMl6kKyJepCtCXqQrgl6kK7JepCvSXqQsAl6kK8JepCvCXqQsAl6kK9JepC</masses>
+						<intensities>kAq3RxlS10k5jK9KD89wS7wO1UvgPwBMtSsvTCD8NUzJtC1MTsA1TJtANExgCC9MiHgUTFna+0uwW9ZLhnzES4wIj0tyiGVLf68uSymV+0pBC71KJjtrSlFMNEr8PCZKYwchSjgpFkpcEhJK</intensities>
+						<relativeintensities>kAq3RxlS10k5jK9KD89wS7wO1UvgPwBMtSsvTCD8NUzJtC1MTsA1TJtANExgCC9MiHgUTFna+0uwW9ZLhnzES4wIj0tyiGVLf68uSymV+0pBC71KJjtrSlFMNEr8PCZKYwchSjgpFkpcEhJK</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAAC</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>142</scan>
+					<retentiontime>45.09580612182617</retentiontime>
+					<mass>117.07373996569538</mass>
+					<intensity>5.462286E7</intensity>
+					<measurementid>3</measurementid>
+					<peakdata type="centroid" size="27">
+						<scanids>AAAAiAAAAIkAAACKAAAAiwAAAIwAAACNAAAAjgAAAI8AAACQAAAAkQAAAJIAAACTAAAAlAAAAJUAAACWAAAAlwAAAJgAAACZAAAAmgAAAJsAAACcAAAAnQAAAJ4AAACfAAAAoAAAAKEAAACi</scanids>
+						<retentiontimes>eCAtQvRVLkJ4iy9CNsEwQrr2MUI2LDNCG2I0QtyXNUIEzjZC5AM4Qgg6OUIscDpCkqY7QhndPEIBFD5CC0s/QhSCQEI+uUFCifBCQhYoREJCX0VCS5ZGQrfNR0JHBUlCdD1KQoZ1S0KZrkxC</retentiontimes>
+						<masses>8CXqQu0l6kLpJepC3iXqQtMl6kLMJepCxSXqQsEl6kK+JepCuiXqQrYl6kK4JepCtyXqQrUl6kK1JepCuiXqQrgl6kK+JepCuCXqQrwl6kK9JepCwyXqQrwl6kLDJepCyyXqQu8l6kLtJepC</masses>
+						<intensities>U6YASZzhFUpN/QBLlBOES3YJ8EuR0y1Mo15QTLUlRUy0EUdM6FZMTJW8Skz1uDxMfrYbTBowCUz4he5Lzrm4S+H1pkvBHnhLKUtKS8bOD0uHdslKYUWPSu/CNkoNojZK1echSrwBNEokxRVK</intensities>
+						<relativeintensities>U6YASZzhFUpN/QBLlBOES3YJ8EuR0y1Mo15QTLUlRUy0EUdM6FZMTJW8Skz1uDxMfrYbTBowCUz4he5Lzrm4S+H1pkvBHnhLKUtKS8bOD0uHdslKYUWPSu/CNkoNojZK1echSrwBNEokxRVK</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAAD</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>144</scan>
+					<retentiontime>45.805965423583984</retentiontime>
+					<mass>117.07374172100248</mass>
+					<intensity>5.7754588E7</intensity>
+					<measurementid>4</measurementid>
+					<peakdata type="centroid" size="27">
+						<scanids>AAAAiAAAAIkAAACKAAAAiwAAAIwAAACNAAAAjgAAAI8AAACQAAAAkQAAAJIAAACTAAAAlAAAAJUAAACWAAAAlwAAAJgAAACZAAAAmgAAAJsAAACcAAAAnQAAAJ4AAACfAAAAoAAAAKEAAACi</scanids>
+						<retentiontimes>BIwtQkLBLkLk9i9CZiwxQidiMkLJlzNCqs00QkwDNkJPOTdC8m44QrWkOUL62jpC/hA8QmNHPUIsfj5C87Q/Qv7rQEImI0JClFpDQt2RREIJyUVCEgBHQoA3SELqbklC2qZKQgrfS0JgGE1C</retentiontimes>
+						<masses>0yXqQt8l6kLuJepC7CXqQtwl6kLRJepCySXqQsIl6kK+JepCwCXqQrwl6kK2JepCuSXqQrMl6kKyJepCtiXqQrcl6kK6JepCwCXqQrol6kLAJepCwyXqQsYl6kLFJepCxyXqQsQl6kLDJepC</masses>
+						<intensities>5vqeSL/Xn0nU77JKGOpXS62dvUtjpg5MH002TDlpUEz3UFxM2l48TH3pPkyQkzBMFbgZTNvPDkyGVPBLWrbMSwtSq0u9aHxLCuRNS75tEUtUd95KHcWiSqvJRkqvWTRKfZ8pSigKGEqn4/5J</intensities>
+						<relativeintensities>5vqeSL/Xn0nU77JKGOpXS62dvUtjpg5MH002TDlpUEz3UFxM2l48TH3pPkyQkzBMFbgZTNvPDkyGVPBLWrbMSwtSq0u9aHxLCuRNS75tEUtUd95KHcWiSqvJRkqvWTRKfZ8pSigKGEqn4/5J</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE</measurementids>
+					</peakdata>
+				</peak>
+			</peaks>
+		</peak>
+		<peak type="peakset">
+			<scan>284</scan>
+			<retentiontime>89.37606660709825</retentiontime>
+			<mass>133.1049456966923</mass>
+			<intensity>8.7058072E7</intensity>
+			<patternid>136</patternid>
+			<sha1sum>8th7onqkd1UAFzpxcZGyytXRubA=</sha1sum>
+			<annotations>
+				<annotation unit="">
+					<label>codadw</label>
+					<value>0.989063788910469</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>id</label>
+					<value>146</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.ship</label>
+					<value>bp|C13 isotope #1</value>
+					<valuetype>STRING</valuetype>
+				</annotation>
+				<annotation unit="">
+					<label>relation.id</label>
+					<value>4</value>
+					<valuetype>INTEGER</valuetype>
+				</annotation>
+			</annotations>
+			<peaks>
+				<peak type="masschromatogram">
+					<scan>268</scan>
+					<retentiontime>90.56720733642578</retentiontime>
+					<mass>133.10514259383442</mass>
+					<intensity>6716.51318359375</intensity>
+					<measurementid>0</measurementid>
+					<peakdata type="centroid" size="14">
+						<scanids>AAAA8QAAAPQAAAD2AAAA9wAAAPgAAAD6AAABBgAAAQgAAAEKAAABCwAAAQwAAAEOAAABFgAAAR8=</scanids>
+						<retentiontimes>cAejQl4HpUJoXqZCoQqnQru2p0LqDqlCZSGxQox3skKfzbNCP3i0QmkitULReLZCfdO7QonYwUI=</retentiontimes>
+						<masses>6xoFQ+QaBUPtGgVD6BoFQ+caBUPmGgVD5hoFQ+EaBUPyGgVD7RoFQ+8aBUPqGgVD8BoFQ+QaBUM=</masses>
+						<intensities>PqxrRZOfd0XJ83dFVM1NRdmolEVlOFdFnvB+RaOvW0Vh03ZFBlnIRRvk0UUpR5BFVlI9RRToRkU=</intensities>
+						<relativeintensities>PqxrRZOfd0XJ83dFVM1NRdmolEVlOFdFnvB+RaOvW0Vh03ZFBlnIRRvk0UUpR5BFVlI9RRToRkU=</relativeintensities>
+						<patternids>//////////////////////////////////////////////////////////////////////////8=</patternids>
+						<measurementids>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>262</scan>
+					<retentiontime>89.70146179199219</retentiontime>
+					<mass>133.10517815048766</mass>
+					<intensity>5714.4384765625</intensity>
+					<measurementid>1</measurementid>
+					<peakdata type="centroid" size="18">
+						<scanids>AAAA6wAAAPEAAADyAAAA8wAAAPQAAAD1AAAA9wAAAP8AAAEBAAABAwAAAQQAAAEFAAABBgAAAQcAAAEKAAABCwAAARkAAAEb</scanids>
+						<retentiontimes>0vegQjcOpUJMvKVCD2qmQsUYp0JCyKdCBCapQuWbrkKV+69CwlixQpAIskIcuLJCJmezQo8VtEKMIrZCddG2QsZnwEI/xMFC</retentiontimes>
+						<masses>8xoFQ+0aBUPrGgVD5xoFQ+waBUPtGgVD8hoFQ+4aBUPwGgVD6hoFQ+YaBUPxGgVD8BoFQ/MaBUPlGgVD8xoFQ+kaBUPcGgVD</masses>
+						<intensities>24JoRc6NaEVt/qVFtFdiRSL3m0VYynRFvA40RXZ/T0W0N15FsLaWRW5KZkW/FhRFgpOyRVDtm0V2R3dFdZqRRZ+CTEXj8htF</intensities>
+						<relativeintensities>24JoRc6NaEVt/qVFtFdiRSL3m0VYynRFvA40RXZ/T0W0N15FsLaWRW5KZkW/FhRFgpOyRVDtm0V2R3dFdZqRRZ+CTEXj8htF</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAAB</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>284</scan>
+					<retentiontime>89.08802795410156</retentiontime>
+					<mass>133.10502761888637</mass>
+					<intensity>2114710.5</intensity>
+					<measurementid>2</measurementid>
+					<peakdata type="centroid" size="61">
+						<scanids>AAAA+gAAAPsAAAD8AAAA/QAAAP4AAAD/AAABAAAAAQEAAAECAAABAwAAAQQAAAEFAAABBgAAAQcAAAEIAAABCQAAAQoAAAELAAABDAAAAQ0AAAEOAAABDwAAARAAAAERAAABEgAAARMAAAEUAAABFQAAARYAAAEXAAABGAAAARkAAAEaAAABGwAAARwAAAEdAAABHgAAAR8AAAEgAAABIQAAASIAAAEjAAABJAAAASUAAAEmAAABJwAAASgAAAEpAAABKgAAASsAAAEsAAABLQAAAS4AAAEvAAABMAAAATEAAAEyAAABMwAAATQAAAE1AAABNg==</scanids>
+						<retentiontimes>TUCdQk3dnUKrep5CXBifQsO2n0L4VKBCNPSgQhyToUL3MaJCjNCiQsNuo0InDaRCTaukQmBJpUJT56VCkoSmQpAhp0JcvqdCt1qoQuL2qEIpk6lCRC+qQovLqkLWZ6tCkASsQrKhrEIPP61C5NytQsV6rkKoGK9Ce7avQp9UsEJQ8rBCsY+xQhItskLTyrJCZmizQgUGtEIapLRCLkK1QvfgtUIxgLZCfR+3Qgm/t0IaX7hCLf+4QkufuUJeP7pCCd+6Qmd+u0KqHLxCz7q8QuNYvULG9r1CSZS+QpYxv0JKz79CyWzAQmwKwUKPqMFC5kbCQg==</retentiontimes>
+						<masses>3RoFQ+QaBUPfGgVD5RoFQ+UaBUPkGgVD4RoFQ+QaBUPiGgVD4BoFQ+MaBUPiGgVD4BoFQ+IaBUPiGgVD5hoFQ94aBUPjGgVD5hoFQ+IaBUPgGgVD3RoFQ+gaBUPsGgVD6BoFQ+EaBUPlGgVD3BoFQ+MaBUPkGgVD4hoFQ98aBUPhGgVD4xoFQ+IaBUPgGgVD5BoFQ+IaBUPhGgVD5BoFQ+IaBUPkGgVD8hoFQ/4aBUPkGgVD5hoFQ+caBUPhGgVD5xoFQ+YaBUPoGgVD4xoFQ+caBUPgGgVD4xoFQ+UaBUPkGgVD2xoFQ+YaBUPkGgVD4hoFQw==</masses>
+						<intensities>+QQpR9xVJUgdtS9IpblXSOPJdUhkm45IHNC7SFIfwUhvLgVJ1kYcSWe+Jklpum1JYhpySZMjaEljnFRJrlsrSRCCHUn8iuZIthFoSD+SY0iLgDNIEIrpR6f0wkfxc8JH2GmUR+KVx0cIYBhIc/QySP4yt0gKc/NI4FVKSZfch0lLictJTdTsSVoSAUoxLOlJi9XzSX7qz0nES7lJvPigSXwudkkjSjlJu5ARSaxq1kjrwaxIOS2DSL57R0hjLxZInCv8R4x2HEhrBCVIOF1GSHHlK0i7PB1Iqdc3SDjlGUhsPBhIaObzR45bDEibf+JH74K9Rw==</intensities>
+						<relativeintensities>+QQpR9xVJUgdtS9IpblXSOPJdUhkm45IHNC7SFIfwUhvLgVJ1kYcSWe+Jklpum1JYhpySZMjaEljnFRJrlsrSRCCHUn8iuZIthFoSD+SY0iLgDNIEIrpR6f0wkfxc8JH2GmUR+KVx0cIYBhIc/QySP4yt0gKc/NI4FVKSZfch0lLictJTdTsSVoSAUoxLOlJi9XzSX7qz0nES7lJvPigSXwudkkjSjlJu5ARSaxq1kjrwaxIOS2DSL57R0hjLxZInCv8R4x2HEhrBCVIOF1GSHHlK0i7PB1Iqdc3SDjlGUhsPBhIaObzR45bDEibf+JH74K9Rw==</relativeintensities>
+						<patternids>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////w==</patternids>
+						<measurementids>AAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAg==</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>286</scan>
+					<retentiontime>89.22087860107422</retentiontime>
+					<mass>133.10507094229638</mass>
+					<intensity>2446758.25</intensity>
+					<measurementid>3</measurementid>
+					<peakdata type="centroid" size="62">
+						<scanids>AAAA+wAAAPwAAAD9AAAA/gAAAP8AAAEAAAABAQAAAQIAAAEDAAABBAAAAQUAAAEGAAABBwAAAQgAAAEJAAABCgAAAQsAAAEMAAABDQAAAQ4AAAEPAAABEAAAAREAAAESAAABEwAAARQAAAEVAAABFgAAARcAAAEYAAABGQAAARoAAAEbAAABHAAAAR0AAAEeAAABHwAAASAAAAEhAAABIgAAASMAAAEkAAABJQAAASYAAAEnAAABKAAAASkAAAEqAAABKwAAASwAAAEtAAABLgAAAS8AAAEwAAABMQAAATIAAAEzAAABNAAAATUAAAE2AAABNwAAATg=</scanids>
+						<retentiontimes>y++cQlSMnUJ0KZ5C0saeQlRkn0JGAqBCAKGgQsc/oUJO3qFCtHyiQskao0IPuaNCQ1ekQkj1pEKnkqVC9y+mQhTNpkKhaadC6QWoQvKhqELoPalC8NmpQvd1qkIREqtCm66rQlhLrEI16KxCU4WtQgYjrkLHwK5CSV6vQur7r0JKmbBCmDaxQvrTsUIXcbJCRg6zQqers0InSbRCGue0Qi6FtUKXI7ZCnsK2Qmlht0JxALhCvp+4Qvg+uUIS3rlCC326QoEbu0L4ubtCqle8Qk71vEK8kr1CLjC+QnzNvkKsar9CGwjAQq6lwEJ/Q8FCtOHBQiqAwkI=</retentiontimes>
+						<masses>3RoFQ+gaBUPtGgVD5BoFQ+kaBUPqGgVD5hoFQ+kaBUPlGgVD5hoFQ+gaBUPlGgVD4xoFQ+QaBUPmGgVD4xoFQ+QaBUPoGgVD6BoFQ+caBUPoGgVD5RoFQ+waBUPcGgVD2xoFQ+AaBUPlGgVD5xoFQ+YaBUPlGgVD5RoFQ+QaBUPmGgVD4xoFQ+QaBUPkGgVD5RoFQ+caBUPmGgVD5hoFQ+UaBUPnGgVD6BoFQ+caBUPnGgVD7BoFQ+gaBUPnGgVD6hoFQ+kaBUPsGgVD6hoFQ+UaBUPsGgVD4RoFQ+MaBUPuGgVD7hoFQ+0aBUPnGgVD7RoFQ+saBUM=</masses>
+						<intensities>1ek1R2bxN0jQrCRIIsSDSDXOm0hZtrtItRmrSFjR0EhqqwdJNn0sSdEmc0l+7HVJaDppSVYgY0m/CWdJmFExST/L/kjbT6NI1RuDSHc6WkgS9xRITu0OSGS2IUisIFtHQecPR1kcyUevDRtIIn+BSOjZ10h5HyZJo9iAScK1qEn8C+ZJWngCSqq/AUqZVhVKlZL/SSDN30nYdr5JDM2XSRlaVEmRFihJDOIFSdQ/2UhwrqpIvJSASPe8PEgnqx9IHHUGSMGG/0dutgJIWrEvSK+UNkgRXQZIhMJGSFrKG0hGqUpI2pg/SEWWAUgSdu9HlobER51LYkc=</intensities>
+						<relativeintensities>1ek1R2bxN0jQrCRIIsSDSDXOm0hZtrtItRmrSFjR0EhqqwdJNn0sSdEmc0l+7HVJaDppSVYgY0m/CWdJmFExST/L/kjbT6NI1RuDSHc6WkgS9xRITu0OSGS2IUisIFtHQecPR1kcyUevDRtIIn+BSOjZ10h5HyZJo9iAScK1qEn8C+ZJWngCSqq/AUqZVhVKlZL/SSDN30nYdr5JDM2XSRlaVEmRFihJDOIFSdQ/2UhwrqpIvJSASPe8PEgnqx9IHHUGSMGG/0dutgJIWrEvSK+UNkgRXQZIhMJGSFrKG0hGqUpI2pg/SEWWAUgSdu9HlobER51LYkc=</relativeintensities>
+						<patternids>//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=</patternids>
+						<measurementids>AAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAM=</measurementids>
+					</peakdata>
+				</peak>
+				<peak type="masschromatogram">
+					<scan>287</scan>
+					<retentiontime>89.67906188964844</retentiontime>
+					<mass>133.10507450965298</mass>
+					<intensity>2357809.75</intensity>
+					<measurementid>4</measurementid>
+					<peakdata type="centroid" size="63">
+						<scanids>AAAA+gAAAPsAAAD8AAAA/QAAAP4AAAD/AAABAAAAAQEAAAECAAABAwAAAQQAAAEFAAABBgAAAQcAAAEIAAABCQAAAQoAAAELAAABDAAAAQ0AAAEOAAABDwAAARAAAAERAAABEgAAARMAAAEUAAABFQAAARYAAAEXAAABGAAAARkAAAEaAAABGwAAARwAAAEdAAABHgAAAR8AAAEgAAABIQAAASIAAAEjAAABJAAAASUAAAEmAAABJwAAASgAAAEpAAABKgAAASsAAAEsAAABLQAAAS4AAAEvAAABMAAAATEAAAEyAAABMwAAATQAAAE1AAABNgAAATcAAAE4</scanids>
+						<retentiontimes>ipmcQsI1nUJN0p1CO2+eQnoMn0JNqp9CYkigQvnmoEJEhqFC/SSiQhfEokL/YqNC2AGkQnCgpEK2PqVCqNylQr96pkJfGKdC0bWnQs1SqEJq76hCsYupQsonqkLSw6pC6V+rQiP8q0J9mKxCKDWtQjbSrUJ1b65CSA2vQh2rr0LdSLBCceawQr2DsUIgIbJCTb6yQq5bs0L8+LNCO5a0QtwztUIS0rVCSHC2QiAPt0L7rbdCVU24QgXtuEI0jblCIi26QrDMukL8a7tCJgu8Qp2pvEL0R71ClOW9QtSCvkJkIL9CB76/QnZbwELW+MBCZ5bBQio0wkJP0sJC</retentiontimes>
+						<masses>5RoFQ+caBUPkGgVD5hoFQ+IaBUPmGgVD5xoFQ+IaBUPlGgVD4xoFQ+UaBUPmGgVD5BoFQ+UaBUPoGgVD5RoFQ+YaBUPnGgVD5xoFQ+QaBUPnGgVD6RoFQ+UaBUPnGgVD8BoFQ+YaBUPoGgVD5xoFQ+kaBUPmGgVD5xoFQ+gaBUPoGgVD5hoFQ+UaBUPnGgVD5xoFQ+UaBUPmGgVD5xoFQ+UaBUPlGgVD5xoFQ+caBUPnGgVD6hoFQ+gaBUPjGgVD5BoFQ+saBUPnGgVD4hoFQ+oaBUPmGgVD5RoFQ+MaBUPjGgVD5BoFQ+saBUPkGgVD6xoFQ+gaBUPoGgVD</masses>
+						<intensities>N69WRx0QGkfMuAFIGBAtSKs1dEhjZIBIlk6ZSP4NtEifJK9IfwLmSMr1FUnK1SVJIORXSRgleUmjX2NJkaxoSVI/TEkcLT9J4hsNSZs/vEgDI5pIeqUjSEzYO0jVDfFHly9CRy0sLUeqGuVHsqfXRzyoP0gH1mxIDxEISR0kPklADItJYxXCSXsb8UlYzQBKzboFSsfoD0oJD+FJzrjQSREqrEl864xJHyxpSav9EUld0upIt3u1SEtHiEhZU1FIJNg5SH27+Uf28AdIz40DSGAwI0g8EwxIpmRJSNgBK0ikoxxIi6pFSI3tFUjwBiVIpADaRy4b9Ed/ViRI</intensities>
+						<relativeintensities>N69WRx0QGkfMuAFIGBAtSKs1dEhjZIBIlk6ZSP4NtEifJK9IfwLmSMr1FUnK1SVJIORXSRgleUmjX2NJkaxoSVI/TEkcLT9J4hsNSZs/vEgDI5pIeqUjSEzYO0jVDfFHly9CRy0sLUeqGuVHsqfXRzyoP0gH1mxIDxEISR0kPklADItJYxXCSXsb8UlYzQBKzboFSsfoD0oJD+FJzrjQSREqrEl864xJHyxpSav9EUld0upIt3u1SEtHiEhZU1FIJNg5SH27+Uf28AdIz40DSGAwI0g8EwxIpmRJSNgBK0ikoxxIi6pFSI3tFUjwBiVIpADaRy4b9Ed/ViRI</relativeintensities>
+						<patternids>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</patternids>
+						<measurementids>AAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE</measurementids>
+					</peakdata>
+				</peak>
+			</peaks>
+		</peak>
+	</peaks>
+</peakml>	

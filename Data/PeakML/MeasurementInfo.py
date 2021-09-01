@@ -2,7 +2,7 @@ from Data.PeakML.FileInfo import FileInfo
 from Data.PeakML.ScanInfo import ScanInfo
 from typing import List
 class MeasurementInfo():
-    def __init__(self, id: int, label: str, sample_id: int):
+    def __init__(self, id: int, label: str, sample_id: str):
 
         # PeakML attributes
         self.id = id
@@ -29,11 +29,11 @@ class MeasurementInfo():
         self._label = label
 
     @property
-    def sample_id(self) -> int:
+    def sample_id(self) -> str:
         return self._sample_id
     
     @sample_id.setter
-    def sample_id(self, sample_id: int):
+    def sample_id(self, sample_id: str):
         self._sample_id = sample_id
 
     @property
