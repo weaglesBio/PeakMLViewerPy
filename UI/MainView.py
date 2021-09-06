@@ -1016,7 +1016,7 @@ class MainView():
 
     def open_peak_split_dialog(self):
         rt_mean = self.data.selected_retention_time
-        dlg = PeakSplitDialog(self.root, "Set Retention Time for Peak Split", rt_mean)
+        dlg = PeakSplitDialog(self.root, "Set Retention Time for Peak Split", rt_mean, self.data.plot_peak_view_dataframe)
         if dlg.submit:
             self.data.peak_split_retention_time = f"{dlg.retention_time_min}:{dlg.retention_time_sec}"
 

@@ -31,10 +31,13 @@ class ViewerDialog(tk.Toplevel):
 
         self.result = None
         
+        # Add controls in body frame
         body = tk.Frame(self)
         self.initial_focus = self.body(body)
-        body.pack(padx=5, pady=5)
+        body.pack(fill=tk.BOTH, expand = tk.TRUE, padx=5, pady=5)
 
+
+        # Add button controls
         self.buttonbox()
 
         if not self.initial_focus:

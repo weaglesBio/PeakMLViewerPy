@@ -12,6 +12,12 @@ from faker import Factory
 def format_time_string(time: str) -> str:
     return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
 
+def format_time_min(time: str) -> str:
+    return int(float(time)/60)
+
+def format_time_sec(time: str) -> str:
+    return int(float(time)%60)
+
 def format_time_int(time_string: str) -> int:
     time_split = time_string.split(":")
     min = int(time_split[0])
@@ -19,8 +25,23 @@ def format_time_int(time_string: str) -> int:
     return (min*60) + sec
     #return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
 
+def format_time_int_min(time_string: str) -> int:
+    time_split = time_string.split(":")
+    return int(time_split[0])
+
+def format_time_int_sec(time_string: str) -> int:
+    time_split = time_string.split(":")
+    return int(time_split[1])
+
 def format_time_datetime(time: float) -> datetime:
     return datetime.fromtimestamp(float(time))
+
+def format_time_from_datetime_int(time_as_dt: datetime) -> int:
+    return time_as_dt.minute
+    #return datetime.fromtimestamp(float(time))
+
+def format_time_from_datetime_sec(time_as_dt: datetime) -> int:
+    return time_as_dt.second
 
 def get_current_time() -> str:
     return datetime.now().strftime("%H:%M:%S.%f")
