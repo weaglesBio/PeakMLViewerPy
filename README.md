@@ -88,6 +88,9 @@ pip install scipy
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_osmac.spec
+
+cp settings.xml dist/PeakMLViewerPy
+cp -r MoleculeDatabases dist/PeakMLViewerPy
 ```
 
 Executable file available in dist folder.
