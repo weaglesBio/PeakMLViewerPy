@@ -95,7 +95,7 @@ Executable file available in dist folder.
 ## Compiling from source (Linux)
 
 1. Install latest version of miniconda.
-2. Run the following as bash script in location for install:
+2. Run the following commands in sequence in the location for install:
 ```
 mkdir Source
 cd Source
