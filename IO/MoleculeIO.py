@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 #from lxml import etree as ET
 from Data.Molecule import Molecule
 import Logger as lg
+import os
 
 from typing import Dict
 
@@ -12,7 +13,7 @@ def load_molecule_databases() -> Dict[str, Molecule]:
 
     try:
             # If errors while attempt to read, requires conversion.
-        with open("settings.xml") as f:
+        with open(os.path.join(lg.current_directory,"settings.xml"))as f:
             settings_tree_data = f.read()
 
     except Exception as err:
