@@ -25,9 +25,16 @@ def load_molecule_databases() -> Dict[str, Molecule]:
         for databases in settings_root.findall("./settings/databases/database"):
 
             try:
-                # If errors while attempt to read, requires conversion.
-                with open(databases.text) as f:
-                    tree_data = f.read()
+
+                # If not full path uses MoleculeDatabases folder
+                if ("\\") in databases.text and ("/") in databases.text:
+                    # If errors while attempt to read, requires conversion.
+                    with open(databases.text) as f:
+                        tree_data = f.read()
+                else:
+                    # If errors while attempt to read, requires conversion.
+                    with open(os.path.join(lg.current_directory,"MoleculeDatabases",databases.text)) as f:
+                        tree_data = f.read()
 
                 compound_root = ET.fromstring(tree_data)
 

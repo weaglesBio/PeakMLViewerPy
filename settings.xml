@@ -5,22 +5,22 @@
 		<decdp>1</decdp>
 		<defplot>Peak</defplot>
 		<databases>
-			<database>MoleculeDatabases/01_StdMix.xml</database>
-			<database>MoleculeDatabases/02_StdMix.xml</database>
-			<database>MoleculeDatabases/03_StdMix.xml</database>
-			<database>MoleculeDatabases/04_ESI-contaminants.xml</database>
-			<database>MoleculeDatabases/05_LDonovani.xml</database>
-			<database>MoleculeDatabases/ecocyc.xml</database>
-			<database>MoleculeDatabases/hmdb.xml</database>
-			<database>MoleculeDatabases/kegg.xml</database>
-			<database>MoleculeDatabases/MetaCyc.xml</database>
-			<database>MoleculeDatabases/Mycoplasma_hyopneumoniae.xml</database>
-			<database>MoleculeDatabases/peptides.xml</database>
-			<database>MoleculeDatabases/scocyc.xml</database>
-			<database>MoleculeDatabases/standard.xml</database>
-			<database>MoleculeDatabases/Streptomyces_clavuligerus_db.xml</database>
-			<database>MoleculeDatabases/trypanocyc.xml</database>
-			<database>MoleculeDatabases/009_kegg.xml</database>
+			<database>01_StdMix.xml</database>
+			<database>02_StdMix.xml</database>
+			<database>03_StdMix.xml</database>
+			<database>04_ESI-contaminants.xml</database>
+			<database>05_LDonovani.xml</database>
+			<database>ecocyc.xml</database>
+			<database>hmdb.xml</database>
+			<database>kegg.xml</database>
+			<database>MetaCyc.xml</database>
+			<database>Mycoplasma_hyopneumoniae.xml</database>
+			<database>peptides.xml</database>
+			<database>scocyc.xml</database>
+			<database>standard.xml</database>
+			<database>Streptomyces_clavuligerus_db.xml</database>
+			<database>trypanocyc.xml</database>
+			<database>009_kegg.xml</database>
 		</databases>
 	</settings>
 </peakmlviewer>
