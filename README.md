@@ -1,4 +1,4 @@
-## PeakMLViewerPy - Version 0.2.0
+## PeakMLViewerPy - Version 0.3.0
 ***
 ## Setting up release
 
@@ -118,12 +118,11 @@ pip install scipy
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_oslinux.spec
-```
 
-Binary file available in dist folder. Run with:
+cp settings.xml dist
+cp -r MoleculeDatabases dist
 ```
-./PeakMLViewerPy
-```
+Can be run by clicking binary file available in dist folder.
 ***
 ## Using IPA integration
 %Include script for the IPA integration running in the GitHub.
