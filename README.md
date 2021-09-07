@@ -100,11 +100,9 @@ Executable file available in dist folder.
 mkdir Source
 cd Source
 sudo apt install git
+sudo apt-get install -y binutils libc6
 git clone https://github.com/weaglesBio/MetabolomicModellingMSc
 cd MetabolomicModellingMSc
-
-sudo apt-get update -y
-sudo apt-get install -y binutils-common
 
 # Set up virtual environment to install libraries (required for rdkit)
 
