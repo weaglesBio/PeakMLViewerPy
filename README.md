@@ -103,6 +103,9 @@ sudo apt install git
 git clone https://github.com/weaglesBio/MetabolomicModellingMSc
 cd MetabolomicModellingMSc
 
+sudo apt-get update -y
+sudo apt-get install -y binutils-common
+
 # Set up virtual environment to install libraries (required for rdkit)
 
 conda create -c conda-forge -n peakml_env rdkit
