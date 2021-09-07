@@ -2,8 +2,6 @@
 ***
 ## Using packaged release
 
-% Script/guide - set up environment to run locally
-
 Release consists of zipped folder PeakMLViewerPy_0_3_0.
 Releases are currently available for for Windows 10 v2004 64-bit, MacOS Catalina and Linux Ubuntu v20.04.
 Executable requires MoleculeDatabases folder and settings.xml file stored at same root, which is how the files are packaged.
