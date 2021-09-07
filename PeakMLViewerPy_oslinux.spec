@@ -1,11 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+spec_root = os.path.abspath(SPECPATH)
 
 block_cipher = None
 
-
 a = Analysis(['PeakMLViewerPy.py'],
-             pathex=['/home/will/Source/MetabolomicModellingMSc'],
+             pathex=[spec_root],
              binaries=[],
              datas=[],
              hiddenimports=['PIL._tkinter_finder'],
