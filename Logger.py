@@ -24,7 +24,7 @@ def initalise_logging_session():
         path = sys.argv[0]
 
     global current_directory
-    current_directory = os.path.split(sys.argv[0])[0]
+    current_directory = os.path.split(path)[0]
 
 #    self._log_records = []
     global logger_file_name
