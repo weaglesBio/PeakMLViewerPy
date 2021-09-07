@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import sys
+import platform
 
 # global variable to store log file name for access from anywhere within application.
 logger_file_name = ""
@@ -16,6 +17,11 @@ def get_datetime_full_string() -> str:
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 def initalise_logging_session():
+
+    if platform.system() == 'Darwin':
+        path = __file__
+    else:
+        path = sys.argv[0]
 
     global current_directory
     current_directory = os.path.split(sys.argv[0])[0]
