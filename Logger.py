@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import sys
 
 # global variable to store log file name for access from anywhere within application.
 logger_file_name = ""
@@ -17,7 +18,7 @@ def get_datetime_full_string() -> str:
 def initalise_logging_session():
 
     global current_directory
-    current_directory = os.path.split(__file__)[0]
+    current_directory = os.path.split(sys.argv[0])[0]
 
 #    self._log_records = []
     global logger_file_name
