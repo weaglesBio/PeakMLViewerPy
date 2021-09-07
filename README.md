@@ -62,7 +62,7 @@ Executable file available in dist folder.
     conda init
 ```
 
-2. Run the following as bash script in location for install:
+3. Run the following as bash script in location for install:
 ```
 # Download the source using git
 mkdir Source
