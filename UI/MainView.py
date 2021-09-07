@@ -300,7 +300,6 @@ class MainView():
         self.style = ttk.Style()
         self.style.map('Treeview', foreground = self.fixed_map('foreground'), background = self.fixed_map('background'))
         self.style.map('Treeview', background=[('selected', 'blue')])
-
         
         self.menubar = tk.Menu(self.root)
 
@@ -338,22 +337,25 @@ class MainView():
         #self.editmenu.add_command(label="Copy all", command=self.open_peak_split_dialog)
         #self.editmenu.add_command(label="Copy selected", command=self.open_peak_split_dialog)
         #self.editmenu.add_separator()
-        #self.editmenu.add_command(label="Select all", command=self.open_peak_split_dialog)
-        #self.editmenu.add_command(label="Deselect all", command=self.open_peak_split_dialog)
-        #self.editmenu.add_command(label="Invert selectio ", command=self.open_peak_split_dialog)
-        #self.editmenu.add_separator()
+        self.editmenu.add_command(label="Check all entries", command=self.entries_view_check_all)
+        self.editmenu.add_command(label="Uncheck all entries", command=self.entries_view_uncheck_all)
+        self.editmenu.add_command(label="Invert entry check status", command=self.entries_view_invert_check)
+        self.editmenu.add_separator()
         #self.editmenu.add_command(label="Merge", command=self.open_peak_split_dialog)
         self.editmenu.add_command(label="Split peak", command=self.open_peak_split_dialog)
 
-
+#entries_view_check_all
+#entries_view_uncheck_all
+#entries_view_invert_check
 
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         
         # Add 'IPA' menu item
         self.ipamenu = tk.Menu(self.menubar, tearoff=0)
-        self.ipamenu.add_command(label="Import IPA", command=self.import_ipa_file)
-        self.ipamenu.add_command(label="Export entries", command=self.export_ipa_file)
-        self.ipamenu.add_command(label="Export priors", command=self.export_ipa_priors_file)
+        self.ipamenu.add_command(label="Export entries as IPA input", command=self.export_ipa_file)
+        self.ipamenu.add_command(label="Import IPA results", command=self.import_ipa_file)
+
+        #self.ipamenu.add_command(label="Export priors", command=self.export_ipa_priors_file)
         self.menubar.add_cascade(label="IPA", menu=self.ipamenu)
 
         # Add 'View' menu item
@@ -379,17 +381,26 @@ class MainView():
         # Disable 'Save as...'
         self.filemenu.entryconfig(2, state=tk.DISABLED)
 
-        # Disable 'Split peak'
+        # Disable 'Check all'
+        self.editmenu.entryconfig(0, state=tk.DISABLED)
+
+        # Disable 'Uncheck all'
         self.editmenu.entryconfig(1, state=tk.DISABLED)
 
-        # Disable 'Import IPA RData'
+        # Disable 'Invert check status'
         self.editmenu.entryconfig(2, state=tk.DISABLED)
 
-        # Disable 'Export IPA RData'
-        self.editmenu.entryconfig(3, state=tk.DISABLED)
+        # Disable 'Split peak'
+        self.editmenu.entryconfig(4, state=tk.DISABLED)
+
+        # Disable 'Export entries as IPA input'
+        self.ipamenu.entryconfig(0, state=tk.DISABLED)
+
+        # Disable 'Import IPA results'
+        self.ipamenu.entryconfig(1, state=tk.DISABLED)
 
         # Disable 'Export IPA with priors RData'
-        self.editmenu.entryconfig(4, state=tk.DISABLED)
+        #self.ipamenu.entryconfig(4, state=tk.DISABLED)
 
         # Initialise Layout
         self.root_frame = tk.Frame(self.root, padx=0, pady=0)
@@ -871,10 +882,12 @@ class MainView():
             # Enable disabled menu items.
             self.filemenu.entryconfig(1, state=tk.NORMAL)
             self.filemenu.entryconfig(2, state=tk.NORMAL)
+            self.editmenu.entryconfig(0, state=tk.NORMAL)
             self.editmenu.entryconfig(1, state=tk.NORMAL)
             self.editmenu.entryconfig(2, state=tk.NORMAL)
-            self.editmenu.entryconfig(3, state=tk.NORMAL)
             self.editmenu.entryconfig(4, state=tk.NORMAL)
+            self.ipamenu.entryconfig(0, state=tk.NORMAL)
+            self.ipamenu.entryconfig(1, state=tk.NORMAL)
 
             # Update UI widgets
             self.load_data_from_views()
@@ -1038,6 +1051,17 @@ class MainView():
 
         p.update_progress("Peak split.", 100)
 
+    def entries_view_check_all(self):
+        self.data.update_entry_check_all()
+        self.refresh_entry_grid()
+
+    def entries_view_uncheck_all(self):
+        self.data.update_entry_uncheck_all()
+        self.refresh_entry_grid()
+
+    def entries_view_invert_check(self):
+        self.data.update_entry_invert_check_all()
+        self.refresh_entry_grid()
 #endregion
 
 #region Info/Entry View Methods
@@ -1404,20 +1428,20 @@ class MainView():
             if not self.plot_int_log_loaded:
                 self.generate_plot_int_log()
 
-    def refresh_plots(self):
-        lg.log_progress("Begin loading plots.")
+    # def refresh_plots(self):
+    #     lg.log_progress("Begin loading plots.")
 
-        p.update_progress("Loading peak plots", 75)
-        self.generate_plot_peak()
-        lg.log_progress("Peak plot loaded.")
+    #     p.update_progress("Loading peak plots", 75)
+    #     self.generate_plot_peak()
+    #     lg.log_progress("Peak plot loaded.")
 
-        p.update_progress("Loading derivative plots", 80)
-        self.generate_plot_derivatives()
-        lg.log_progress("Derivative plots loaded.")
+    #     p.update_progress("Loading derivative plots", 80)
+    #     self.generate_plot_derivatives()
+    #     lg.log_progress("Derivative plots loaded.")
 
-        p.update_progress("Loading intensity plots", 90)
-        self.generate_plots_int()
-        lg.log_progress("Intensity plots loaded.")
+    #     p.update_progress("Loading intensity plots", 90)
+    #     self.generate_plots_int()
+    #     lg.log_progress("Intensity plots loaded.")
 
     def generate_plot_peak(self):
         df = self.data.plot_peak_view_dataframe   
@@ -1466,7 +1490,7 @@ class MainView():
             axes_der.stem(mass_values, intensity_values, markerfmt=" ")
 
             for i in range(len(data)):
-                axes_der.annotate(label_values[i], (mass_values[i], intensity_values[i]), horizontalalignment='left', verticalalignment='top')
+                axes_der.annotate(text=label_values[i], xy=(mass_values[i], intensity_values[i]), xytext=(5,5), textcoords='offset points', horizontalalignment='left', verticalalignment='top')
 
             axes_der.set_xscale('linear')
 

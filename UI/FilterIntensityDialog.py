@@ -8,7 +8,7 @@ class FilterIntensityDialog(ViewerDialog):
         self.submit = False
         self.validate_intensity_min_details = tk.StringVar()
         
-        super().__init__(parent, title, width=200, height=130)
+        super().__init__(parent, title, width=200, height=130, take_focus=True, extendable=False)
     
     def body(self, frame):
         

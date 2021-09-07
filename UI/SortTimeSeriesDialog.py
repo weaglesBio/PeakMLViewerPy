@@ -10,7 +10,7 @@ class SortTimeSeriesDialog(ViewerDialog):
     def __init__(self, parent, title, sets):
         self.sets = sets
         self.submit = False
-        super().__init__(parent, title, width=600, height=600)
+        super().__init__(parent, title, width=600, height=600, take_focus=True, extendable=True)
 
     def body(self, frame):
 

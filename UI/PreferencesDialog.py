@@ -24,7 +24,7 @@ class PreferencesDialog(ViewerDialog):
         self._plot_options[e.Plot.IntensityPatternAll] = "Intensity:All"
         self._plot_options[e.Plot.IntensityPatternTrend] = "Intensity:Log"
 
-        super().__init__(parent, title, width=500, height=280)
+        super().__init__(parent, title, width=500, height=280, take_focus=True, extendable=False)
     
     def body(self, frame):
 

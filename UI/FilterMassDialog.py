@@ -8,7 +8,7 @@ class FilterMassDialog(ViewerDialog):
         self.submit = False
         self.validate_mass_details = tk.StringVar()
 
-        super().__init__(parent, title, width=170, height=150)
+        super().__init__(parent, title, width=170, height=150, take_focus=True, extendable=False)
 
     def body(self, frame):
 

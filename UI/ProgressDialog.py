@@ -10,7 +10,7 @@ class ProgressDialog(ViewerDialog):
         self.progress_val = progress_val
         self.progress_text.trace("w", self.check_if_complete)
 
-        super().__init__(parent=self.parent, title="Progress", width=400, height=100, take_focus=False)
+        super().__init__(parent=self.parent, title="Progress", width=400, height=100, take_focus=False, extendable=False)
 
     def body(self, parent):
         progress_frame = tk.Frame(parent, padx=10, pady=10)

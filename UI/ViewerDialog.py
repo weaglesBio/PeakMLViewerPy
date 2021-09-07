@@ -3,7 +3,7 @@ import tkinter as tk
 #https://github.com/python/cpython/blob/3.9/Lib/tkinter/simpledialog.py
 
 class ViewerDialog(tk.Toplevel):
-    def __init__(self, parent, title, width, height, take_focus: bool = True):
+    def __init__(self, parent, title, width, height, take_focus: bool = True, extendable: bool = False):
         self.parent = parent
         #self.title = title
         self.width = width
@@ -34,7 +34,11 @@ class ViewerDialog(tk.Toplevel):
         # Add controls in body frame
         body = tk.Frame(self)
         self.initial_focus = self.body(body)
-        body.pack(fill=tk.BOTH, expand = tk.TRUE, padx=5, pady=5)
+
+        if extendable:
+            body.pack(fill=tk.BOTH, expand = tk.TRUE, padx=5, pady=5)
+        else:
+            body.pack(padx=5, pady=5)
 
 
         # Add button controls

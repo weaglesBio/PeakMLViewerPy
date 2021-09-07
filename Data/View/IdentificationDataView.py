@@ -169,10 +169,10 @@ class IdentificationDataView(BaseDataView):
 
         for item in self.datalist:
             if item.uid == uid:
-                if prior_val != item.prior:
-                    prior_changed = True
-                
-                item.prior = prior_val
+                if prior_val != None:
+                    if prior_val != round(item.prior,2):
+                        prior_changed = True
+                        item.prior = prior_val
                 item.notes = notes
 
                 break

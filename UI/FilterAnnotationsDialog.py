@@ -9,7 +9,7 @@ class FilterAnnotationsDialog(ViewerDialog):
         self.option_annotation_relation_selected = tk.StringVar()
         self.validate_annotation_details = tk.StringVar()
 
-        super().__init__(parent, title, width=180, height=150)
+        super().__init__(parent, title, width=180, height=150, take_focus=True, extendable=False)
     
     def body(self, frame):
 

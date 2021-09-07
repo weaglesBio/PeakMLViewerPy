@@ -13,7 +13,7 @@ class FilterNumberDetectionsDialog(ViewerDialog):
 
         self.submit = False
 
-        super().__init__(parent, title, width=200, height=100)
+        super().__init__(parent, title, width=200, height=100, take_focus=True, extendable=False)
     
     def body(self, frame):
 

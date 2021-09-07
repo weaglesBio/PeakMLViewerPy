@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 import matplotlib.dates as mdates
 
-
 import Utilities as u
 
 class PeakSplitDialog(ViewerDialog):
@@ -28,7 +27,7 @@ class PeakSplitDialog(ViewerDialog):
         self.retention_time_min = None
         self.submit = False
 
-        super().__init__(parent, title, width=640, height=620)
+        super().__init__(parent, title, width=640, height=620, take_focus=True, extendable=True)
 
     def body(self, frame):
 
@@ -124,6 +123,3 @@ class PeakSplitDialog(ViewerDialog):
     def _update_retention_time(self):
         self.val_min.set(self._datetime_x.minute)
         self.val_sec.set(self._datetime_x.second)
-
-        #self.spbx_min.set(u.format_time_min(self._position_x))
-        #self.spbx_sec.set(u.format_time_sec(self._position_x))

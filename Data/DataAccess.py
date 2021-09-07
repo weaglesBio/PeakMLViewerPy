@@ -309,6 +309,15 @@ class DataAccess:
     def update_entry_checked_status(self, uid: str, checked: bool):
         self._entry_view.update_checked_status(uid, checked)
 
+    def update_entry_check_all(self):
+        self._entry_view.update_checked_status_for_all("CheckAll")
+
+    def update_entry_uncheck_all(self):
+        self._entry_view.update_checked_status_for_all("UncheckAll")
+
+    def update_entry_invert_check_all(self):
+        self._entry_view.update_checked_status_for_all("InvertCheck")
+
     def update_set_checked_status(self, uid: str, checked: bool):
         self._set_view.update_checked_status(uid, checked)
 

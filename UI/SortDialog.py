@@ -7,7 +7,7 @@ class SortDialog(ViewerDialog):
         self.submit = False
         self.option_type_selected = tk.StringVar()
         self.option_direction_selected = tk.StringVar()
-        super().__init__(parent, title, width=260, height=100)
+        super().__init__(parent, title, width=260, height=100, take_focus=True, extendable=False)
     
     def body(self, frame):
 

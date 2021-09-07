@@ -6,7 +6,7 @@ class FilterProbabilityDialog(ViewerDialog):
         self.submit = False
         self.validate_probability_details = tk.StringVar()
 
-        super().__init__(parent, title, width=200, height=180)
+        super().__init__(parent, title, width=200, height=180, take_focus=True, extendable=False)
 
     def body(self, frame):
 

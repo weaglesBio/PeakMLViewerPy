@@ -1,7 +1,8 @@
 from datetime import datetime
 import uuid
 import IO.SettingsIO as SettingsIO
-import xml.etree.ElementTree as ET
+#import xml.etree.ElementTree as ET
+from lxml import etree as ET
 from xml.dom import minidom
 from typing import List
 

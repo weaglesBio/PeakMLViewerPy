@@ -2,6 +2,8 @@ import pandas as pd
 
 from Data.View.BaseItem import BaseItem
 
+import Logger as lg
+
 from typing import List
 
 class BaseDataView():
@@ -59,3 +61,39 @@ class BaseDataView():
 
         # Update dataframe
         self.dataframe.loc[self.dataframe["UID"] == uid, 'Checked'] = checked
+
+    def update_checked_status_for_all(self, option: str):
+
+        try:
+            # Check all
+            if option == "CheckAll":
+
+                # Update all datalist
+                for item in self.datalist:
+                    item.checked = True
+
+                # Update all dataframe
+                self.dataframe['Checked'] = True
+
+            #Uncheck all
+            elif option == "UncheckAll":
+
+                # Update all datalist
+                for item in self.datalist:
+                    item.checked = False
+
+                # Update all dataframe
+                self.dataframe['Checked'] = False
+
+            #Invert check status
+            elif option == "InvertCheck":
+
+                # Update all datalist
+                for item in self.datalist:
+                    item.checked = not item.checked
+
+                # Update all dataframe
+                self.dataframe['Checked'] = ~self.dataframe['Checked']
+
+        except Exception as err:
+            lg.log_error(f'An error occurred: {err}')

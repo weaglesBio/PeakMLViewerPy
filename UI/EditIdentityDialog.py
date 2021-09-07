@@ -11,7 +11,7 @@ class EditIdentityDialog(ViewerDialog):
         self.submit = False
         self.validate_prior_details = tk.StringVar()
         self.validate_notes_details = tk.StringVar()
-        super().__init__(parent, title, width=260, height=260)
+        super().__init__(parent, title, width=260, height=260, take_focus=True, extendable=False)
     
     def body(self, frame: tk.Frame):
 
