@@ -21,6 +21,7 @@ Source can be run in Python with the following third-party libraries installed.
 - faker
 - pyreadr
 - scipy
+- molmass
 
 ***
 ## Compiling from source (Windows)
@@ -45,6 +46,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_oswin.spec
@@ -85,6 +87,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_osmac.spec
@@ -118,6 +121,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_oslinux.spec
