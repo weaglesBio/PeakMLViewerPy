@@ -1,8 +1,8 @@
-## PeakMLViewerPy - Version 0.3.0
+## PeakMLViewerPy - Version 0.4.0
 ***
 ## Using packaged release
 
-Release consists of zipped folder PeakMLViewerPy_0_3_0.
+Release consists of zipped folder PeakMLViewerPy_0_4_0.
 
 Releases are currently available for for Windows 10 v2004 64-bit, MacOS Catalina and Linux Ubuntu v20.04.
 
@@ -21,6 +21,7 @@ Source can be run in Python with the following third-party libraries installed.
 - faker
 - pyreadr
 - scipy
+- molmass
 
 ***
 ## Compiling from source (Windows)
@@ -45,6 +46,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_oswin.spec
@@ -52,7 +54,7 @@ pyinstaller PeakMLViewerPy_oswin.spec
 
 Executable file available in dist folder.
 ***
-## Compiling from source (macOS)
+## Packag from source (macOS)
 
 1. Install latest version of miniconda.
 2. Run the following to initialise miniconda.
@@ -85,6 +87,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_osmac.spec
@@ -93,7 +96,7 @@ cp settings.xml dist/PeakMLViewerPy
 cp -r MoleculeDatabases dist/PeakMLViewerPy
 ```
 
-Executable file available in dist folder.
+Executable file available in dist/PeakMLViewerPy folder.
 ***
 ## Compiling from source (Linux)
 
@@ -118,6 +121,7 @@ pip install lxml
 pip install faker
 pip install pyreadr
 pip install scipy
+pip install molmass
 pip install pyinstaller
 
 pyinstaller PeakMLViewerPy_oslinux.spec
