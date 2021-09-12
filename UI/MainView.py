@@ -800,10 +800,14 @@ class MainView():
             tree = ttkw.CheckboxTreeview(frame, selectmode="browse", columns=len(columns))
         else:
             tree = ttk.Treeview(frame, columns=len(columns))
-            
-        tree["columns"] = [i[0] for i in columns]
 
+        tree.update()
+
+        tree["columns"] = [i[0] for i in columns]
+        #total_width = 0
         for i in range(len(columns)):
+           # total_width += columns[i][1]
+
             column_name = columns[i][0] if columns[i][0] != "Selected" else ""
             #col_width = tk.font.Font().measure(column_name)
             tree.heading("#{0}".format(i), text=column_name)
@@ -823,6 +827,8 @@ class MainView():
         tree_hsb.config(command=tree.xview)
 
         tree['show'] = ('headings','tree')
+
+        tree.update()
 
         return tree
 
@@ -1131,8 +1137,14 @@ class MainView():
                 else:
                     focus = "no_ann_is_focus" if entry_row["Selected"] == True else "no_ann_not_focus"
 
+                # Update current entry based on selected entry.
+                if entry_row["Selected"] == True:
+                    self.current_entry = i
+
                 # Add entries to tree
                 self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], entry_row["Nrpeaks"]), tags=(entry_row["UID"], focus, "checked" if entry_row["Checked"] == True else "unchecked")) 
+
+                #self.entry_tree.update()
 
                 p.update_progress(f"Populating peak {(i+1)} of {len(self.df_entry)} to Entry View")
 
@@ -1520,7 +1532,8 @@ class MainView():
 
         # Rotate labels so do overlap
         for tick in self.axes_int_all.get_xticklabels():
-            tick.set_rotation(305)
+            #tick.set_rotation(305)
+            tick.set_rotation(90)
 
         self.figure_int_all.canvas.draw()
         #self.figure_int_all.tight_layout()

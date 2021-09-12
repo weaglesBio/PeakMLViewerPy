@@ -119,11 +119,14 @@ class PeakML():
 
         #Select peaks to include based on checks and filters.
 
-        r = open(filepath, "w")
+        #Save raw
+        r = gzip.open(filepath, "w")
         # Pass header and peaks list
         
-        r.write(PeakMLIO.create_xml_from_peakml(self.header, list(self.peaks.values())))
+        r.write(PeakMLIO.create_xml_from_peakml(self.header, list(self.peaks.values())).encode())
         r.close()
+
+        #Save zipped
 
     def export_ipa(self, filepath: str):
 

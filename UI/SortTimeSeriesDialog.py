@@ -10,18 +10,41 @@ class SortTimeSeriesDialog(ViewerDialog):
     def __init__(self, parent, title, sets):
         self.sets = sets
         self.submit = False
-        super().__init__(parent, title, width=600, height=600, take_focus=True, extendable=True)
+        super().__init__(parent, title, width=600, height=720, take_focus=True, extendable=True)
 
     def body(self, frame):
 
-        self._figure_frame = tk.Frame(frame, padx=20, pady=20)
+        self._containing_frame = tk.Frame(frame, padx=5, pady=5)
+        self._containing_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
+
+        # Option frame
+
+        self._options_frame = tk.LabelFrame(self._containing_frame, padx=0, pady=0, text="Preset")
+        self._options_frame.pack(fill=tk.BOTH, expand = tk.FALSE)
+
+        self.option_set_selected = tk.StringVar(self._options_frame)
+        self.option_set_selected.set(self.sets[0])
+
+        self.lbl_set_select = tk.Label(self._options_frame, width=10, text = "Set associated:")
+
+        self.option_set_select = tk.OptionMenu(self._options_frame, self.option_set_selected, *self.sets)
+
+        self.btn_apply = tk.Button(self._options_frame, text='Apply', width=5, command=self.apply_layout)
+
+        self.lbl_set_select.grid(row=0, column=0, padx=(5,5), pady=(2,2), sticky="NEWS")
+        self.option_set_select.grid(row=0, column=1, padx=(5,5), pady=(2,2), sticky="NEWS")
+        self.btn_apply.grid(row=0, column=2, padx=(5,5), pady=(2,2), sticky="NEWS")
+
+        # Figure frame
+
+        self._figure_frame = tk.Frame(self._containing_frame, padx=10, pady=10)
         self._figure_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
 
         self._figure, self._axes, self._line = None, None, None
         self._dragging_point = None
         self._points = {}
 
-        self._figure = plt.Figure(figsize=(7,5))
+        self._figure = plt.Figure(figsize=(6,5))
 
         self._figure.canvas.mpl_connect('button_press_event', self._on_click)
         self._figure.canvas.mpl_connect('button_release_event', self._on_release)
@@ -36,52 +59,18 @@ class SortTimeSeriesDialog(ViewerDialog):
         for tick in self._axes.get_xticklabels():
             tick.set_rotation(305)
 
-
         self._axes.set_ylim(0,1)
 
         for set in self.sets:
             self._add_point(set, 0.5)
 
         self._update_plot()
-
+        
         canvas = FigureCanvasTkAgg(self._figure, self._figure_frame)
         canvas.get_tk_widget().pack(side="top", fill ='both', expand=True)
         canvas.draw()
 
-        # option_set_int_list = [
-        #     "IPA_Beard",
-        #     "IPA_Bust",
-        #     "IPA_Green",
-        #     "IPA_Hob",
-        #     "IPA_Old",
-        #     "IPA_Punk",
-        #     "IPA_Thorn",
-        #     "Lag_Beck",
-        #     "Lag_Bud",
-        #     "Lag_Cob",
-        #     "Lag_Est",
-        #     "Lag_Hob",
-        #     "Lag_Per",
-        #     "Lag_San",
-        #     "Port_Brew",
-        #     "Port_Coffee",
-        #     "Port_Drag",
-        #     "Port_Guin",
-        #     "Port_Lond",
-        #     "Port_Rob",
-        #     "Port_White",
-        #     "IPA",
-        #     "Lager",
-        #     "Porter"
-        #     ]
-
-        # self.option_set_int_selected = tk.StringVar(frame)
-        # self.option_set_int_selected.set("IPA_Beard")
-
-        # #self.lbl_annotation_relation = tk.Label(frame, width=10)
-        # self.option_annotation_relation = tk.OptionMenu(frame, self.option_set_int_selected, *option_set_int_list)
-        # self.option_annotation_relation.grid(row=0, column=0)
-
+        self._figure.tight_layout()
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -92,57 +81,6 @@ class SortTimeSeriesDialog(ViewerDialog):
         self.bind("<Escape>", lambda event: self.cancel_btn_clicked())
 
     def ok_btn_clicked(self):
-       # option_int_selected = self.option_set_int_selected.get()
-
-        # if option_int_selected == "IPA_Beard":
-        #     self.set_values = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Bust":
-        #     self.set_values = [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Green":
-        #     self.set_values = [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Hob":
-        #     self.set_values = [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Old":
-        #     self.set_values = [0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Punk":
-        #     self.set_values = [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "IPA_Thorn":
-        #     self.set_values = [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Beck":
-        #     self.set_values = [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Bud":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Cob":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Est":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Hob":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_Per":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lag_San":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Port_Brew":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Port_Coffee":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0]
-        # elif option_int_selected == "Port_Drag":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0]
-        # elif option_int_selected == "Port_Guin":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]
-        # elif option_int_selected == "Port_Lond":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0]
-        # elif option_int_selected == "Port_Rob":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]
-        # elif option_int_selected == "Port_White":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]
-        # elif option_int_selected == "IPA":
-        #     self.set_values = [0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Lager":
-        #     self.set_values = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
-        # elif option_int_selected == "Porter":
-        #     self.set_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0]
-
         self.set_values = self._read_values_from_points()
         self.submit = True
         self.destroy()
@@ -166,6 +104,8 @@ class SortTimeSeriesDialog(ViewerDialog):
             self._line, = self._axes.plot(x, y, "b", marker="o", markersize=10)
         else:
             self._line.set_data(x, y)
+
+        self._figure.tight_layout()
 
         self._figure.canvas.draw()
 
@@ -232,5 +172,14 @@ class SortTimeSeriesDialog(ViewerDialog):
 
             # Prevent movement out the line of the draggable point
             self._dragging_point = self._add_point(self._dragging_point[0], y)
-            self._update_plot()
+            self._update_plot()  
 
+    def apply_layout(self):
+
+        # Clear all current points
+        self._points = {}
+
+        for set_name in self.sets:
+            self._add_point(set_name, 1 if self.option_set_selected.get() == set_name else 0)
+
+        self._update_plot()

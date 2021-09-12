@@ -51,9 +51,9 @@ class FilterAnnotationsDialog(ViewerDialog):
         self.bind("<Escape>", lambda event: self.cancel_btn_clicked())
 
     def ok_btn_clicked(self):
-        self.ent_annotation_name = self.ent_annotation_name.get()
+        self.annotation_name = self.ent_annotation_name.get()
         self.annotation_relation = self.option_annotation_relation_selected.get()
-        self.ent_annotation_value = self.ent_annotation_value.get()
+        self.annotation_value = self.ent_annotation_value.get()
         self.submit = True
         self.destroy()
 

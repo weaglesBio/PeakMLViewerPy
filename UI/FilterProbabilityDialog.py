@@ -6,7 +6,7 @@ class FilterProbabilityDialog(ViewerDialog):
         self.submit = False
         self.validate_probability_details = tk.StringVar()
 
-        super().__init__(parent, title, width=200, height=180, take_focus=True, extendable=False)
+        super().__init__(parent, title, width=180, height=180, take_focus=True, extendable=False)
 
     def body(self, frame):
 
@@ -22,8 +22,8 @@ class FilterProbabilityDialog(ViewerDialog):
         self.lbl_validate_probability = tk.Label(frame, fg="#ff0000", textvariable = self.validate_probability_details)
         self.lbl_validate_probability.pack(fill=tk.BOTH, expand = tk.TRUE)
 
-        self.lbl_mini = tk.Label(self._figure_frame, width=10, text="Minimum:")
-        self.lbl_max = tk.Label(self._figure_frame, width=10, text="Maximum:")
+        self.lbl_mini = tk.Label(self._figure_frame, width=5, text="Min:")
+        self.lbl_max = tk.Label(self._figure_frame, width=5, text="Max:")
         self.lbl_prior = tk.Label(self._figure_frame, width=5, text="Prior")
         self.lbl_post = tk.Label(self._figure_frame, width=5, text="Post")
 

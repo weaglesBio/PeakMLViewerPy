@@ -379,7 +379,6 @@ class DataAccess:
     def get_set_checked_status(self, label: str) -> bool:
         return self._set_view.get_checked_status_from_label(label)
 
-
     def split_selected_peak_on_retention_time(self):
         
         original_peak = self._peakml.peaks[self.selected_entry_uid]
@@ -394,6 +393,9 @@ class DataAccess:
 
             # Remove higher values from peak.
             peak_higher = self._remove_peak_values_by_retention_time(peak_higher, False)
+
+            # Assign new peak id to higher peak.
+            peak_higher.update_specific_annotation("id", self._get_next_available_peak_id())
 
             new_higher_uuid = u.get_new_uuid()
 
@@ -413,6 +415,22 @@ class DataAccess:
             #restore modified peak
             self._peakml.peaks[self.selected_entry_uid] = original_peak
         
+    def _get_next_available_peak_id(self):
+
+        current_highest_peak_id = 0
+
+        for peak in self._peakml.peaks.values():
+            peak_id = peak.get_specific_annotation("id")
+            if peak_id:
+                if peak_id.value.isnumeric():
+                    peak_id_int = int(peak_id.value)
+
+                    if peak_id_int > current_highest_peak_id:
+                        current_highest_peak_id = peak_id_int
+
+        return str(current_highest_peak_id)
+
+
     def _remove_peak_values_by_retention_time(self, peak: Peak, keep_lower: bool) -> Peak: 
         
         rt_split = u.format_time_int(self.peak_split_retention_time)

@@ -35,43 +35,45 @@ class ProbabilityFilter(BaseFilter):
         return f"Prior: {self.prior_min}-{self.prior_max}; Post: {self.post_min}-{self.post_max}" 
 
     def apply_to_peak_list(self, peak_dic) -> Dict[str, Peak]:
-
-        prior_min = float(self.prior_min)
-        prior_max = float(self.prior_max)
-        post_min = float(self.post_min)
-        post_max = float(self.post_max)
-
-        filtered_peak_dic = {}
-        peak_num = 0
-        for peak_uid in peak_dic.keys():   
-            peak = peak_dic[peak_uid]
-            peak_num += 1
-            #u.trace(f"checking peak {peak_num}")
-
-            prior_ann = peak.get_specific_annotation("prior")
-            post_ann = peak.get_specific_annotation("post")
-
-            if prior_ann is not None:
-                priors = prior_ann.value.split(", ")
-
-            if post_ann is not None:
-                posts = post_ann.value.split(", ")
         
-            in_prior = False
-            for prior in priors:
-                prior_f = float(prior)
-                if prior_min < prior_f and prior_max > prior_f:
-                    in_prior = True
-                    break
+            prior_min = float(self.prior_min)
+            prior_max = float(self.prior_max)
+            post_min = float(self.post_min)
+            post_max = float(self.post_max)
+
+            filtered_peak_dic = {}
+            peak_num = 0
+            for peak_uid in peak_dic.keys():   
+                peak = peak_dic[peak_uid]
+                peak_num += 1
+                priors = []
+                posts = []
+                #u.trace(f"checking peak {peak_num}")
+
+                prior_ann = peak.get_specific_annotation("prior")
+                post_ann = peak.get_specific_annotation("post")
+
+                if prior_ann is not None:
+                    priors = prior_ann.value.split(", ")
+
+                if post_ann is not None:
+                    posts = post_ann.value.split(", ")
             
-            in_post = False
-            for post in posts:
-                post_f = float(post)
-                if post_min < post_f and post_max > post_f:
-                    in_post = True
-                    break
+                in_prior = False
+                for prior in priors:
+                    prior_f = float(prior)
+                    if prior_min < prior_f and prior_max > prior_f:
+                        in_prior = True
+                        break
+                
+                in_post = False
+                for post in posts:
+                    post_f = float(post)
+                    if post_min < post_f and post_max > post_f:
+                        in_post = True
+                        break
 
-            if in_prior and in_post:
-                filtered_peak_dic[peak_uid] = peak
+                if in_prior and in_post:
+                    filtered_peak_dic[peak_uid] = peak
 
-        return filtered_peak_dic
+            return filtered_peak_dic

@@ -2,7 +2,7 @@
 <peakmlviewer>
 	<settings>
 		<smooth>true</smooth>
-		<decdp>1</decdp>
+		<decdp>3</decdp>
 		<defplot>Peak</defplot>
 		<databases>
 			<database>01_StdMix.xml</database>

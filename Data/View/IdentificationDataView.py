@@ -117,6 +117,8 @@ class IdentificationDataView(BaseDataView):
             else:
                 lg.log_progress(f'No "identification" annotation found.')
 
+            self.sort_datalist_by_probabilities()
+
             # Reload dataframe after all added.
             self.refresh_dataframe()
 
@@ -125,6 +127,14 @@ class IdentificationDataView(BaseDataView):
 
     def add_item(self, id: int, formula: str, ppm: float, adduct: str, name: str, class_desc: str, description: str, prior: float, post: float, smiles: str, inchi: str, notes: str):
         self.datalist.append(IdentificationItem(id, formula, ppm, adduct, name, class_desc, description, prior, post, smiles, inchi, notes))
+
+    def sort_datalist_by_probabilities(self):
+        if len(self.datalist) > 0:
+            # If the identifications have posterior values then
+            if self.datalist[0].post != "":
+        
+                self.datalist.sort(key=lambda x: x.prior, reverse=True)
+                self.datalist.sort(key=lambda x: x.post, reverse=True)
 
     def refresh_dataframe(self):
         self.clear_dataframe()
@@ -153,6 +163,10 @@ class IdentificationDataView(BaseDataView):
             if len(self.dataframe.loc[self.dataframe["Selected"] == True]) == 0:
                 # set the first one as selected.
                 self.dataframe.at[0, 'Selected'] = True
+
+
+
+
 
     def get_details(self, uid: str):
         row = self.dataframe.loc[self.dataframe["UID"] == uid]

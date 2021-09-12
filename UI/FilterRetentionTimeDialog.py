@@ -26,12 +26,12 @@ class FilterRetentionTimeDialog(ViewerDialog):
         self.retention_time_max_minu = None
         self.submit = False
 
-        super().__init__(parent, title, width=220, height=160, take_focus=True, extendable=False)
+        super().__init__(parent, title, width=200, height=160, take_focus=True, extendable=False)
 
     def body(self, frame):
 
-        self.lbl_mini = tk.Label(frame, width=10, text="Minimum:")
-        self.lbl_max = tk.Label(frame, width=10, text="Maximum:")
+        self.lbl_mini = tk.Label(frame, width=5, text="Min:")
+        self.lbl_max = tk.Label(frame, width=5, text="Max:")
         self.lbl_sec = tk.Label(frame, width=5, text="Second")
         self.lbl_minu = tk.Label(frame, width=5, text="Minute")
 

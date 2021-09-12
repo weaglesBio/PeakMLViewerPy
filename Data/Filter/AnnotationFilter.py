@@ -11,10 +11,10 @@ class AnnotationFilter(BaseFilter):
         self.annotation_relation = annotation_relation
         self.annotation_value = annotation_value
 
-    def get_filter_annotations_type_value(self) -> str:
+    def get_type_value(self) -> str:
         return "Filter annotations"
 
-    def get_filter_annotations_settings_value(self) -> str:
+    def get_settings_value(self) -> str:
         return f"{self.annotation_name} {self.annotation_relation} {self.annotation_value}"
 
     def apply_to_peak_list(self, peak_dic: Dict[str, Peak]) -> Dict[str, Peak]:
