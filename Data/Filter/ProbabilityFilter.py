@@ -48,7 +48,6 @@ class ProbabilityFilter(BaseFilter):
                 peak_num += 1
                 priors = []
                 posts = []
-                #u.trace(f"checking peak {peak_num}")
 
                 prior_ann = peak.get_specific_annotation("prior")
                 post_ann = peak.get_specific_annotation("post")

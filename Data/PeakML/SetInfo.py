@@ -57,10 +57,6 @@ class SetInfo():
         if peak_measurement_id not in self.linked_peak_measurement_ids:
             self._linked_peak_measurement_ids.append(peak_measurement_id)
 
-    # Returns string of plain-text (UTF-8) measurementids
-    # def get_measurement_ids_str(self):
-    #     return ", ".join(self.measurement_ids)
-
     # Returns measurementids as raw encoded string
     def get_encoded_measurement_ids(self) -> str:
         encoded = base64.b64encode(self.measurement_ids_byte_array)

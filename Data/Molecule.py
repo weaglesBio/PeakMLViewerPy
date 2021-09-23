@@ -39,8 +39,6 @@ class Molecule:
 
     @property
     def mass(self) -> str:
-        #if self.formula:
-        #    return self.formula.get_mass(masstype)
         return self._mass
 
     @mass.setter

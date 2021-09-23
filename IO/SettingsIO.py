@@ -1,4 +1,3 @@
-#import xml.etree.ElementTree as ET
 from lxml import etree as ET
 import Logger as lg
 import Utilities as u

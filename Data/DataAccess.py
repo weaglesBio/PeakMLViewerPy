@@ -331,8 +331,6 @@ class DataAccess:
         for uid_to_delete in self._entry_view.get_checked_entries_uid():
             self._peakml.remove_peak_by_uid(uid_to_delete)
 
-        #TODO: Change to remove the rows and only reload if selected has been removed.
-
         self._load_view_data_from_peakml()
 
     def get_selected_identification_details(self) -> Tuple[str, str, str, str]:
@@ -371,7 +369,6 @@ class DataAccess:
 
         peak.update_specific_annotation('prior',ann_prior)
         peak.update_specific_annotation('post',ann_post)
-            #self._prior_probabilities_modified = True
         
         peak.update_specific_annotation('notes',ann_notes)
         self._peakml.peaks[self.selected_entry_uid] = peak
@@ -412,7 +409,7 @@ class DataAccess:
 
         except Exception as err:
             lg.log_error(f'An error when splitting peak: {err}')
-            #restore modified peak
+            # Restore modified peak
             self._peakml.peaks[self.selected_entry_uid] = original_peak
         
     def _get_next_available_peak_id(self):
@@ -514,8 +511,8 @@ class DataAccess:
     def add_filter_intensity(self, intensity_min: float):
         self._add_filter(IntensityFilter(intensity_min))
 
-    def add_filter_retention_time(self, retention_time_min_hr: int, retention_time_max_hr: int, retention_time_min_minu: int, retention_time_max_minu: int):
-        self._add_filter(RetentionTimeFilter(retention_time_min_hr, retention_time_max_hr, retention_time_min_minu, retention_time_max_minu))
+    def add_filter_retention_time(self, retention_time_min_sec: int, retention_time_max_sec: int, retention_time_min_minu: int, retention_time_max_minu: int):
+        self._add_filter(RetentionTimeFilter(retention_time_min_sec, retention_time_max_sec, retention_time_min_minu, retention_time_max_minu))
 
     def add_filter_number_detections(self, detection_number: int):
         self._add_filter(NumberDetectionsFilter(detection_number))

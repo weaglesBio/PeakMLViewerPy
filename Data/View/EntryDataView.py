@@ -77,6 +77,7 @@ class EntryDataView(BaseDataView):
             self._mass_max = None
             self._intensity_min = None
             self._intensity_max = None
+            self._retention_time_mean = None
 
             retention_times = []
 
@@ -130,7 +131,8 @@ class EntryDataView(BaseDataView):
                 elif self.sample_count_max < nr_peaks:
                     self._sample_count_max = nr_peaks
 
-            self._retention_time_mean = u.format_time_string(stats.mean(retention_times))
+            if len(retention_times) > 0:
+                self._retention_time_mean = u.format_time_string(stats.mean(retention_times))
 
             self.refresh_dataframe()
         except Exception as err:

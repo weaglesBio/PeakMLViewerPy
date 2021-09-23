@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-#from lxml import etree as ET
 from Data.Molecule import Molecule
 import Logger as lg
 import os

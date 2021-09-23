@@ -4,7 +4,6 @@ from typing import List
 class Settings():
     def __init__(self, preferences: List[str] = [], databases: List[str] = []):
         self.preferences = preferences
-        #preferences = SetIO.load_preferences()
 
         self.appearance_smooth = None
         self.appearance_decdp = None
@@ -19,7 +18,6 @@ class Settings():
                 self.appearance_defplot = preference[1]
 
         self.databases = databases
-        #self.databases = SetIO.load_database_paths()
 
     def get_preference_by_name(self, name: str) -> str:
         if name == "smooth":

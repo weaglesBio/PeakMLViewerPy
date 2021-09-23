@@ -123,9 +123,6 @@ class EditIdentityDialog(ViewerDialog):
         current_char_count = len(content)
         self.validate_notes_details.set(f"{current_char_count}/140")
 
-        #TODO Key press - is incorrect number
-        # Key release potential for unacceptable length - need to handle one.
-
         if current_char_count > 140:
             self.lbl_notes_validate.config(fg="#ff0000")
             self.btn_ok["state"] = "disabled"

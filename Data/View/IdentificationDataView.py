@@ -226,11 +226,6 @@ class IdentificationDataView(BaseDataView):
 
         ann_identification = ", ".join(self.dataframe["ID"].tolist())
 
-        #TODO: Ask if adduct/ppm are always the same for each identification
-        #ann_ppm = ", ".join([str(x) for x in self.dataframe["PPM"].tolist()])
-        #ann_adduct = ", ".join(self.dataframe["Adduct"].tolist())
-
-        # Returned as stringyfied list with one value as this is how it is stored in the annotation.
         ann_ppm = str(self.dataframe.at[0,"PPM"])
         ann_adduct = str(self.dataframe.at[0,"Adduct"])
 

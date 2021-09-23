@@ -16,7 +16,6 @@ class Header(AnnotatableEntity):
         self.owner = owner
         self.description = description
 
-        #TODO: Replace these with dictionaries?
         self._samples = []
         self._applications = []
         self._sets = []

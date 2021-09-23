@@ -44,17 +44,6 @@ import Progress as p
 configure_timer = None
 class MainView():
 
-# Need to look at more intelligent resizing
-# Define starting layout
-# Having it grow and shrink with resizing OF MAIN WINDOW
-# individual parts can be manually adjusted.
-# when resizing
-# Each widget resizes to max first, then summary plot expands to fill rest.
-# VF0 does not change.
-# Can resizing below a certain size be prevented, does it need to be?
-# Need to define natural max layout for all other widgets
-# Target for the day: 9 hours
-
     @property
     def filter_options(self) -> "dict[e.Filter, str]":
         return self._filter_options
@@ -324,29 +313,18 @@ class MainView():
         self.filemenu.add_command(label="Open", command=self.file_open)
         self.filemenu.add_command(label="Save", command=self.file_save)
         self.filemenu.add_command(label="Save as...", command=self.file_save_as)
-        #self.filemenu.add_separator()
-        #self.filemenu.add_command(label="Export CSV...", command=self.file_open)
-        #self.filemenu.add_command(label="Export checked...", command=self.file_save)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.root.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
         # Add 'Edit' menu item
         self.editmenu = tk.Menu(self.menubar, tearoff=0)
-        #self.editmenu.add_command(label="Copy", command=self.open_peak_split_dialog)
-        #self.editmenu.add_command(label="Copy all", command=self.open_peak_split_dialog)
-        #self.editmenu.add_command(label="Copy selected", command=self.open_peak_split_dialog)
-        #self.editmenu.add_separator()
         self.editmenu.add_command(label="Check all entries", command=self.entries_view_check_all)
         self.editmenu.add_command(label="Uncheck all entries", command=self.entries_view_uncheck_all)
         self.editmenu.add_command(label="Invert entry check status", command=self.entries_view_invert_check)
         self.editmenu.add_separator()
-        #self.editmenu.add_command(label="Merge", command=self.open_peak_split_dialog)
         self.editmenu.add_command(label="Split peak", command=self.open_peak_split_dialog)
 
-#entries_view_check_all
-#entries_view_uncheck_all
-#entries_view_invert_check
 
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         
@@ -355,25 +333,13 @@ class MainView():
         self.ipamenu.add_command(label="Export entries as IPA input", command=self.export_ipa_file)
         self.ipamenu.add_command(label="Import IPA results", command=self.import_ipa_file)
 
-        #self.ipamenu.add_command(label="Export priors", command=self.export_ipa_priors_file)
         self.menubar.add_cascade(label="IPA", menu=self.ipamenu)
-
-        # Add 'View' menu item
-        # self.viewmenu = tk.Menu(self.menubar, tearoff=0)
-        # self.viewmenu.add_command(label="Peak information", command=self.open_log_dialog)
-        # self.viewmenu.add_command(label="Peak comparison", command=self.open_preferences_dialog)
-        # self.menubar.add_cascade(label="View", menu=self.viewmenu)
 
         # Add 'User' menu item
         self.usermenu = tk.Menu(self.menubar, tearoff=0)
         self.usermenu.add_command(label="View Log", command=self.open_log_dialog)
         self.usermenu.add_command(label="Preferences", command=self.open_preferences_dialog)
         self.menubar.add_cascade(label="User", menu=self.usermenu)
-
-        # self.debugmenu = tk.Menu(self.menubar, tearoff=0)
-        # self.debugmenu.add_command(label="Get Layout", command=self.get_current_layout)
-        # self.menubar.add_cascade(label="Debug", menu=self.debugmenu)
-
 
         # Disable 'Save'
         self.filemenu.entryconfig(1, state=tk.DISABLED)
@@ -398,9 +364,6 @@ class MainView():
 
         # Disable 'Import IPA results'
         self.ipamenu.entryconfig(1, state=tk.DISABLED)
-
-        # Disable 'Export IPA with priors RData'
-        #self.ipamenu.entryconfig(4, state=tk.DISABLED)
 
         # Initialise Layout
         self.root_frame = tk.Frame(self.root, padx=0, pady=0)
@@ -695,72 +658,28 @@ class MainView():
 
     def update_layout_if_resize(self):
 
-        #u.trace("Resize check.")
-
         current_height = self.root_frame.winfo_height()
         current_width = self.root_frame.winfo_width()
-
-        #u.trace(f"height {current_height}")
-        #u.trace(f"width {current_width}")
 
         # Update layout, if overall window size has changed.
         if (current_height != self.set_height or current_width != self.set_width):
 
-            #print("Resize occurred.")
-
             height_change = current_height - self.set_height 
             width_change = current_width - self.set_width
 
-            #print(f"hc {height_change} = {current_height} - {self.set_height}")
-            #print(f"wc {width_change} = {current_width} - {self.set_width}")
-
             self.set_height = current_height
             self.set_width = current_width
-
-            # info_view_w = width
-            # info_view_h = vf0
-            # entry_view_w = mf0
-            # entry_view_h = mlf0
-            # filter_view_w = mf0
-            # filter_view_h = vf1 - subpmlf0
-            # plot_view_w = mf1 - mf0
-            # plot_view_h = vf1 - vf0
-            # set_view_w = width - mf1
-            # set_view_h = mrf0
-            # ann_view_w = width - mf1
-            # ann_view_h = mrf1 - mrf0
-            # mol_view_w = width - mf1
-            # mol_view_h = vf1 - mrf1
-            # iden_view_w = width
-            # iden_view_h = height - vf1
-            # print(f"hc {height_change}")
-            # print(f"wc {width_change}")
 
             # Fixed height, not modified 
             vf0_u = self.set_vf0
             # Increasing the height should be able to increase this an unlimited amount.
             vf1_u = self.set_vf1 + height_change
-            # 
             mf0_u = self.set_mf0
             # Increasing the width should be able to increase this an unlimited amount.
             mf1_u = self.set_mf1 + width_change
-            #
-            #self.adjust_mlf(vf1_u, mf0_u)
             mlf0_u = self.set_mlf0
-            # 
             mrf0_u = self.set_mrf0
-            # 
             mrf1_u = self.set_mrf1
-            #print(f"vf0_u {vf0_u}")
-            #print(f"vf1_u {vf1_u} = {self.set_vf1} + {height_change}")
-            #print(f"mf0_u {mf0_u}")
-            #print(f"mf1_u {mf1_u} = {self.set_mf1} + {width_change}")
-            #print(f"mlf0_u {mlf0_u}")
-            #print(f"mrf0_u {mrf0_u}")
-            #print(f"mrf1_u {mrf1_u}")
-
-            #height: 1117, width: 1920, VF0: 43, VF1: 852, MF0: 400, MF1: 1565, MLF0: 576, MRF0: 379, MRF1: 565
-
 
             if 1117 == current_height and 1920 == current_width:
                 self.update_layout(43, 852, 400, 1565, 576, 379, 565)
@@ -771,20 +690,12 @@ class MainView():
             else:
                 self.update_layout(vf0_u, vf1_u, mf0_u, mf1_u, mlf0_u, mrf0_u, mrf1_u)
 
-            #self.get_current_layout("UPDATED")
-
-    def adjust_mlf(self, vf1, mf0):
-        print("not implemented")
-
-    def adjust_mrf(self, vf1, mf0):
-        print("not implemented")
-
 #endregion
 
 #region Control initialise methods
 
     def initialize_plot(self, tab):
-        figure = plt.Figure(figsize=(12,12))#figsize=(7,7)figsize=(10,10)
+        figure = plt.Figure(figsize=(12,12))
         axes = figure.add_subplot(111)
         canvas = FigureCanvasTkAgg(figure, tab)
         toolbar_frame = tk.Frame(tab)
@@ -804,15 +715,11 @@ class MainView():
         tree.update()
 
         tree["columns"] = [i[0] for i in columns]
-        #total_width = 0
-        for i in range(len(columns)):
-           # total_width += columns[i][1]
 
+        for i in range(len(columns)):
             column_name = columns[i][0] if columns[i][0] != "Selected" else ""
-            #col_width = tk.font.Font().measure(column_name)
             tree.heading("#{0}".format(i), text=column_name)
             tree.column("#{0}".format(i), width = columns[i][1], stretch = False, anchor=tk.CENTER)
-            #tree.column("#{0}".format(i), width = col_width, stretch = False, anchor=tk.CENTER)
 
         tree_vsb = ttk.Scrollbar(frame, orient="vertical")
         
@@ -859,7 +766,6 @@ class MainView():
 
     def start_progress_dialog(self):
         self.progress_dlg = ProgressDialog(self.root, self.progress_text, self.progress_val)
-        #self.progress_dlg.progress_start()
 
     def run_process_with_progress(self, func):
         self.show_progressbar(True)
@@ -1144,8 +1050,6 @@ class MainView():
                 # Add entries to tree
                 self.entry_tree.insert("",i,i, values=(entry_row["RT"], entry_row["Mass"], entry_row["Intensity"], entry_row["Nrpeaks"]), tags=(entry_row["UID"], focus, "checked" if entry_row["Checked"] == True else "unchecked")) 
 
-                #self.entry_tree.update()
-
                 p.update_progress(f"Populating peak {(i+1)} of {len(self.df_entry)} to Entry View")
 
         # If any entries, enable button for adding filters.
@@ -1201,7 +1105,6 @@ class MainView():
                 lg.log_progress("Load selected entry details.")
                 #Attempt to load details of record, if unable revert to previously selected record.
                 try:
-                    #self.run_process_with_progress(self.refresh_entry_selected)
                     self.refresh_entry_selected()
 
                 except Exception as err:
@@ -1239,8 +1142,6 @@ class MainView():
         if reply == True:
             self.data.remove_checked_entries()
             self.load_data_from_views()
-
-            #TODO: Avoid full reload if deleted row is not selected.
 
 #endregion
 
@@ -1440,21 +1341,6 @@ class MainView():
             if not self.plot_int_log_loaded:
                 self.generate_plot_int_log()
 
-    # def refresh_plots(self):
-    #     lg.log_progress("Begin loading plots.")
-
-    #     p.update_progress("Loading peak plots", 75)
-    #     self.generate_plot_peak()
-    #     lg.log_progress("Peak plot loaded.")
-
-    #     p.update_progress("Loading derivative plots", 80)
-    #     self.generate_plot_derivatives()
-    #     lg.log_progress("Derivative plots loaded.")
-
-    #     p.update_progress("Loading intensity plots", 90)
-    #     self.generate_plots_int()
-    #     lg.log_progress("Intensity plots loaded.")
-
     def generate_plot_peak(self):
         df = self.data.plot_peak_view_dataframe   
         plot_count = len(df)
@@ -1476,11 +1362,7 @@ class MainView():
         date_format = DateFormatter("%M:%S")
         self.axes_peak.xaxis.set_major_formatter(date_format)    
 
-        #If used needs to take into account range 
-        #self.axes_peak.xaxis.set_major_locator(mdates.SecondLocator(interval=2))
-
         self.figure_peak.canvas.draw()
-        #self.figure_peak.tight_layout()
 
     def generate_plot_der_all(self):
         df = self.data.plot_der_view_dataframe
@@ -1532,11 +1414,9 @@ class MainView():
 
         # Rotate labels so do overlap
         for tick in self.axes_int_all.get_xticklabels():
-            #tick.set_rotation(305)
             tick.set_rotation(90)
 
         self.figure_int_all.canvas.draw()
-        #self.figure_int_all.tight_layout()
 
     def generate_plot_int_log(self):
         data = self.data.plot_int_view_dataframe
@@ -1559,7 +1439,6 @@ class MainView():
             tick.set_rotation(305)
 
         self.figure_int_log.canvas.draw()
-        #self.figure_int_log.tight_layout()
 
 #endregion
 

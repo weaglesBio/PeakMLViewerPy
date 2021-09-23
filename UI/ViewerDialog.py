@@ -5,7 +5,6 @@ import tkinter as tk
 class ViewerDialog(tk.Toplevel):
     def __init__(self, parent, title, width, height, take_focus: bool = True, extendable: bool = False):
         self.parent = parent
-        #self.title = title
         self.width = width
         self.height = height
 
@@ -27,8 +26,6 @@ class ViewerDialog(tk.Toplevel):
         elif self._windowingsystem == "x11":
             self.wm_attributes("-type", "dialog")
 
-        #self.parent = parent
-
         self.result = None
         
         # Add controls in body frame
@@ -39,7 +36,6 @@ class ViewerDialog(tk.Toplevel):
             body.pack(fill=tk.BOTH, expand = tk.TRUE, padx=5, pady=5)
         else:
             body.pack(padx=5, pady=5)
-
 
         # Add button controls
         self.buttonbox()
@@ -56,15 +52,12 @@ class ViewerDialog(tk.Toplevel):
 
         self.initial_focus.focus_set()
 
-
         if take_focus:
             self.wait_visibility()
             self.grab_set()
             self.wait_window()
         else:
-            #self.wait_visibility()
             self.grab_set()
-            #self.wait_window()
 
     def body(self, parent):
         pass
@@ -94,13 +87,10 @@ class ViewerDialog(tk.Toplevel):
         finally:
             self.cancel()
 
-        #self.destroy()
-
     def cancel(self, event=None):
         if self.parent is not None:
             self.parent.focus_set()
 
-        #self.withdraw()
         self.destroy()
 
     def validate(self):

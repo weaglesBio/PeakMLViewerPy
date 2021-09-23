@@ -13,9 +13,6 @@ class FilterProbabilityDialog(ViewerDialog):
         # Register validation methods
         validate_probability = frame.register(self.confirm_probability_valid)
 
-        # self.lbl_info_probability = tk.Label(frame, text="Filters to to entries with at least one identification of probability")
-        # self.lbl_info_probability.pack(fill=tk.BOTH, expand = tk.TRUE)
-
         self._figure_frame = tk.Frame(frame, padx=5, pady=5)
         self._figure_frame.pack(fill=tk.BOTH, expand = tk.TRUE)
 

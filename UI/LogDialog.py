@@ -16,7 +16,6 @@ class LogDialog(ViewerDialog):
         self.log_text.configure(state='disabled')
 
         self.log_text.pack(fill=tk.BOTH, expand = tk.TRUE)
-        #self.log_text.grid(row=0, column=0, sticky="NEWS")
 
         self.resizable(width = True, height = True)
 

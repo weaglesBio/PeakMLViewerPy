@@ -1,7 +1,6 @@
 from datetime import datetime
 import uuid
 import IO.SettingsIO as SettingsIO
-#import xml.etree.ElementTree as ET
 from lxml import etree as ET
 from xml.dom import minidom
 from typing import List
@@ -24,7 +23,6 @@ def format_time_int(time_string: str) -> int:
     min = int(time_split[0])
     sec = int(time_split[1])
     return (min*60) + sec
-    #return "{:02d}:{:02d}".format(int(float(time)/60), int(float(time)%60))
 
 def format_time_int_min(time_string: str) -> int:
     time_split = time_string.split(":")
@@ -39,14 +37,12 @@ def format_time_datetime(time: float) -> datetime:
 
 def format_time_from_datetime_int(time_as_dt: datetime) -> int:
     return time_as_dt.minute
-    #return datetime.fromtimestamp(float(time))
 
 def format_time_from_datetime_sec(time_as_dt: datetime) -> int:
     return time_as_dt.second
 
 def get_current_time() -> str:
     return datetime.now().strftime("%H:%M:%S.%f")
-    #return datetime.now().strftime("%H:%M:%S")
 
 def get_new_uuid() -> str:
     return str(uuid.uuid4())
@@ -97,31 +93,6 @@ def get_colours(number: int) -> List[str]:
                     colour_added = True
 
     return colours
-
-    # return ['#fabebe', # 1. blank
-    #         '#3cb44b', # 2. IPA_Beard
-    #         '#3cb44b', # 3. IPA_Bust
-    #         '#3cb44b', # 4. IPA_Green
-    #         '#3cb44b', # 5. IPA_Hob
-    #         '#3cb44b', # 6. IPA_Old
-    #         '#3cb44b', # 7. IPA_Punk
-    #         '#3cb44b', # 8. IPA_Thorn
-    #         '#e6194b', # 9. Lag_Beck
-    #         '#e6194b', # 10. Lag_Bud
-    #         '#e6194b', # 11. Lag_Cob
-    #         '#e6194b', # 12. Lag_Est
-    #         '#e6194b', # 13. Lag_Hob
-    #         '#e6194b', # 14. Lag_Per
-    #         '#e6194b', # 15. Lag_San
-    #         '#4363d8', # 16. Port_Brew
-    #         '#4363d8', # 17. Port_Coffee
-    #         '#4363d8', # 18. Port_Drag
-    #         '#4363d8', # 19. Port_Guin
-    #         '#4363d8', # 20. Port_Lond
-    #         '#4363d8', # 21. Port_Rob
-    #         '#4363d8', # 22. Port_White
-    #         '#fabebe', # 23. QC
-    #         ]
 
 def to_float(value: str) -> float:
     try:

@@ -1,5 +1,4 @@
 from Data.PeakML.AnnotatableEntity import AnnotatableEntity
-#import xml.etree.cElementTree as ET
 
 from lxml import etree as ET
 import base64
@@ -31,8 +30,6 @@ def showElementValue(tag_name: str, tag_value: str):
         print(tag_name + ": " + tag_value.text)
     else:
         print(tag_name + ": None")
-
-# TODO: Add logic for checking it is valid peakml file based on extension and structure.
 
 def add_annotations(parent_element: ET.Element, parent_object: Type[AnnotatableEntity]):
     for annotation_element in parent_element.findall("./annotations/annotation"):
@@ -160,8 +157,6 @@ def add_peaks(parent_element: ET.Element, header_obj: Header, peakset: List[Peak
 
         else:
             peak_data = None
-
-        #u.trace(f"Import peak {mass}")
 
         peak = Peak(type_attribute, scan, retention_time, mass, intensity, measurement_id, pattern_id, sha1sum, signal, peak_data)
 
@@ -389,8 +384,6 @@ def import_element_tree_from_peakml_file(tree_data) -> Tuple[Header, Dict[str, P
 
     return header_obj, peakset_dict, peak_order
         
-# Need to create test file to see that conversion process is correct, checking every node.
-
 #endregion
 
 #region Write methods
@@ -399,7 +392,6 @@ def finalise_xml_formatting(input_string: str):
 
     updated_top_string = input_string.replace('<?xml version="1.0" ?>','<?xml version="1.0" encoding="UTF-8"?>\n\n\n<?xml-stylesheet type="text/xml" href=""?>\n')
     updated_empty_nodes = updated_top_string.replace("/>"," />")
-    #split_header_and_peaks = updated_empty_nodes.replace('</header>','</header>\n')
 
     return updated_empty_nodes
 
@@ -510,7 +502,6 @@ def create_xml_from_peakml(data_header: Header, data_peaks_list: List[Peak]):
 
     nr_peaks = ET.SubElement(header, 'nrpeaks')
 
-    #TODO: Update this to reflect excluded peaks
     nr_peaks.text = data_header.nr_peaks
     date = ET.SubElement(header, 'date')
     date.text = data_header.date

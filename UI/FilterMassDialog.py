@@ -20,7 +20,6 @@ class FilterMassDialog(ViewerDialog):
 
         # Register validation methods
         validate_decimal = frame.register(self.confirm_valid_decimal)
-        #validate_formula = frame.register(self.confirm_valid_formula)
 
         self._radio_frame = tk.Frame(frame, padx=5, pady=5)
         self._radio_frame.pack(fill=tk.BOTH, expand = tk.FALSE)    
@@ -36,11 +35,9 @@ class FilterMassDialog(ViewerDialog):
 
         self._mass_frame = tk.LabelFrame(self._options_frame, padx=5, pady=5, text="Range")
         self._mass_frame.pack(fill=tk.BOTH, expand = tk.FALSE)
-        #self._mass_frame.grid(row=0, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
         self._formula_frame = tk.LabelFrame(self._options_frame, padx=5, pady=5, text="Formula")
         self._formula_frame.pack(fill=tk.BOTH, expand = tk.FALSE)
-        #self._formula_frame.grid(row=1, column=0, padx=(2,2), pady=(5,5), sticky="NEWS")
 
         # Mass range frame
 
@@ -88,7 +85,6 @@ class FilterMassDialog(ViewerDialog):
         self.ent_mass_min.config(validate="key", validatecommand=(validate_decimal,'%P'))
         self.ent_mass_max.config(validate="key", validatecommand=(validate_decimal,'%P'))
         self.ent_ppm.config(validate="key", validatecommand=(validate_decimal,'%P'))
-        #self.ent_formula.config(validate="key", validatecommand=(validate_formula,'%P'))
 
     def buttonbox(self):
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
@@ -150,25 +146,11 @@ class FilterMassDialog(ViewerDialog):
         # Required to update value in entry.
         return True
 
-    # def confirm_valid_formula(self, input: str):
-    #     try:
-    #         f = Formula(input)
-    #         # check has valid mass
-    #         mass = f.isotope.mass
-    #     except FormulaError:
-    #         self.update_validation_status(False, "Formula is invalid")
-    #         return False
-
-    #     self.update_validation_status(True, "")
-    #     # Required to update value in entry.
-    #     return True
-
     def update_validation_status(self, valid: bool, message: str):
         if valid:
             self.lbl_validate_mass.configure(foreground="#808080")
             self.validate_mass_details.set("") # Parameters are valid
-            #self.btn_ok["state"] = "normal"
         else:
             self.lbl_validate_mass.configure(foreground="#ff0000")
             self.validate_mass_details.set(message)
-            #self.btn_ok["state"] = "disabled"
+

@@ -64,10 +64,10 @@ class FilterRetentionTimeDialog(ViewerDialog):
         self.bind("<Escape>", lambda event: self.cancel_btn_clicked())
 
     def ok_btn_clicked(self):
-        self.retention_time_min_sec = self.val_mini_sec.get()
-        self.retention_time_max_sec = self.val_max_sec.get()
-        self.retention_time_min_minu = self.val_mini_min.get()
-        self.retention_time_max_minu = self.val_max_min.get()
+        self.retention_time_min_sec = int(self.val_mini_sec.get())
+        self.retention_time_max_sec = int(self.val_max_sec.get())
+        self.retention_time_min_minu = int(self.val_mini_min.get())
+        self.retention_time_max_minu = int(self.val_max_min.get())
         self.submit = True
         self.destroy()
 

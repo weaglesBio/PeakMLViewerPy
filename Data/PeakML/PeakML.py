@@ -55,6 +55,9 @@ class PeakML():
     def remove_peak_by_uid(self, uid: str):
         del self.peaks[uid]
 
+        if uid in self._peak_order:
+            self._peak_order.remove(uid)
+
     def import_from_file(self, filepath: str) -> bool:
         success = False
         tree_data = None

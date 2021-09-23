@@ -19,14 +19,8 @@ class ProgressDialog(ViewerDialog):
         progress_lbl = tk.Label(progress_frame, textvariable = self.progress_text)
         progress_lbl.grid(row=0, column=0)
 
-        # self.progress_bar = ttk.Progressbar(progress_frame, orient=tk.HORIZONTAL, mode='indeterminate', takefocus=True, length=300)
-        # self.progress_bar.grid(row=1, column=0)
-
         self.progress_bar_track = ttk.Progressbar(progress_frame, orient=tk.HORIZONTAL, mode='determinate', variable=self.progress_val, takefocus=True, length=300)
         self.progress_bar_track.grid(row=1, column=0)
-
-        #progress_lbl = tk.Label(progress_frame, textvariable = self.progress_text)
-        #progress_lbl.grid(row=0, column=0)
 
     def buttonbox(self):
         pass
@@ -40,11 +34,6 @@ class ProgressDialog(ViewerDialog):
     def check_if_complete(self, *args):
         if self.progress_text.get() == "Completed":
             self.progress_stop()
-
-    #def progress_start(self):
-        #self.progress_bar.start()
     
     def progress_stop(self):
-        #self.progress_bar.stop()
-        #self.progress_bar.destroy()
         self.destroy()
