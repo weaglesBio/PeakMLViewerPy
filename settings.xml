@@ -22,5 +22,11 @@
 			<database>trypanocyc.xml</database>
 			<database>009_kegg.xml</database>
 		</databases>
+		<fragDatabasesType1>
+			<fragDatabase>G:/PeakMLViewerPy_0_5_0_win/samples/IPA_MS1.csv</fragDatabase>
+		</fragDatabasesType1>
+		<fragDatabasesType2>
+			<fragDatabase>G:/PeakMLViewerPy_0_5_0_win/samples/IPA_MS2_full.csv</fragDatabase>
+		</fragDatabasesType2>
 	</settings>
 </peakmlviewer>
