@@ -244,6 +244,8 @@ class MainView():
         self.frag_option = 1
         self.blank = ""
 
+        self.last_plot = ""
+
         #comparison database:
         self.id_db = None
         self.id_samples = None
@@ -1370,8 +1372,10 @@ class MainView():
             # Refresh grid
             self.generate_plot_peak()
             self.generate_plot_frag_sample()
+            self.generate_plot_frag_con()
 
-    def update_sets_for_samples(self):
+    def refresh_sets_for_samples(self):
+        print(12)
         # Clear grid
         self.set_tree.delete(*self.set_tree.get_children())
 
@@ -1654,7 +1658,10 @@ class MainView():
 
 
     def generate_plot_peak(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         df = self.data.plot_peak_view_dataframe
         plot_count = len(df)
         self.axes_peak.clear()
@@ -1678,16 +1685,26 @@ class MainView():
         self.figure_peak.canvas.draw()
 
     def generate_plot_der_all(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
 
     def generate_plot_der_log(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
 
     def generate_plot_der(self, data, type, figure_der, axes_der):
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         axes_der.clear()
 
         mass_values = np.array(data['Mass'])
@@ -1716,7 +1733,10 @@ class MainView():
         #figure_der.tight_layout()
 
     def generate_plot_int_all(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         data = self.data.plot_int_view_dataframe
         self.axes_int_all.clear()
 
@@ -1735,7 +1755,10 @@ class MainView():
         self.figure_int_all.canvas.draw()
 
     def generate_plot_int_log(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         data = self.data.plot_int_view_dataframe
         self.axes_int_log.clear()
 
@@ -1758,27 +1781,41 @@ class MainView():
         self.figure_int_log.canvas.draw()
 
     def generate_plot_frag_con(self):
-        self.refresh_set_grid()
+        if self.last_plot == "sample":
+            self.refresh_set_grid()
+            self.last_plot = "peaks"
+
         data = self.data.plot_frag_view_dataframe
         self.axes_frag_con.clear()
+
+        #visible = self.data.get_set_checked_status(plot_label)
+        #print(visible)
 
         fragment_samples = []
 
         if self.blank == "":
             self.blank = "############"
 
-        for index, row in data.iterrows():
-            if self.blank not in row['Label']:
-                frags = list(dict.fromkeys(row['Fragments']))
-                con_mz = []
-                con_ints = []
 
-                for fragment in frags:
-                    a = fragment.split(',')
-                    con_mz.append(float(a[0]))
-                    con_ints.append(float(a[1]))
 
-                fragment_samples.append(SampleFragmentsItem(con_mz,con_ints))
+        for i in range(len(data)):
+            plot_label = data.iloc[i]['Label']
+            visible = self.data.get_set_checked_status(plot_label)
+            if visible:
+                if self.blank not in plot_label:
+                    con_mz = []
+                    con_ints = []
+
+                    frags = data.iloc[i]['Fragments']
+                    print(frags)
+
+                    for f in frags:
+                        a = f.split(',')
+                        con_mz.append(float(a[0]))
+                        con_ints.append(float(a[1]))
+
+                    fragment_samples.append(SampleFragmentsItem(con_mz,con_ints))
+
 
         if self.blank == "############":
             self.blank = ""
@@ -1805,23 +1842,28 @@ class MainView():
 
 
     def generate_plot_frag_sample(self):
-        self.update_sets_for_samples()
+        if self.last_plot == "peaks":
+            self.refresh_sets_for_samples()
+            self.last_plot = "sample"
+
+
+
         data = self.data.plot_frag_view_dataframe
         self.axes_frag_sample.clear()
 
 
 
-        for index, row in data.iterrows():
-            frags = row['Fragments']
-            lab = row['Label']
-            visible = self.data.get_set_checked_status(lab)
-
-            for fragment in frags:
-                frag_data = fragment.split(',')
-                x = [float(frag_data[0]),float(frag_data[0])]
-                y = [0,float(frag_data[1])]
-                if visible:
-                    self.axes_frag_sample.plot(x,y,linewidth=2, color="black",label=lab)
+        for i in range(len(data)):
+            plot_label = data.iloc[i]['Label']
+            visible = self.data.get_set_checked_status(plot_label)
+            if visible:
+                frags = data.iloc[i]['Fragments']
+                for fragment in frags:
+                    frag_data = fragment.split(',')
+                    x = [float(frag_data[0]),float(frag_data[0])]
+                    y = [0,float(frag_data[1])]
+                    if visible:
+                        self.axes_frag_sample.plot(x,y,linewidth=2, color="black",label=plot_label)
 
         self.axes_frag_sample.set_ylim(bottom=0)
         self.axes_frag_sample.set_xlabel("m/z")
