@@ -245,6 +245,7 @@ class MainView():
         self.blank = ""
 
         self.last_plot = ""
+        self.frag_update = 0
 
         #comparison database:
         self.id_db = None
@@ -1099,7 +1100,6 @@ class MainView():
             else:
                 dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["ID"].values[0],self.id_db,self.id_samples,0,self.fragPPM)
         else:
-            print(selected["IPA_id"].values[0])
             if self.frag_option == 2:
                 dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["IPA_id"].values[0],self.id_db,self.id_samples,self.mzd,0)
             else:
@@ -1161,7 +1161,6 @@ class MainView():
         self.refresh_to_selected_entry()
 
     def refresh_to_selected_entry(self):
-        print("_____")
 
         p.update_progress("Loading annotation grid", 65)
         self.refresh_annotation_grid()
@@ -1370,19 +1369,21 @@ class MainView():
                     selected_status = False if self.set_tree.item(child_item)["tags"][2] == "unchecked" else True
                     self.data.update_set_checked_status(uid, selected_status)
             # Refresh grid
+            self.frag_update = 1
             self.generate_plot_peak()
             self.generate_plot_frag_sample()
             self.generate_plot_frag_con()
+            self.frag_update = 0
 
     def refresh_sets_for_samples(self):
-        print(12)
+        print(1)
         # Clear grid
         self.set_tree.delete(*self.set_tree.get_children())
 
         # Load set view data
         df_sets = self.data.set_view_dataframe
 
-
+        print("start")
 
         if df_sets is not None:
             # Filter to sets which have no parent value (so are the parents)
@@ -1405,7 +1406,7 @@ class MainView():
                         folder = self.set_tree.insert("", i, f"P-{name_parent}", values=(name_parent), tags=("uid",select_parent, "#4d4a4b"))
 
                     df_sets_child = df_sets.loc[df_sets['Parent'] == name_parent]
-                    #print(df_sets_child)
+
 
 
                     if df_sets_child is not None:
@@ -1562,7 +1563,7 @@ class MainView():
         self.refresh_identification_grid()
 
         selected = self.data.identification_view_dataframe.loc[self.data.identification_view_dataframe["Selected"] == True]
-        print(selected["ID"].values[0])
+
 
         if self.selected_identities_tab == 0:
             ms2 = self.id_db.loc[self.id_db['id'] == selected["ID"].values[0]]
@@ -1658,9 +1659,9 @@ class MainView():
 
 
     def generate_plot_peak(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         df = self.data.plot_peak_view_dataframe
         plot_count = len(df)
@@ -1685,25 +1686,25 @@ class MainView():
         self.figure_peak.canvas.draw()
 
     def generate_plot_der_all(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "All", self.figure_der_all, self.axes_der_all)
 
     def generate_plot_der_log(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         df = self.data.plot_der_view_dataframe
         self.generate_plot_der(df, "Log", self.figure_der_log, self.axes_der_log)
 
     def generate_plot_der(self, data, type, figure_der, axes_der):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         axes_der.clear()
 
@@ -1733,9 +1734,9 @@ class MainView():
         #figure_der.tight_layout()
 
     def generate_plot_int_all(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         data = self.data.plot_int_view_dataframe
         self.axes_int_all.clear()
@@ -1755,9 +1756,9 @@ class MainView():
         self.figure_int_all.canvas.draw()
 
     def generate_plot_int_log(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         data = self.data.plot_int_view_dataframe
         self.axes_int_log.clear()
@@ -1781,9 +1782,9 @@ class MainView():
         self.figure_int_log.canvas.draw()
 
     def generate_plot_frag_con(self):
-        if self.last_plot == "sample":
+        if self.last_plot == "sample" and self.frag_update == 0:
             self.refresh_set_grid()
-            self.last_plot = "peaks"
+            self.last_plot = ""
 
         data = self.data.plot_frag_view_dataframe
         self.axes_frag_con.clear()
@@ -1807,7 +1808,6 @@ class MainView():
                     con_ints = []
 
                     frags = data.iloc[i]['Fragments']
-                    print(frags)
 
                     for f in frags:
                         a = f.split(',')
@@ -1842,7 +1842,7 @@ class MainView():
 
 
     def generate_plot_frag_sample(self):
-        if self.last_plot == "peaks":
+        if self.last_plot == "" and self.frag_update == 0:
             self.refresh_sets_for_samples()
             self.last_plot = "sample"
 
