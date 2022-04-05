@@ -146,10 +146,15 @@ def ConsensusSpec(x,minProp,mzd = 0,ppm = 0):
             outINTS.append(sum(int_split[allCounter])/len(int_split[allCounter]))
         allCounter += 1
 
+    normalised = []
+
+    largest = max(outINTS)
+    for i in outINTS:
+        normalised.append((i/largest) * 100)
+
+    out = SampleFragmentsItem(outMZS,normalised)
+
     #Finish normalise
-
-    out = SampleFragmentsItem(outMZS,outINTS)
-
     return out
 
 def cosine_similarity(spec1,spec2,mzd=0,ppm=10):
