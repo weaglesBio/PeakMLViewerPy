@@ -23,10 +23,14 @@
 			<database>009_kegg.xml</database>
 		</databases>
 		<fragDatabasesType1>
-			<fragDatabase>G:/PeakMLViewerPy_0_5_0_win/samples/IPA_MS1.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS1.csv</fragDatabase>
 		</fragDatabasesType1>
 		<fragDatabasesType2>
-			<fragDatabase>G:/PeakMLViewerPy_0_5_0_win/samples/IPA_MS2_full.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS2_full_0.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS2_full_1.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS2_full_2.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS2_full_3.csv</fragDatabase>
+			<fragDatabase>X:/MetabolomicModellingMSc/Fragment Databases/IPA_MS2_full_4.csv</fragDatabase>
 		</fragDatabasesType2>
 	</settings>
 </peakmlviewer>
