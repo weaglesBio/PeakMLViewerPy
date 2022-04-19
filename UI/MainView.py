@@ -1383,7 +1383,6 @@ class MainView():
         df_sets = self.data.set_view_dataframe
 
 
-
         if df_sets is not None:
             # Filter to sets which have no parent value (so are the parents)
             df_sets_parent = df_sets.loc[df_sets['Parent'].isnull()]
@@ -1433,7 +1432,8 @@ class MainView():
         if df_annotation is not None:
             for i in range(len(df_annotation)):
                 ann_row = df_annotation.iloc[i]
-                self.ann_tree.insert("", i, i, values=(ann_row["Label"], ann_row["Value"]))
+                if "IPA" not in ann_row["Label"]:
+                    self.ann_tree.insert("", i, i, values=(ann_row["Label"], ann_row["Value"]))
 
 #endregion
 
@@ -1446,7 +1446,6 @@ class MainView():
         except:
             pass
         df_identification = self.data.identification_view_dataframe
-
 
         smiles_details = inchi_details = None
 
@@ -1547,7 +1546,6 @@ class MainView():
             focused_iden = self.iden_tree.item(self.iden_tree.focus())
         else:
             focused_iden = self.IPA_iden_tree.item(self.IPA_iden_tree.focus())
-
 
 
 
@@ -1789,8 +1787,6 @@ class MainView():
         self.axes_frag_con.clear()
 
 
-
-
         fragment_samples = []
 
         if self.blank == "":
@@ -1857,7 +1853,6 @@ class MainView():
             visible = self.data.get_set_checked_status(plot_label)
             if visible:
                 frags = data.iloc[i]['Fragments']
-
                 xs = []
                 ys = []
                 for j in frags:
@@ -1866,7 +1861,6 @@ class MainView():
                     ys.append(float(frag[1]))
 
                 maxim= max(ys)
-
                 new_ys = []
                 for j in ys:
                     new_ys.append((j/maxim)*100)
@@ -1874,7 +1868,6 @@ class MainView():
                 frags = []
                 for j in range(len(new_ys)):
                     frags.append(str(xs[j]) + "," + str(new_ys[j]))
-
 
 
                 for fragment in frags:
