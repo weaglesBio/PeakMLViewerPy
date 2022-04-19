@@ -1376,14 +1376,13 @@ class MainView():
             self.frag_update = 0
 
     def refresh_sets_for_samples(self):
-        print(1)
         # Clear grid
         self.set_tree.delete(*self.set_tree.get_children())
 
         # Load set view data
         df_sets = self.data.set_view_dataframe
 
-        print("start")
+
 
         if df_sets is not None:
             # Filter to sets which have no parent value (so are the parents)
@@ -1447,7 +1446,7 @@ class MainView():
         except:
             pass
         df_identification = self.data.identification_view_dataframe
-        #print(df_identification)
+
 
         smiles_details = inchi_details = None
 
@@ -1549,7 +1548,7 @@ class MainView():
         else:
             focused_iden = self.IPA_iden_tree.item(self.IPA_iden_tree.focus())
 
-        #print(self.IPA_iden_tree.item(self.IPA_iden_tree.focus()))
+
 
 
 
@@ -1789,8 +1788,8 @@ class MainView():
         data = self.data.plot_frag_view_dataframe
         self.axes_frag_con.clear()
 
-        #visible = self.data.get_set_checked_status(plot_label)
-        #print(visible)
+
+
 
         fragment_samples = []
 
@@ -1858,6 +1857,26 @@ class MainView():
             visible = self.data.get_set_checked_status(plot_label)
             if visible:
                 frags = data.iloc[i]['Fragments']
+
+                xs = []
+                ys = []
+                for j in frags:
+                    frag = j.split(',')
+                    xs.append(float(frag[0]))
+                    ys.append(float(frag[1]))
+
+                maxim= max(ys)
+
+                new_ys = []
+                for j in ys:
+                    new_ys.append((j/maxim)*100)
+
+                frags = []
+                for j in range(len(new_ys)):
+                    frags.append(str(xs[j]) + "," + str(new_ys[j]))
+
+
+
                 for fragment in frags:
                     frag_data = fragment.split(',')
                     x = [float(frag_data[0]),float(frag_data[0])]
