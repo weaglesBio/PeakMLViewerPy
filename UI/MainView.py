@@ -248,9 +248,9 @@ class MainView():
         self.frag_update = 0
 
         #comparison database:
-        self.id_db = None
-        self.id_samples = None
-        self.update_fragmentation_dbs()
+        #self.id_db = None
+        #self.id_samples = None
+        #self.update_fragmentation_dbs()
 
         ## Populate class properties
         # Set initial widget layout values
@@ -684,20 +684,20 @@ class MainView():
 
 #region Layout methods
 
-    def update_fragmentation_dbs(self):
-        type1 = self.data.get_settings_frag_database_type_1_paths()["Path"].tolist()
-        type2 = self.data.get_settings_frag_database_type_2_paths()["Path"].tolist()
+    # def update_fragmentation_dbs(self):
+    #     type1 = self.data.get_settings_frag_database_type_1_paths()["Path"].tolist()
+    #     type2 = self.data.get_settings_frag_database_type_2_paths()["Path"].tolist()
 
 
-        dbs = []
-        for i in type1:
-            dbs.append(pd.read_csv(i, header=0))
-        self.id_db = pd.concat(dbs)
+    #     dbs = []
+    #     for i in type1:
+    #         dbs.append(pd.read_csv(i, header=0))
+    #     self.id_db = pd.concat(dbs)
 
-        dbs = []
-        for i in type2:
-            dbs.append(pd.read_csv(i, header=0))
-        self.id_samples = pd.concat(dbs)
+    #     dbs = []
+    #     for i in type2:
+    #         dbs.append(pd.read_csv(i, header=0))
+    #     self.id_samples = pd.concat(dbs)
 
 
 
@@ -1045,7 +1045,8 @@ class MainView():
             self.fragPPM = dlg.frag_ppm
             self.frag_option = dlg.frag_option
             self.blank = dlg.blank
-            self.update_fragmentation_dbs()
+            #self.update_fragmentation_dbs()
+            self.data.import_fragment_databases()
 
 
     def open_log_dialog(self):
@@ -1096,14 +1097,14 @@ class MainView():
 
         if self.selected_identities_tab == 0:
             if self.frag_option == 2:
-                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["ID"].values[0],self.id_db,self.id_samples,self.mzd,0)
+                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["ID"].values[0],self.data.fragment_id_db,self.data.fragment_id_samples,self.mzd,0)
             else:
-                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["ID"].values[0],self.id_db,self.id_samples,0,self.fragPPM)
+                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["ID"].values[0],self.data.fragment_id_db,self.data.fragment_id_samples,0,self.fragPPM)
         else:
             if self.frag_option == 2:
-                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["IPA_id"].values[0],self.id_db,self.id_samples,self.mzd,0)
+                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["IPA_id"].values[0],self.data.fragment_id_db,self.data.fragment_id_samples,self.mzd,0)
             else:
-                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["IPA_id"].values[0],self.id_db,self.id_samples,0,self.fragPPM)
+                dlg = FragmentComparisonDialog(self.root,"Fragment Comparison",con,selected["IPA_id"].values[0],self.data.fragment_id_db,self.data.fragment_id_samples,0,self.fragPPM)
 
     def split_peak_on_retention_time(self):
         p.update_progress("Splitting peak", 0)
@@ -1563,12 +1564,12 @@ class MainView():
 
 
         if self.selected_identities_tab == 0:
-            ms2 = self.id_db.loc[self.id_db['id'] == selected["ID"].values[0]]
+            ms2 = self.data.fragment_id_db.loc[self.data.fragment_id_db['id'] == selected["ID"].values[0]]
         else:
-            ms2 = self.id_db.loc[self.id_db['id'] == selected["IPA_id"].values[0]]
+            ms2 = self.data.fragment_id_db.loc[self.data.fragment_id_db['id'] == selected["IPA_id"].values[0]]
 
         try:
-            sample_data = self.id_samples[self.id_samples["MonaID"] == ms2["MS2"].values[0]]
+            sample_data = self.data.fragment_id_samples[self.data.fragment_id_samples["MonaID"] == ms2["MS2"].values[0]]
         except:
             sample_data = None
 

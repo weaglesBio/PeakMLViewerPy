@@ -181,11 +181,29 @@ class DataAccess:
     def group_split_peak(self, group_split: int):
         self._group_split_peak = group_split
 
+    @property
+    def fragment_id_db(self) -> pd.DataFrame:
+        return self._fragment_id_db
+
+    @fragment_id_db.setter
+    def fragment_id_db(self, fragment_id_db: pd.DataFrame):
+        self._fragment_id_db = fragment_id_db
+
+    @property
+    def fragment_id_samples(self) -> pd.DataFrame:
+        return self._fragment_id_samples
+
+    @fragment_id_samples.setter
+    def fragment_id_samples(self, fragment_id_samples: pd.DataFrame):
+        self._fragment_id_samples = fragment_id_samples
+
     def __init__(self):
 
         self._peakml = PeakML()
 
         self._molecule_database = MolIO.load_molecule_databases()
+        #self.import_fragment_databases()
+        self._fragment_id_db, self._fragment_id_samples = MolIO.load_fragment_databases()
         settings_io = SetIO.load_database_paths()
         self._settings = Settings(SetIO.load_preferences(), settings_io[0], settings_io[1], settings_io[2])
 
@@ -237,6 +255,13 @@ class DataAccess:
 
         except Exception as err:
             lg.log_error(f'An error when importing IPA data: {err}')
+
+    #def import_fragment_databases(self):
+    #    try:
+            self.fragment_id_db, self.fragment_id_samples = MolIO.load_fragment_databases()
+            
+    #    except Exception as err:
+    #        lg.log_error(f'An error when importing IPA data: {err}')
 
     # Load view data from peakml object
     def _load_view_data_from_peakml(self):
