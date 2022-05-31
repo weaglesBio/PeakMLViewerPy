@@ -1816,19 +1816,19 @@ class MainView():
         if self.blank == "############":
             self.blank = ""
 
+        if fragment_samples:
+            if self.frag_option == 2:
+                con = ConsensusSpec(fragment_samples,float(self.frag_threshold)/100,self.mzd,0)
+            else:
+                con = ConsensusSpec(fragment_samples,float(self.frag_threshold)/100,0,self.fragPPM)
 
-        if self.frag_option == 2:
-            con = ConsensusSpec(fragment_samples,float(self.frag_threshold)/100,self.mzd,0)
-        else:
-            con = ConsensusSpec(fragment_samples,float(self.frag_threshold)/100,0,self.fragPPM)
+            frag_counter = 0
 
-        frag_counter = 0
-
-        while frag_counter < len(con.mz):
-            x = [float(con.mz[frag_counter]),con.mz[frag_counter]]
-            y = [0,float(con.intensity[frag_counter])]
-            self.axes_frag_con.plot(x,y,linewidth=2, color="black")
-            frag_counter += 1
+            while frag_counter < len(con.mz):
+                x = [float(con.mz[frag_counter]),con.mz[frag_counter]]
+                y = [0,float(con.intensity[frag_counter])]
+                self.axes_frag_con.plot(x,y,linewidth=2, color="black")
+                frag_counter += 1
 
         self.axes_frag_con.set_ylim(bottom=0)
         self.axes_frag_con.set_xlabel("m/z")

@@ -101,7 +101,7 @@ def load_fragment_databases() -> Dict[str, Molecule]:
 
         # Fragment database type 1
         fragment_1_databases = []
-        for fragment_1_database_paths in settings_root.findall("./settings/databases/database"):
+        for fragment_1_database_paths in settings_root.findall("./settings/fragDatabasesType1/fragDatabase"):
 
             try:
 
@@ -119,7 +119,7 @@ def load_fragment_databases() -> Dict[str, Molecule]:
 
         # Fragment database type 2
         fragment_2_databases = []
-        for fragment_2_database_paths in settings_root.findall("./settings/databases/database"):
+        for fragment_2_database_paths in settings_root.findall("./settings/fragDatabasesType2/fragDatabase"):
 
             try:
 
