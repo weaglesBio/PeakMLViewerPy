@@ -75,7 +75,7 @@ class PeakSplitDialog(ViewerDialog):
 
     def buttonbox(self):
         self.group_split_variable = tk.IntVar()
-        self.checkbox = tk.Checkbutton(self, text = "Apply to all instance of this peak",variable=self.group_split_variable)
+        self.checkbox = tk.Checkbutton(self, text = "Split all members of the cluster",variable=self.group_split_variable)
         self.checkbox.pack(side="left", padx=(5,10), pady=(5,10))
         self.btn_cancel = tk.Button(self, text='Cancel', width=5, command=self.cancel_btn_clicked)
         self.btn_cancel.pack(side="right", padx=(5,10), pady=(5,10))

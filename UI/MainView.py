@@ -648,7 +648,7 @@ class MainView():
         self.identities.bind("<<NotebookTabChanged>>", self.iden_tab_changed)
 
         #api tree
-        self.IPA_iden_tree = self.initialize_grid(self.IPA_tree, True, [("Selected", 40), ("ID", 100), ("Name", 150), ("Formula", 150), ("Adduct", 80), ("M/Z", 150), ("Charge", 50), ("PPM", 100), ("isotope pattern score", 150), ("fragmentation pattern score", 200), ("Prior", 100), ("Post", 100), ("Post Gibbs", 100), ("chi-square pval", 100)])
+        self.IPA_iden_tree = self.initialize_grid(self.IPA_tree, True, [("Selected", 40), ("ID", 100), ("Name", 150), ("Formula", 150), ("Adduct", 80), ("M/Z", 150), ("Charge", 50), ("PPM", 100), ("Isotope pattern score", 150), ("Fragmentation pattern score", 200), ("Prior", 100), ("Post", 100), ("Post Gibbs", 100), ("\u03A7^2 pval", 100)])
         self.IPA_iden_tree.tag_configure("not_focus", foreground="black")
         self.IPA_iden_tree.tag_configure("is_focus", foreground="white", background="blue")
         self.IPA_iden_tree.bind('<ButtonRelease-1>', self.IPA_select_iden)

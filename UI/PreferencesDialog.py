@@ -49,8 +49,8 @@ class PreferencesDialog(ViewerDialog):
 
         self.tabs_preferences.add(self.tab_appearance, text = "Appearance")
         self.tabs_preferences.add(self.tab_databases, text = "Databases")
-        self.tabs_preferences.add(self.tab_fragmentation, text = "fragmentation")
-        self.tabs_preferences.add(self.tab_fragmentation_databases, text = "fragmentation database")
+        self.tabs_preferences.add(self.tab_fragmentation, text = "Fragmentation")
+        self.tabs_preferences.add(self.tab_fragmentation_databases, text = "Fragmentation database")
         self.tabs_preferences.pack(expand = 1, fill = "both")
 
         # Appearance section
@@ -121,9 +121,9 @@ class PreferencesDialog(ViewerDialog):
         self.frag_optionSV = tk.StringVar(value=self.frag_option)
         self.blank_optionSV = tk.StringVar(value=self.blank)
 
-        self.lbl_threshold = tk.Label(self.tab_fragmentation, width=15, text="consensus threshold:")
+        self.lbl_threshold = tk.Label(self.tab_fragmentation, width=15, text="Consensus threshold:")
         self.spbx_threshold = tk.Spinbox(self.tab_fragmentation, width=15, from_=1, to=100, state='readonly', textvariable=self.frag_thr)
-
+S
         self.lbl_threshold.grid(row=0, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
         self.spbx_threshold.grid(row=0, column=1, padx=(2,2), pady=(5,5),sticky="NEWS")
 
@@ -139,7 +139,7 @@ class PreferencesDialog(ViewerDialog):
         self.lbl_absolute.grid(row=2, column=0, padx=(2,2), pady=(5,5),sticky="NEWS")
         self.spbx_absolute.grid(row=2, column=1, padx=(2,2), pady=(5,5),sticky="NEWS")
 
-        self.lbl_choicetk = tk.Label(self.tab_fragmentation, width=15, text="consensus based on")
+        self.lbl_choicetk = tk.Label(self.tab_fragmentation, width=15, text="Consensus based on")
         self.rad_ppm = tk.Radiobutton(self.tab_fragmentation,text = "PPM", variable=self.frag_optionSV, value=1)
         self.rad_absolute = tk.Radiobutton(self.tab_fragmentation,text = "Absolute", variable=self.frag_optionSV, value=2)
 

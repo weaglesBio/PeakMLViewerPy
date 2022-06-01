@@ -106,7 +106,7 @@ class FragmentComparisonDialog(ViewerDialog):
 
         self.sim.set(str(compareSpectra(self.fragments, self.loaded_fragments,self.mzd,self.ppm)))
 
-        self._simularity_lbl = tk.Label(self._simularity_frame, width=15, text="Simularity :")
+        self._simularity_lbl = tk.Label(self._simularity_frame, width=15, text="Similarity Score :")
         self._simularity_lbl.grid(row=0,column=1,padx=(2,2), pady=(5,5), sticky="NEWS")
 
         self.simularity_lb = tk.Label(self._simularity_frame, width=20, textvariable=self.sim)
